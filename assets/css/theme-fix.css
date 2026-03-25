@@ -1,0 +1,275 @@
+/* 主题修复CSS - 简化版 */
+
+/* 暗黑模式下的粒子颜色 */
+[data-theme="dark"] #particles-js {
+  filter: brightness(0.8);
+}
+
+/* 暗黑模式下的头部 */
+[data-theme="dark"] .site-header {
+  background: rgba(26, 20, 37, 0.95);
+  border-bottom-color: var(--neutral);
+}
+
+[data-theme="dark"] .site-header.scrolled {
+  background: rgba(26, 20, 37, 0.98);
+}
+
+/* 暗黑模式下的导航链接 */
+[data-theme="dark"] .nav-link {
+  color: var(--text);
+}
+
+[data-theme="dark"] .nav-link:hover {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .nav-link.active {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .nav-link.active::after {
+  background: var(--primary-light);
+}
+
+/* 暗黑模式下的卡片 */
+[data-theme="dark"] .card,
+[data-theme="dark"] .skill-item,
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .link-card {
+  background: var(--surface);
+  border-color: var(--neutral);
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .skill-item:hover,
+[data-theme="dark"] .post-card:hover,
+[data-theme="dark"] .link-card:hover {
+  border-color: rgba(138, 75, 90, 0.3);
+}
+
+/* 暗黑模式下的按钮 */
+[data-theme="dark"] .btn-primary {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .btn-secondary {
+  color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: var(--primary-light);
+  color: var(--surface);
+}
+
+/* 暗黑模式下的页脚 */
+[data-theme="dark"] .site-footer {
+  background: var(--surface);
+  color: var(--text);
+  border-top: 1px solid var(--neutral);
+}
+
+[data-theme="dark"] .footer-links a {
+  color: var(--text-light);
+}
+
+[data-theme="dark"] .footer-links a:hover {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .social-link {
+  background: var(--neutral);
+  color: var(--text);
+}
+
+[data-theme="dark"] .social-link:hover {
+  background: var(--primary);
+  color: white;
+}
+
+[data-theme="dark"] .copyright {
+  color: var(--text-light);
+}
+
+/* 暗黑模式下的技术标签 */
+[data-theme="dark"] .tech-tag {
+  background: var(--neutral);
+  color: var(--text);
+}
+
+[data-theme="dark"] .tech-tag:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* 暗黑模式下的搜索 */
+[data-theme="dark"] .search-input {
+  background: var(--surface);
+  border-color: var(--neutral);
+  color: var(--text);
+}
+
+[data-theme="dark"] .search-results {
+  background: var(--surface);
+  border-color: var(--neutral);
+}
+
+[data-theme="dark"] .search-highlight {
+  background: rgba(138, 75, 90, 0.2);
+}
+
+/* 暗黑模式下的评论 */
+[data-theme="dark"] .comments-warning {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+[data-theme="dark"] .comments-disabled {
+  background: rgba(108, 117, 125, 0.1);
+  border-color: rgba(108, 117, 125, 0.3);
+}
+
+/* 暗黑模式下的移动菜单 */
+[data-theme="dark"] .mobile-menu {
+  background: var(--surface);
+}
+
+[data-theme="dark"] .mobile-menu-footer {
+  border-top-color: var(--neutral);
+}
+
+/* 暗黑模式下的滚动条 */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--neutral);
+}
+
+/* 暗黑模式下的图片 */
+[data-theme="dark"] img {
+  filter: brightness(0.9);
+}
+
+/* 暗黑模式下的代码块 */
+[data-theme="dark"] pre,
+[data-theme="dark"] code {
+  background: var(--neutral);
+  border-color: var(--neutral-light);
+}
+
+/* 暗黑模式下的表格 */
+[data-theme="dark"] table {
+  border-color: var(--neutral);
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] td {
+  border-color: var(--neutral-light);
+}
+
+[data-theme="dark"] tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 暗黑模式下的引用 */
+[data-theme="dark"] blockquote {
+  border-left-color: var(--primary);
+  background: rgba(138, 75, 90, 0.05);
+}
+
+/* 暗黑模式下的表单元素 */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background: var(--surface);
+  border-color: var(--neutral);
+  color: var(--text);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(138, 75, 90, 0.2);
+}
+
+/* 暗黑模式下的水平线 */
+[data-theme="dark"] hr {
+  border-color: var(--neutral);
+}
+
+/* 暗黑模式下的主题切换按钮 */
+[data-theme="dark"] .theme-toggle {
+  background: rgba(42, 42, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* 暗黑模式下的标签卡片 */
+[data-theme="dark"] .tag-card {
+  background: var(--surface);
+  border-color: var(--neutral);
+}
+
+[data-theme="dark"] .tag-card:hover {
+  border-color: rgba(138, 75, 90, 0.3);
+}
+
+[data-theme="dark"] .tag-title a:hover {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .view-tag:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* 暗黑模式下的标签页眉 */
+[data-theme="dark"] .tag-header-meta i {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .tag-article-count {
+  color: var(--text-light);
+}
+
+/* 暗黑模式下的联系信息 */
+[data-theme="dark"] .contact-info p {
+  color: var(--text-light);
+}
+
+/* 暗黑模式下的页脚备注 */
+[data-theme="dark"] .footer-note {
+  color: var(--text-light);
+}
+
+[data-theme="dark"] .powered-by {
+  color: var(--text-light);
+}
+
+[data-theme="dark"] .powered-by a {
+  color: var(--primary-light);
+}
+
+[data-theme="dark"] .powered-by a:hover {
+  color: var(--primary);
+}
+
+/* 向后兼容：支持旧的CSS类名 */
+.dark-theme {
+  /* 所有样式都通过[data-theme="dark"]选择器应用 */
+}
+
+html.dark-theme,
+body.dark-theme {
+  /* 所有样式都通过[data-theme="dark"]选择器应用 */
+}

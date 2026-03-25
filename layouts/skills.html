@@ -1,0 +1,430 @@
+{{ define "main" }}
+<!-- 粒子背景 -->
+<div id="particles-js"></div>
+
+<div class="container">
+  <!-- 页面标题 -->
+  <section class="page-header" data-aos="fade-up">
+    <h1 class="page-title">{{ .Title }}</h1>
+    <p class="page-description">{{ .Description }}</p>
+  </section>
+
+  <!-- 技能总览 -->
+  <section class="skills-overview" data-aos="fade-up">
+    <div class="skills-summary card">
+      <h2 class="section-title">技能总览</h2>
+      <p class="section-subtitle">掌握多项技术，持续学习进步</p>
+      
+      <div class="skills-categories">
+        <div class="category-item" data-aos="zoom-in">
+          <div class="category-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3>前端开发</h3>
+          <p>HTML5、CSS3、JavaScript、Vue.js、React</p>
+          <div class="category-progress">
+            <div class="progress-bar" style="width: 90%"></div>
+          </div>
+        </div>
+        
+        <div class="category-item" data-aos="zoom-in" data-aos-delay="100">
+          <div class="category-icon">
+            <i class="fas fa-server"></i>
+          </div>
+          <h3>后端开发</h3>
+          <p>Node.js、Python、数据库、API设计</p>
+          <div class="category-progress">
+            <div class="progress-bar" style="width: 85%"></div>
+          </div>
+        </div>
+        
+        <div class="category-item" data-aos="zoom-in" data-aos-delay="200">
+          <div class="category-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>移动开发</h3>
+          <p>Flutter、React Native、原生开发</p>
+          <div class="category-progress">
+            <div class="progress-bar" style="width: 75%"></div>
+          </div>
+        </div>
+        
+        <div class="category-item" data-aos="zoom-in" data-aos-delay="300">
+          <div class="category-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <h3>开发工具</h3>
+          <p>Git、Docker、VS Code、构建工具</p>
+          <div class="category-progress">
+            <div class="progress-bar" style="width: 80%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 详细技能 -->
+  <section class="detailed-skills" data-aos="fade-up">
+    <h2 class="section-title">详细技能</h2>
+    <p class="section-subtitle">每一项技能都经过项目实践验证</p>
+    
+    <div class="skills-detailed-grid">
+      {{ range .Site.Params.skills }}
+      <div class="skill-detail-item card" data-aos="fade-up">
+        <div class="skill-header">
+          <h3 class="skill-name">{{ .name }}</h3>
+          <span class="skill-level">{{ .level }}%</span>
+        </div>
+        
+        <div class="skill-bar">
+          <div class="skill-progress" data-level="{{ .level }}"></div>
+        </div>
+        
+        <div class="skill-description">
+          {{ if eq .name "JavaScript" }}
+          掌握ES6+特性、异步编程、模块化开发，熟悉Vue.js和React框架。
+          {{ else if eq .name "HTML5" }}
+          精通语义化标签、Canvas绘图、Web Storage等HTML5新特性。
+          {{ else if eq .name "CSS3" }}
+          熟练使用Flexbox、Grid布局，掌握CSS动画和响应式设计。
+          {{ else if eq .name "Python" }}
+          熟悉Django、Flask框架，掌握数据分析和机器学习基础。
+          {{ else if eq .name "Flutter" }}
+          掌握Dart语言，熟悉Widget系统，能够开发跨平台应用。
+          {{ else if eq .name "Rust" }}
+          了解Rust语言特性，掌握基础语法和内存安全机制。
+          {{ end }}
+        </div>
+        
+        <div class="skill-projects">
+          <h4>相关项目</h4>
+          <ul>
+            {{ if eq .name "JavaScript" }}
+            <li>个人博客系统</li>
+            <li>数据可视化平台</li>
+            <li>在线编辑器</li>
+            {{ else if eq .name "Python" }}
+            <li>自动化脚本工具</li>
+            <li>Web爬虫系统</li>
+            <li>数据分析报告</li>
+            {{ else if eq .name "Flutter" }}
+            <li>跨平台电商应用</li>
+            <li>社交应用开发</li>
+            <li>工具类应用</li>
+            {{ end }}
+          </ul>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- 技能发展 -->
+  <section class="skill-development" data-aos="fade-up">
+    <div class="development-timeline card">
+      <h2 class="section-title">技能发展历程</h2>
+      
+      <div class="timeline">
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-date">2022</div>
+          <div class="timeline-content">
+            <h3>基础学习</h3>
+            <p>掌握HTML、CSS、JavaScript基础，完成第一个个人网站项目。</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item" data-aos="fade-left">
+          <div class="timeline-date">2023</div>
+          <div class="timeline-content">
+            <h3>框架掌握</h3>
+            <p>学习Vue.js和React框架，参与团队项目开发，掌握前后端分离架构。</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-date">2024</div>
+          <div class="timeline-content">
+            <h3>全栈发展</h3>
+            <p>学习Node.js和Python后端开发，掌握数据库设计和API开发。</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item" data-aos="fade-left">
+          <div class="timeline-date">2025</div>
+          <div class="timeline-content">
+            <h3>移动开发</h3>
+            <p>学习Flutter跨平台开发，完成多个移动应用项目。</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-date">2026</div>
+          <div class="timeline-content">
+            <h3>技术深化</h3>
+            <p>学习Rust语言，深入研究性能优化和系统架构设计。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 添加技能页面特定样式 -->
+<style>
+.page-header {
+  text-align: center;
+  padding: 4rem 0 2rem;
+}
+
+.page-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-description {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.skills-summary {
+  margin: 2rem 0;
+}
+
+.skills-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.category-item {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 15px;
+  background: rgba(138, 43, 226, 0.05);
+  transition: all 0.3s ease;
+}
+
+.category-item:hover {
+  transform: translateY(-5px);
+  background: rgba(138, 43, 226, 0.1);
+}
+
+.category-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.category-item h3 {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.category-item p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.category-progress {
+  height: 6px;
+  background: rgba(138, 43, 226, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 3px;
+}
+
+.skills-detailed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.skill-detail-item {
+  padding: 2rem;
+}
+
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.skill-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.skill-level {
+  background: var(--gradient);
+  color: white;
+  padding: 0.3rem 1rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.skill-description {
+  color: var(--text-light);
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.skill-projects {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(138, 43, 226, 0.1);
+}
+
+.skill-projects h4 {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.skill-projects ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.skill-projects li {
+  padding: 0.3rem 0;
+  color: var(--text-light);
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.skill-projects li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.development-timeline {
+  padding: 2rem;
+}
+
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 3rem auto 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--gradient);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.timeline-item:nth-child(odd) {
+  flex-direction: row;
+}
+
+.timeline-item:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.timeline-date {
+  flex: 0 0 100px;
+  text-align: center;
+  background: var(--gradient);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-content {
+  flex: 1;
+  padding: 1.5rem;
+  background: var(--surface);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin: 0 2rem;
+}
+
+.timeline-content h3 {
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.timeline-content p {
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.content-card {
+  padding: 3rem;
+  margin: 3rem 0;
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2.5rem;
+  }
+  
+  .skills-categories {
+    grid-template-columns: 1fr;
+  }
+  
+  .skills-detailed-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline::before {
+    left: 30px;
+  }
+  
+  .timeline-item {
+    flex-direction: row !important;
+    align-items: flex-start;
+  }
+  
+  .timeline-date {
+    flex: 0 0 60px;
+    margin-right: 1rem;
+  }
+  
+  .timeline-content {
+    margin: 0;
+    margin-left: 1rem;
+  }
+}
+</style>
+{{ end }}

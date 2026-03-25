@@ -1,0 +1,808 @@
+{{ define "main" }}
+<!-- 粒子背景 -->
+<div id="particles-js"></div>
+
+<div class="container">
+  <!-- 页面标题 -->
+  <section class="page-header" data-aos="fade-up">
+    <h1 class="page-title">{{ .Title }}</h1>
+    <p class="page-description">{{ .Description }}</p>
+  </section>
+
+  <!-- 个人简介 -->
+  <section class="about-intro" data-aos="fade-up">
+    <div class="intro-card card">
+      <div class="intro-content">
+        <div class="intro-text">
+          <h2>爱则心痛 (azxt)</h2>
+          <p class="intro-subtitle">全栈开发者 · 技术爱好者 · 开源贡献者</p>
+          <div class="intro-quote">
+            <i class="fas fa-quote-left"></i>
+            <p>代码如诗，技术如画。在0和1的世界里，创造无限可能。</p>
+            <i class="fas fa-quote-right"></i>
+          </div>
+        </div>
+        <div class="intro-image">
+          <img src="{{ .Site.Params.avatarImage }}" alt="爱则心痛" loading="lazy">
+          <div class="image-decoration"></div>
+        </div>
+      </div>
+      
+      <div class="intro-stats">
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ len (where site.RegularPages "Type" "posts") }}</div>
+            <div class="stat-label">技术文章</div>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-project-diagram"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">{{ len .Site.Params.skills }}</div>
+            <div class="stat-label">技术技能</div>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">8+</div>
+            <div class="stat-label">开发经验</div>
+          </div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">热爱程度</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 技术理念 -->
+  <section class="about-philosophy" data-aos="fade-up">
+    <h2 class="section-title">技术理念</h2>
+    <div class="philosophy-grid">
+      <div class="philosophy-item" data-aos="zoom-in">
+        <div class="philosophy-icon">
+          <i class="fas fa-feather-alt"></i>
+        </div>
+        <h3>优雅简洁</h3>
+        <p>追求代码的简洁性和可维护性，相信好的代码本身就是最好的文档</p>
+      </div>
+      
+      <div class="philosophy-item" data-aos="zoom-in" data-aos-delay="100">
+        <div class="philosophy-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h3>持续学习</h3>
+        <p>技术日新月异，保持好奇心和学习能力是开发者最重要的品质</p>
+      </div>
+      
+      <div class="philosophy-item" data-aos="zoom-in" data-aos-delay="200">
+        <div class="philosophy-icon">
+          <i class="fas fa-share-alt"></i>
+        </div>
+        <h3>分享共赢</h3>
+        <p>知识因分享而更有价值，开源精神推动技术进步</p>
+      </div>
+      
+      <div class="philosophy-item" data-aos="zoom-in" data-aos-delay="300">
+        <div class="philosophy-icon">
+          <i class="fas fa-user-check"></i>
+        </div>
+        <h3>用户体验</h3>
+        <p>技术服务于人，优秀的用户体验是产品的灵魂</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页面内容 -->
+  <section class="about-content" data-aos="fade-up">
+    <div class="content-card card">
+      <div class="markdown-content enhanced-markdown">
+        {{ .Content }}
+      </div>
+    </div>
+  </section>
+
+  <!-- 联系方式 -->
+  <section class="about-contact" data-aos="fade-up">
+    <div class="contact-card card">
+      <h2 class="section-title">保持联系</h2>
+      <p class="section-subtitle">如果你对我的工作感兴趣，或者有任何技术问题想要讨论</p>
+      
+      <div class="contact-methods">
+        <a href="mailto:{{ .Site.Params.email }}" class="contact-method">
+          <div class="method-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="method-info">
+            <h3>邮箱</h3>
+            <p>{{ .Site.Params.email }}</p>
+          </div>
+        </a>
+        
+        <a href="https://github.com/{{ .Site.Params.github }}" class="contact-method" target="_blank" rel="noopener">
+          <div class="method-icon">
+            <i class="fab fa-github"></i>
+          </div>
+          <div class="method-info">
+            <h3>GitHub</h3>
+            <p>{{ .Site.Params.github }}</p>
+          </div>
+        </a>
+        
+        <a href="https://{{ .Site.Params.domain }}" class="contact-method" target="_blank" rel="noopener">
+          <div class="method-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="method-info">
+            <h3>网站</h3>
+            <p>{{ .Site.Params.domain }}</p>
+          </div>
+        </a>
+      </div>
+      
+      <div class="contact-note">
+        <p>欢迎交流技术问题、项目合作或开源贡献！</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 关于页面样式 -->
+<style>
+.page-header {
+  text-align: center;
+  padding: 4rem 0 2rem;
+}
+
+.page-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-description {
+  color: var(--text-light);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.about-intro {
+  margin: 2rem 0;
+}
+
+.intro-card {
+  padding: 3rem;
+}
+
+.intro-content {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.intro-text {
+  flex: 1;
+}
+
+.intro-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.intro-subtitle {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.intro-quote {
+  background: rgba(124, 58, 237, 0.05);
+  border-left: 4px solid var(--primary);
+  padding: 1.5rem;
+  border-radius: 0 12px 12px 0;
+  position: relative;
+}
+
+.intro-quote i:first-child {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: var(--primary);
+  opacity: 0.3;
+  font-size: 1.5rem;
+}
+
+.intro-quote i:last-child {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: var(--primary);
+  opacity: 0.3;
+  font-size: 1.5rem;
+}
+
+.intro-quote p {
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.intro-image {
+  flex: 0 0 200px;
+  position: relative;
+}
+
+.intro-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+
+.image-decoration {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: var(--gradient);
+  border-radius: 50%;
+  opacity: 0.1;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(1.05); opacity: 0.15; }
+}
+
+.intro-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.stat-label {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.about-philosophy {
+  margin: 4rem 0;
+}
+
+.philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.philosophy-item {
+  text-align: center;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+}
+
+.philosophy-item:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(124, 58, 237, 0.15);
+}
+
+.philosophy-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.philosophy-item h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.philosophy-item p {
+  color: var(--text-light);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.about-content {
+  margin: 4rem 0;
+}
+
+.content-card {
+  padding: 3rem;
+}
+
+.about-contact {
+  margin: 4rem 0;
+}
+
+.contact-card {
+  padding: 3rem;
+  text-align: center;
+}
+
+.contact-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(124, 58, 237, 0.05);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.contact-method:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.2);
+  transform: translateY(-3px);
+}
+
+.method-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--gradient);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.method-info {
+  flex: 1;
+  text-align: left;
+}
+
+.method-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  color: var(--text);
+}
+
+.method-info p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+
+.contact-note {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+.contact-note p {
+  color: var(--text-light);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+/* 增强的Markdown样式 */
+.enhanced-markdown {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.enhanced-markdown h2 {
+  font-size: 1.8rem;
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--neutral);
+  color: var(--text);
+}
+
+.enhanced-markdown h3 {
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+  color: var(--text);
+}
+
+.enhanced-markdown h4 {
+  font-size: 1.3rem;
+  margin: 1.5rem 0 0.8rem;
+  color: var(--text);
+}
+
+.enhanced-markdown p {
+  margin: 1.5rem 0;
+  color: var(--text);
+}
+
+.enhanced-markdown strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.enhanced-markdown em {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.enhanced-markdown ul,
+.enhanced-markdown ol {
+  margin: 1.5rem 0;
+  padding-left: 2rem;
+}
+
+.enhanced-markdown li {
+  margin: 0.8rem 0;
+  color: var(--text);
+}
+
+.enhanced-markdown li::marker {
+  color: var(--primary);
+}
+
+.enhanced-markdown blockquote {
+  border-left: 4px solid var(--primary);
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  background: rgba(138, 75, 90, 0.05);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--text-light);
+}
+
+.enhanced-markdown blockquote p {
+  margin: 0;
+}
+
+.enhanced-markdown code {
+  background: rgba(138, 75, 90, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: var(--primary-dark);
+}
+
+.enhanced-markdown pre {
+  background: var(--surface);
+  border: 1px solid var(--neutral);
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.enhanced-markdown pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: var(--text);
+}
+
+.enhanced-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  border: 1px solid var(--neutral);
+}
+
+.enhanced-markdown th {
+  background: rgba(138, 75, 90, 0.1);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--neutral);
+}
+
+.enhanced-markdown td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--neutral-light);
+  color: var(--text);
+}
+
+.enhanced-markdown tr:hover {
+  background: rgba(138, 75, 90, 0.05);
+}
+
+.enhanced-markdown a {
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(138, 75, 90, 0.3);
+  transition: all 0.3s ease;
+}
+
+.enhanced-markdown a:hover {
+  color: var(--primary-dark);
+  border-bottom-color: var(--primary);
+}
+
+.enhanced-markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+
+.enhanced-markdown hr {
+  border: none;
+  height: 1px;
+  background: var(--neutral);
+  margin: 3rem 0;
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2.5rem;
+  }
+  
+  .intro-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .intro-image {
+    order: -1;
+  }
+  
+  .intro-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .philosophy-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  .content-card,
+  .contact-card {
+    padding: 2rem;
+  }
+}
+
+  @media (max-width: 480px) {
+    .page-title {
+      font-size: 2rem;
+    }
+    
+    .intro-stats {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+      justify-content: center;
+    }
+  }
+</style>
+
+<!-- Markdown增强脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 为代码块添加复制按钮
+  const codeBlocks = document.querySelectorAll('.enhanced-markdown pre');
+  
+  codeBlocks.forEach((block, index) => {
+    // 创建复制按钮
+    const copyButton = document.createElement('button');
+    copyButton.className = 'copy-code-btn';
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+    copyButton.setAttribute('aria-label', '复制代码');
+    copyButton.setAttribute('title', '复制代码');
+    
+    // 添加点击事件
+    copyButton.addEventListener('click', function() {
+      const code = block.querySelector('code')?.textContent || '';
+      navigator.clipboard.writeText(code).then(() => {
+        // 显示复制成功反馈
+        const originalHTML = copyButton.innerHTML;
+        copyButton.innerHTML = '<i class="fas fa-check"></i>';
+        copyButton.style.background = 'var(--primary)';
+        copyButton.style.color = 'white';
+        
+        setTimeout(() => {
+          copyButton.innerHTML = originalHTML;
+          copyButton.style.background = '';
+          copyButton.style.color = '';
+        }, 2000);
+      });
+    });
+    
+    // 将按钮添加到代码块
+    block.style.position = 'relative';
+    copyButton.style.position = 'absolute';
+    copyButton.style.top = '10px';
+    copyButton.style.right = '10px';
+    copyButton.style.padding = '5px 10px';
+    copyButton.style.background = 'rgba(138, 75, 90, 0.1)';
+    copyButton.style.border = '1px solid rgba(138, 75, 90, 0.2)';
+    copyButton.style.borderRadius = '4px';
+    copyButton.style.cursor = 'pointer';
+    copyButton.style.transition = 'all 0.3s ease';
+    copyButton.style.zIndex = '1';
+    
+    copyButton.addEventListener('mouseenter', () => {
+      copyButton.style.background = 'rgba(138, 75, 90, 0.2)';
+    });
+    
+    copyButton.addEventListener('mouseleave', () => {
+      copyButton.style.background = 'rgba(138, 75, 90, 0.1)';
+    });
+    
+    block.appendChild(copyButton);
+  });
+  
+  // 为表格添加滚动支持
+  const tables = document.querySelectorAll('.enhanced-markdown table');
+  tables.forEach(table => {
+    const wrapper = document.createElement('div');
+    wrapper.style.overflowX = 'auto';
+    wrapper.style.margin = '2rem 0';
+    wrapper.style.borderRadius = '8px';
+    wrapper.style.border = '1px solid var(--neutral)';
+    
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  });
+  
+  // 为图片添加灯箱效果
+  const images = document.querySelectorAll('.enhanced-markdown img');
+  images.forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', function() {
+      // 创建灯箱
+      const lightbox = document.createElement('div');
+      lightbox.className = 'lightbox';
+      lightbox.style.position = 'fixed';
+      lightbox.style.top = '0';
+      lightbox.style.left = '0';
+      lightbox.style.width = '100%';
+      lightbox.style.height = '100%';
+      lightbox.style.background = 'rgba(0, 0, 0, 0.9)';
+      lightbox.style.display = 'flex';
+      lightbox.style.alignItems = 'center';
+      lightbox.style.justifyContent = 'center';
+      lightbox.style.zIndex = '9999';
+      lightbox.style.cursor = 'zoom-out';
+      
+      // 创建图片
+      const lightboxImg = document.createElement('img');
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightboxImg.style.maxWidth = '90%';
+      lightboxImg.style.maxHeight = '90%';
+      lightboxImg.style.objectFit = 'contain';
+      lightboxImg.style.borderRadius = '8px';
+      
+      // 创建关闭按钮
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      closeBtn.style.position = 'absolute';
+      closeBtn.style.top = '20px';
+      closeBtn.style.right = '20px';
+      closeBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+      closeBtn.style.border = 'none';
+      closeBtn.style.color = 'white';
+      closeBtn.style.width = '50px';
+      closeBtn.style.height = '50px';
+      closeBtn.style.borderRadius = '50%';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.style.fontSize = '1.5rem';
+      closeBtn.style.display = 'flex';
+      closeBtn.style.alignItems = 'center';
+      closeBtn.style.justifyContent = 'center';
+      closeBtn.style.transition = 'all 0.3s ease';
+      
+      closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+      });
+      
+      closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+      });
+      
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.body.removeChild(lightbox);
+      });
+      
+      lightbox.addEventListener('click', () => {
+        document.body.removeChild(lightbox);
+      });
+      
+      lightbox.appendChild(lightboxImg);
+      lightbox.appendChild(closeBtn);
+      document.body.appendChild(lightbox);
+    });
+  });
+});
+</script>
+{{ end }}

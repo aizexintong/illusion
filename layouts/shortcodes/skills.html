@@ -1,0 +1,75 @@
+<div class="skills-shortcode">
+  <h3>技术技能概览</h3>
+  <div class="skills-list">
+    {{ range .Site.Params.skills }}
+    <div class="skill-shortcode-item">
+      <div class="skill-shortcode-header">
+        <span class="skill-shortcode-name">{{ .name }}</span>
+        <span class="skill-shortcode-level">{{ .level }}%</span>
+      </div>
+      <div class="skill-shortcode-bar">
+        <div class="skill-shortcode-progress" style="width: {{ .level }}%"></div>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>
+
+<style>
+.skills-shortcode {
+  margin: 2rem 0;
+}
+
+.skills-shortcode h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text);
+  font-size: 1.5rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skill-shortcode-item {
+  background: rgba(138, 43, 226, 0.05);
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.skill-shortcode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.skill-shortcode-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.skill-shortcode-level {
+  background: var(--gradient);
+  color: white;
+  padding: 0.2rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.skill-shortcode-bar {
+  height: 8px;
+  background: rgba(138, 43, 226, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.skill-shortcode-progress {
+  height: 100%;
+  background: var(--gradient);
+  border-radius: 4px;
+  transition: width 1.5s ease-in-out;
+}
+</style>

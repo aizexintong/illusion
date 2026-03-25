@@ -1,0 +1,12 @@
+<div class="link-card">
+  <div class="link-avatar">
+    <img src="{{ .Get "avatar" }}" alt="{{ .Get "name" }}" loading="lazy">
+  </div>
+  <div class="link-info">
+    <h3 class="link-name">{{ .Get "name" }}</h3>
+    <p class="link-desc">{{ .Get "desc" }}</p>
+    <a href="{{ .Get "url" }}" class="link-url" target="_blank" rel="noopener">
+      <i class="fas fa-external-link-alt"></i> {{ .Get "url" | replaceRE "^https?://" "" }}
+    </a>
+  </div>
+</div>

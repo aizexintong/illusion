@@ -1,0 +1,83 @@
+{{ define "main" }}
+  <div class="section-content" role="main">
+    <header class="section-header">
+      <h1 class="section-title">文章</h1>
+      {{ if .Content }}
+        <div class="section-description">
+          {{ .Content }}
+        </div>
+      {{ end }}
+    </header>
+
+    {{ if .Site.Params.enableSearch }}
+      <div class="section-search" data-aos="fade-up">
+        {{ partial "search.html" . }}
+      </div>
+    {{ end }}
+
+    <div class="posts-grid" role="list">
+      {{ range .Pages }}
+        <article class="post-card" data-aos="fade-up" role="listitem">
+          {{ if .Params.image }}
+            <div class="post-image">
+              <img 
+                src="{{ .Params.image }}" 
+                alt="{{ .Title }}" 
+                loading="lazy"
+                width="400"
+                height="200"
+              />
+              {{ if .Params.categories }}
+                <span class="post-category" aria-label="文章分类">
+                  {{ index .Params.categories 0 }}
+                </span>
+              {{ end }}
+            </div>
+          {{ end }}
+          
+          <div class="post-content">
+            <h2 class="post-title">
+              <a href="{{ .RelPermalink }}" aria-label="阅读文章: {{ .Title }}">
+                {{ .Title }}
+              </a>
+            </h2>
+            
+            <div class="post-meta" aria-label="文章信息">
+              {{ if .Date }}
+                <span class="post-date">
+                  <i class="fas fa-calendar" aria-hidden="true"></i>
+                  {{ .Date.Format "2006-01-02" }}
+                </span>
+              {{ end }}
+              
+              {{ if .ReadingTime }}
+                <span class="post-reading-time">
+                  <i class="fas fa-clock" aria-hidden="true"></i>
+                  {{ .ReadingTime }}分钟阅读
+                </span>
+              {{ end }}
+              
+              {{ if .Params.tags }}
+                <span class="post-tags">
+                  <i class="fas fa-tags" aria-hidden="true"></i>
+                  {{ range first 3 .Params.tags }}
+                    <span class="post-tag">{{ . }}</span>
+                  {{ end }}
+                </span>
+              {{ end }}
+            </div>
+            
+            <div class="post-excerpt">
+              {{ .Summary | truncate 150 }}
+            </div>
+            
+            <a href="{{ .RelPermalink }}" class="read-more" aria-label="继续阅读: {{ .Title }}">
+              阅读全文
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

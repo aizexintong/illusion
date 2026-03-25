@@ -1,0 +1,125 @@
+{{- /* 
+ * 评论系统组件
+ * 支持 Disqus、Utterances、Giscus
+ */ -}}
+
+{{- if .Site.Params.enableComments -}}
+  <section class="comments-section" aria-label="评论区域">
+    <div class="container">
+      <h2 class="section-title">评论</h2>
+      <div class="comments-container">
+        
+        {{- if eq .Site.Params.commentsProvider "disqus" -}}
+          {{- /* Disqus 评论系统 */ -}}
+          {{- if .Site.Params.disqusShortname -}}
+            <div id="disqus_thread"></div>
+            <script>
+              var disqus_config = function () {
+                this.page.url = '{{ .Permalink }}';
+                this.page.identifier = '{{ .File.UniqueID }}';
+                this.page.title = '{{ .Title }}';
+              };
+              (function() {
+                var d = document, s = d.createElement('script');
+                s.src = 'https://{{ .Site.Params.disqusShortname }}.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+              })();
+            </script>
+            <noscript>
+              请启用JavaScript以查看<a href="https://disqus.com/?ref_noscript">Disqus评论</a>。
+            </noscript>
+          {{- else -}}
+            <div class="comments-warning" role="alert">
+              <p>Disqus配置未完成，请在站点配置中设置disqusShortname。</p>
+            </div>
+          {{- end -}}
+          
+        {{- else if eq .Site.Params.commentsProvider "utterances" -}}
+          {{- /* Utterances 评论系统 (GitHub Issues) */ -}}
+          {{- if .Site.Params.utterancesRepo -}}
+            <script src="https://utteranc.es/client.js"
+                    repo="{{ .Site.Params.utterancesRepo }}"
+                    issue-term="pathname"
+                    theme="github-light"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+          {{- else -}}
+            <div class="comments-warning" role="alert">
+              <p>Utterances配置未完成，请在站点配置中设置utterancesRepo。</p>
+            </div>
+          {{- end -}}
+          
+        {{- else if eq .Site.Params.commentsProvider "giscus" -}}
+          {{- /* Giscus 评论系统 (GitHub Discussions) */ -}}
+          {{- if .Site.Params.giscusRepo -}}
+            <script src="https://giscus.app/client.js"
+                    data-repo="{{ .Site.Params.giscusRepo }}"
+                    data-repo-id=""
+                    data-category=""
+                    data-category-id=""
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="light"
+                    data-lang="zh-CN"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+          {{- else -}}
+            <div class="comments-warning" role="alert">
+              <p>Giscus配置未完成，请在站点配置中设置giscusRepo。</p>
+            </div>
+          {{- end -}}
+          
+        {{- else -}}
+          {{- /* 默认: 无评论系统 */ -}}
+          <div class="comments-disabled" role="status">
+            <p>评论功能已关闭。</p>
+          </div>
+        {{- end -}}
+        
+      </div>
+    </div>
+  </section>
+  
+  <style>
+    .comments-section {
+      padding: var(--space-2xl) 0;
+      margin-top: var(--space-2xl);
+      border-top: 1px solid var(--neutral);
+    }
+    
+    .comments-container {
+      margin-top: var(--space-lg);
+      min-height: 200px;
+    }
+    
+    .comments-warning,
+    .comments-disabled {
+      padding: var(--space-lg);
+      background: var(--neutral-light);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      color: var(--text-light);
+    }
+    
+    .comments-warning {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    /* 暗黑模式适配 */
+    .dark-theme .comments-warning {
+      background: rgba(255, 193, 7, 0.15);
+      border-color: rgba(255, 193, 7, 0.4);
+    }
+    
+    .dark-theme .comments-disabled {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  </style>
+{{- end -}}

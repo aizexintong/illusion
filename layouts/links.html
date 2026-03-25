@@ -1,0 +1,349 @@
+{{ define "main" }}
+<!-- 粒子背景 -->
+<div id="particles-js"></div>
+
+<div class="container">
+  <!-- 友链展示 -->
+  <section class="friends-links" data-aos="fade-up">
+    <h2 class="section-title">我的朋友们</h2>
+    <p class="section-subtitle">与志同道合的朋友们互相链接</p>
+    
+    <div class="links-container">
+      <!-- 这里可以通过数据文件动态加载友链 -->
+      <div class="links-grid" id="linksGrid">
+        <!-- 友链将通过JavaScript动态加载 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 申请友链 -->
+  <section class="apply-links" data-aos="fade-up">
+    <div class="apply-card card">
+      <h2 class="section-title">申请友链</h2>
+      <div class="apply-content">
+        <div class="apply-info">
+          <h3>申请条件</h3>
+          <ul class="apply-conditions">
+            <li><i class="fas fa-check-circle"></i> 内容优质，原创技术文章优先</li>
+            <li><i class="fas fa-check-circle"></i> 定期更新，保持活跃</li>
+            <li><i class="fas fa-check-circle"></i> 无不良内容，健康向上</li>
+            <li><i class="fas fa-check-circle"></i> 已添加本站链接</li>
+          </ul>
+          
+          <h3>本站信息</h3>
+          <div class="site-info">
+            <div class="info-item">
+              <span class="info-label">名称：</span>
+              <span class="info-value">爱则心痛 (azxt)</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">网址：</span>
+              <span class="info-value">https://azxt.org</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">描述：</span>
+              <span class="info-value">爱则心痛的个人博客 - 分享技术、生活和思考</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="apply-contact">
+          <h3>联系方式</h3>
+          <p>如果你符合条件并希望交换链接，请通过以下方式联系：</p>
+          <div class="contact-methods">
+            <a href="mailto:admin@azxt.org" class="contact-btn">
+              <i class="fas fa-envelope"></i> 发送邮件
+            </a>
+            <a href="https://github.com/aizexintong/azxt-blog/issues" class="contact-btn" target="_blank" rel="noopener">
+              <i class="fab fa-github"></i> GitHub Issues
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 友链页面样式 -->
+<style>
+.friends-links {
+  margin: 4rem 0;
+}
+
+.links-container {
+  margin-top: 3rem;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.link-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.link-avatar {
+  flex: 0 0 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(124, 58, 237, 0.1);
+}
+
+.link-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.link-card:hover .link-avatar img {
+  transform: scale(1.1);
+}
+
+.link-info {
+  flex: 1;
+}
+
+.link-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.link-desc {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.link-url {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.link-url:hover {
+  color: var(--secondary);
+  gap: 0.7rem;
+}
+
+.link-url i {
+  font-size: 0.8rem;
+}
+
+.apply-links {
+  margin: 4rem 0;
+}
+
+.apply-card {
+  padding: 3rem;
+}
+
+.apply-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.apply-conditions {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 2rem;
+}
+
+.apply-conditions li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.apply-conditions i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.site-info {
+  background: rgba(124, 58, 237, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.info-item {
+  margin-bottom: 0.8rem;
+  display: flex;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--text);
+  min-width: 60px;
+}
+
+.info-value {
+  color: var(--text-light);
+  flex: 1;
+}
+
+.apply-contact h3 {
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.apply-contact p {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.contact-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1rem 2rem;
+  background: var(--gradient);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.contact-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+}
+
+.contact-btn i {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .links-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .apply-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .apply-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .link-avatar {
+    margin-bottom: 1rem;
+  }
+}
+</style>
+
+<!-- 友链数据加载脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 示例友链数据
+  const friends = [
+    {
+      name: "示例友链",
+      url: "https://example.com",
+      avatar: "https://t.alcy.cc/tx",
+      description: "这是一个示例友链的描述",
+      category: "技术博客"
+    },
+    {
+      name: "技术博客示例",
+      url: "https://tech.example.com",
+      avatar: "https://t.alcy.cc/ai",
+      description: "分享前沿技术文章和开发经验",
+      category: "技术分享"
+    },
+    {
+      name: "学习笔记",
+      url: "https://learn.example.com",
+      avatar: "https://t.alcy.cc/moe",
+      description: "记录学习过程中的心得体会",
+      category: "学习笔记"
+    },
+    {
+      name: "开源项目",
+      url: "https://opensource.example.com",
+      avatar: "https://t.alcy.cc/pc",
+      description: "优秀的开源项目展示",
+      category: "开源项目"
+    }
+  ];
+
+  const linksGrid = document.getElementById('linksGrid');
+  
+  if (linksGrid) {
+    friends.forEach(friend => {
+      const linkCard = document.createElement('div');
+      linkCard.className = 'link-card';
+      linkCard.innerHTML = `
+        <div class="link-avatar">
+          <img src="${friend.avatar}" alt="${friend.name}" loading="lazy">
+        </div>
+        <div class="link-info">
+          <h3 class="link-name">${friend.name}</h3>
+          <p class="link-desc">${friend.description}</p>
+          <div class="link-meta">
+            <span class="link-category">${friend.category}</span>
+            <a href="${friend.url}" class="link-url" target="_blank" rel="noopener">
+              <i class="fas fa-external-link-alt"></i> 访问网站
+            </a>
+          </div>
+        </div>
+      `;
+      linksGrid.appendChild(linkCard);
+    });
+  }
+  
+  // 添加友链卡片悬停效果
+  const linkCards = document.querySelectorAll('.link-card');
+  linkCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-6px)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+{{ end }}

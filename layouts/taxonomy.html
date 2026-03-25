@@ -1,0 +1,56 @@
+{{ define "main" }}
+  <div class="section-content" role="main">
+    <header class="section-header">
+      <h1 class="section-title">标签</h1>
+      {{ if .Content }}
+        <div class="section-description">
+          {{ .Content }}
+        </div>
+      {{ end }}
+    </header>
+
+    <div class="tags-grid" role="list">
+      {{ range .Pages }}
+        <article class="tag-card" role="listitem">
+          <div class="tag-content">
+            <h2 class="tag-title">
+              <a href="{{ .RelPermalink }}" aria-label="查看标签: {{ .LinkTitle }}">
+                <i class="fas fa-tag" aria-hidden="true"></i>
+                {{ .LinkTitle }}
+              </a>
+            </h2>
+            
+            <div class="tag-meta" aria-label="标签信息">
+              <span class="tag-count">
+                <i class="fas fa-file-alt" aria-hidden="true"></i>
+                {{ len .Pages }} 篇文章
+              </span>
+              
+              {{ if .Date }}
+                <span class="tag-updated">
+                  <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                  最近更新: {{ .Date.Format "2006-01-02" }}
+                </span>
+              {{ end }}
+            </div>
+            
+            {{ if .Description }}
+              <div class="tag-description">
+                {{ .Description | truncate 120 }}
+              </div>
+            {{ else if .Summary }}
+              <div class="tag-description">
+                {{ .Summary | truncate 120 }}
+              </div>
+            {{ end }}
+            
+            <a href="{{ .RelPermalink }}" class="view-tag" aria-label="查看标签详情: {{ .LinkTitle }}">
+              查看文章
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

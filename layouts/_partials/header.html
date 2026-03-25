@@ -1,0 +1,45 @@
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="header-content">
+      <div class="site-brand">
+        <a href="{{ "/" | relURL }}" class="site-title" aria-label="返回首页">
+          {{ site.Title }}
+        </a>
+        <div class="site-subtitle" aria-label="网站副标题">爱则心痛 · azxt</div>
+      </div>
+      
+      <nav class="main-nav" aria-label="主导航">
+        {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+      </nav>
+      
+      <div class="header-actions">
+        {{ if .Site.Params.enableDarkMode }}
+        <button class="theme-toggle btn btn-outline" id="theme-toggle" aria-label="切换主题模式" title="切换深色/浅色主题">
+          <i class="fas fa-moon"></i>
+        </button>
+        {{ end }}
+        <button class="mobile-menu-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 移动端菜单 -->
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" role="presentation" aria-hidden="true"></div>
+<nav class="mobile-menu" id="mobile-menu" aria-label="移动端导航" aria-hidden="true">
+  <button class="mobile-menu-close" aria-label="关闭菜单" aria-controls="mobile-menu">
+    <i class="fas fa-times"></i>
+  </button>
+  {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+  <div class="mobile-menu-footer">
+    <div class="social-links" role="list" aria-label="社交链接">
+      {{ range .Site.Params.socialLinks }}
+      <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener" aria-label="{{ .platform }}">
+        <i class="{{ .icon }}"></i>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</nav>

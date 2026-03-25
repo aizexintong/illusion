@@ -1,0 +1,49 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h2 id="about-me">关于我</h2>
+        <p>爱则心痛 (azxt)，一名热爱技术的开发者。专注于前端开发、移动应用和新兴技术。</p>
+        <div class="contact-info">
+          <p><i class="fas fa-envelope" aria-hidden="true"></i> {{ .Site.Params.email }}</p>
+          <p><i class="fas fa-globe" aria-hidden="true"></i> {{ .Site.Params.domain }}</p>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h2 id="quick-links">快速链接</h2>
+        <ul class="footer-links" role="list" aria-labelledby="quick-links">
+          {{ range site.Menus.main }}
+          <li role="listitem"><a href="{{ .URL }}" aria-label="访问 {{ .Name }} 页面">{{ .Name }}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h2 id="tech-stack">技术栈</h2>
+        <div class="tech-tags" role="list" aria-labelledby="tech-stack">
+          {{ range .Site.Params.skills }}
+          <span class="tech-tag" role="listitem" aria-label="技能: {{ .name }}">{{ .name }}</span>
+          {{ end }}
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h2 id="follow-me">关注我</h2>
+        <div class="social-links" role="list" aria-labelledby="follow-me">
+          {{ range .Site.Params.socialLinks }}
+          <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener" aria-label="{{ .platform }}" role="listitem">
+            <i class="{{ .icon }}" aria-hidden="true"></i>
+          </a>
+          {{ end }}
+        </div>
+        <p class="footer-note" aria-label="网站座右铭">分享知识，共同进步</p>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      <p>© {{ now.Year }} 爱则心痛 (azxt) · 保留所有权利</p>
+      <p class="powered-by">由 <a href="https://gohugo.io/" target="_blank" rel="noopener" aria-label="访问 Hugo 官网">Hugo</a> 强力驱动 · 主题：azxt-theme</p>
+    </div>
+  </div>
+</footer>

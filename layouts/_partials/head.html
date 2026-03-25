@@ -1,0 +1,47 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{{ .Site.Params.description | default "爱则心痛的个人博客" }}">
+<meta name="author" content="{{ .Site.Params.author | default "爱则心痛" }}">
+<meta name="keywords" content="技术博客,编程,开发,JavaScript,Python,Flutter,Rust">
+
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+
+<!-- Favicon -->
+<link rel="icon" href="{{ "favicon.ico" | relURL }}" type="image/x-icon">
+
+<!-- CDN资源 -->
+<!-- Font Awesome 图标 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+
+<!-- Particles.js 粒子动画 -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+<!-- AOS 滚动动画 -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Typed.js 打字效果 -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+<!-- 自定义样式和脚本 -->
+{{ partialCached "head/css.html" . }}
+{{ partialCached "head/js.html" . }}
+
+<!-- 结构化数据 -->
+{{ partial "head/schema.html" . }}
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ .Description | default .Site.Params.description }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ .Site.Params.avatarImage | default "https://t.alcy.cc/tx" }}">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}">
+<meta name="twitter:image" content="{{ .Site.Params.avatarImage | default "https://t.alcy.cc/tx" }}">

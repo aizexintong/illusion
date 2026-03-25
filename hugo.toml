@@ -1,0 +1,120 @@
+baseURL = 'https://azxt.org/'
+languageCode = 'zh-CN'
+title = '爱则心痛 | azxt'
+theme = 'azxt-theme'
+
+[params]
+  author = "爱则心痛"
+  description = "爱则心痛的个人博客 - 分享技术、生活和思考"
+  email = "admin@azxt.org"
+  github = "aizexintong"
+  domain = "azxt.org"
+  
+  # 主题颜色配置
+  primaryColor = "#8a4b5a"      # 柔和紫红
+  primaryLight = "#b27a87"     # 浅紫红
+  primaryDark = "#6a3b45"      # 深紫红
+  secondaryColor = "#7a6a5f"   # 暖棕灰
+  secondaryLight = "#948a80"   # 浅棕灰
+  accentColor = "#5b7e91"      # 藏青灰
+  accentLight = "#7896a5"      # 浅藏青
+  backgroundColor = "#fdfaf8"  # 温暖离白
+  surfaceColor = "#ffffff"     # 表面白
+  textColor = "#2e2b28"       # 深褐黑
+  textLight = "#7a726c"       # 中灰褐
+  neutralColor = "#e8e4e0"     # 中性灰
+  neutralLight = "#f5f2ef"     # 浅中性
+  
+  # 主题功能开关
+  enableParticles = true       # 粒子背景
+  enable3DEffects = true       # 3D卡片效果
+  enableScrollAnimations = true # 滚动动画
+  enableTypewriter = true      # 打字机效果
+  enableDarkMode = true        # 暗黑模式
+  enableAccessibility = true   # 可访问性增强
+  
+  # 布局配置
+  heroLayout = "centered"      # 英雄区域布局: centered, left, right
+  postsLayout = "grid"         # 文章布局: grid, list, masonry
+  skillsLayout = "grid"        # 技能布局: grid, list, radial
+  footerLayout = "columns"     # 页脚布局: columns, simple, social
+  
+  # 图片配置
+  adaptiveImage = "https://t.alcy.cc/ycy"
+  horizontalImage = "https://t.alcy.cc/pc"
+  verticalImage = "https://t.alcy.cc/mp"
+  avatarImage = "https://t.alcy.cc/tx"
+  
+  # 技能配置
+  skills = [
+    { name = "JavaScript", level = 90 },
+    { name = "HTML5", level = 90 },
+    { name = "CSS3", level = 90 },
+    { name = "Python", level = 90 },
+    { name = "Flutter", level = 75 },
+    { name = "Rust", level = 55 }
+  ]
+  
+  # 社交链接配置
+  socialLinks = [
+    { platform = "github", url = "https://github.com/aizexintong", icon = "fab fa-github" },
+    { platform = "email", url = "mailto:admin@azxt.org", icon = "fas fa-envelope" },
+    { platform = "website", url = "https://azxt.org", icon = "fas fa-globe" }
+  ]
+  
+  # 评论系统配置
+  enableComments = false
+  commentsProvider = "disqus"  # disqus, utterances, giscus
+  disqusShortname = ""
+  utterancesRepo = ""
+  giscusRepo = ""
+  
+  # 搜索配置
+  enableSearch = true
+  searchProvider = "local"     # local, algolia
+  
+  # SEO配置
+  enableSchema = true
+  enableOpenGraph = true
+  enableTwitterCards = true
+  
+  # 性能配置
+  lazyLoadImages = true
+  optimizeCSS = true
+  optimizeJS = true
+
+[menus]
+  [[menus.main]]
+    name = '主页'
+    pageRef = '/'
+    weight = 5
+
+  [[menus.main]]
+    name = '文章'
+    pageRef = '/posts'
+    weight = 10
+
+  [[menus.main]]
+    name = '标签'
+    pageRef = '/tags'
+    weight = 20
+
+  [[menus.main]]
+    name = '关于'
+    pageRef = '/about'
+    weight = 30
+
+  [[menus.main]]
+    name = '技能'
+    pageRef = '/skills'
+    weight = 40
+
+  [[menus.main]]
+    name = '友链'
+    pageRef = '/links'
+    weight = 50
+
+[module]
+  [module.hugoVersion]
+    extended = false
+    min = '0.146.0'
