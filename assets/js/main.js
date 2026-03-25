@@ -367,7 +367,6 @@ const ThemeManager = {
     
     // 添加点击事件
     toggleBtn.addEventListener('click', (e) => {
-      e.preventDefault();
       this.toggleTheme();
       
       // 添加点击反馈

@@ -1111,6 +1111,8 @@ svg {
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   color: var(--text);
+  position: relative;
+  cursor: pointer;
 }
 
 .theme-toggle:hover {
@@ -1123,6 +1125,21 @@ svg {
 
 .theme-toggle i {
   font-size: 1.1rem;
+}
+
+/* 添加透明覆盖层确保整个按钮可点击 */
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  z-index: 1;
+  /* 完全透明，仅用于捕获点击事件 */
+  background: transparent;
+  pointer-events: auto;
 }
 
 /* 深色主题下的按钮样式 */
