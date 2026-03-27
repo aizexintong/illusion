@@ -134,12 +134,13 @@ enableRSS = true
     url = '/terms/'
     weight = 20
 
-  [[menus.footer]]
-    name = '网站地图'
-    url = '/sitemap/'
-    weight = 30
-
 [module]
   [module.hugoVersion]
     extended = false
     min = '0.146.0'
+
+# Sitemap 配置
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
