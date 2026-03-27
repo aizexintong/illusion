@@ -11,8 +11,8 @@
 
 <!-- 第三方库 -->
 <link rel="stylesheet" href="{{ "lib/fontawesome/css/all.min.css" | relURL }}">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
-<link href="{{ "lib/aos/aos.css" | relURL }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ "lib/fonts/fonts.css" | relURL }}">
+<link rel="stylesheet" href="{{ "lib/aos/aos.css" | relURL }}">
 
 <!-- 自定义样式 -->
 {{ partialCached "head/css.html" . }}
@@ -29,3 +29,6 @@
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}">
 <meta name="twitter:image" content="{{ .Site.Params.avatarImage | default "https://t.alcy.cc/tx" }}">
+
+<!-- RSS -->
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ "index.xml" | relURL }}">

@@ -1,0 +1,53 @@
+/* 本地字体定义
+ * 使用系统字体栈作为回退，确保在国内网络环境下也能正常显示
+ */
+
+/* Noto Sans SC - 使用系统字体栈回退 */
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Noto Sans SC Light'), local('NotoSansSC-Light'), 
+       local('PingFang SC Light'), local('Microsoft YaHei Light'),
+       local('Source Han Sans CN Light');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Noto Sans SC Regular'), local('NotoSansSC-Regular'),
+       local('PingFang SC'), local('Microsoft YaHei'),
+       local('Source Han Sans CN Regular');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Noto Sans SC Medium'), local('NotoSansSC-Medium'),
+       local('PingFang SC Medium'), local('Microsoft YaHei Bold'),
+       local('Source Han Sans CN Medium');
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Noto Sans SC Bold'), local('NotoSansSC-Bold'),
+       local('PingFang SC Bold'), local('Microsoft YaHei Bold'),
+       local('Source Han Sans CN Bold');
+}
+
+/* ZCOOL QingKe HuangYou - 艺术字体 */
+@font-face {
+  font-family: 'ZCOOL QingKe HuangYou';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('ZCOOL QingKe HuangYou'), local('ZCOOLQingKeHuangYou-Regular');
+}

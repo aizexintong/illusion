@@ -41,45 +41,17 @@
       </div>
     </div>
     
-    <!-- 底部链接 -->
-    <div class="footer-links-bar">
-      {{ range site.Menus.footer }}
-        <a href="{{ .URL }}" class="footer-bar-link">{{ .Name }}</a>
-      {{ end }}
-      <a href="{{ "index.xml" | relURL }}" class="footer-bar-link" aria-label="RSS 订阅">
-        <i class="fas fa-rss"></i> RSS
-      </a>
-    </div>
-    
     <div class="copyright">
+      <div class="copyright-links">
+        {{ range site.Menus.footer }}
+          <a href="{{ .URL }}" class="copyright-link">{{ .Name }}</a>
+        {{ end }}
+        <a href="{{ "index.xml" | relURL }}" class="copyright-link" aria-label="RSS 订阅">
+          <i class="fas fa-rss"></i> RSS
+        </a>
+      </div>
       <p>© {{ now.Year }} 爱则心痛 (azxt) · 保留所有权利</p>
       <p class="powered-by">由 <a href="https://gohugo.io/" target="_blank" rel="noopener" aria-label="访问 Hugo 官网">Hugo</a> 强力驱动 · 主题：<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener" class="theme-github-link" aria-label="访问幻梦 Illusion GitHub 仓库">幻梦 Illusion <i class="fab fa-github"></i></a></p>
     </div>
   </div>
 </footer>
-
-<style>
-  .footer-links-bar {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: var(--sp-4);
-    padding: var(--sp-4) 0;
-    border-top: 1px solid var(--c-border);
-    margin-bottom: var(--sp-4);
-  }
-  
-  .footer-bar-link {
-    color: var(--c-text-2);
-    font-size: var(--fs-sm);
-    text-decoration: none;
-    transition: color var(--t-fast) var(--ease);
-    display: flex;
-    align-items: center;
-    gap: var(--sp-1);
-  }
-  
-  .footer-bar-link:hover {
-    color: var(--c-primary);
-  }
-</style>

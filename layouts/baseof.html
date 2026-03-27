@@ -6,7 +6,7 @@
 <body>
   <!-- 背景层 -->
   <div class="bg-layer bg-image-layer">
-    <img src="{{ .Site.Params.adaptiveImage | default "https://t.alcy.cc/ycy" }}" alt="背景图片" class="bg-image" loading="eager">
+    <img src="{{ .Site.Params.adaptiveImage | default "https://t.alcy.cc/ycy" }}" alt="背景图片" class="bg-image" loading="lazy">
   </div>
   <div class="bg-layer bg-overlay-layer"></div>
   <div class="bg-layer bg-effects-layer">
@@ -36,10 +36,10 @@
 
   <!-- 返回顶部/底部按钮 -->
   <div class="scroll-buttons" id="scroll-buttons">
-    <button class="scroll-btn" onclick="scrollToTop()" aria-label="返回顶部" title="返回顶部">
+    <button class="scroll-btn scroll-to-top" onclick="scrollToTop()" aria-label="返回顶部" title="返回顶部">
       <i class="fas fa-chevron-up"></i>
     </button>
-    <button class="scroll-btn" onclick="scrollToBottom()" aria-label="跳到底部" title="跳到底部">
+    <button class="scroll-btn scroll-to-bottom" onclick="scrollToBottom()" aria-label="跳到底部" title="跳到底部">
       <i class="fas fa-chevron-down"></i>
     </button>
   </div>
@@ -52,9 +52,9 @@
     <img class="lightbox-image" id="lightbox-image" src="" alt="">
   </div>
 
-  <!-- 第三方库脚本 -->
-  <script src="{{ "lib/aos/aos.js" | relURL }}"></script>
-  <script src="{{ "lib/typed.js/typed.js" | relURL }}"></script>
+  <!-- 第三方库脚本 (延迟加载) -->
+  <script defer src="{{ "lib/aos/aos.js" | relURL }}"></script>
+  <script defer src="{{ "lib/typed.js/typed.js" | relURL }}"></script>
 
   <!-- 自定义脚本 -->
   {{ partialCached "head/js.html" . }}
@@ -153,10 +153,30 @@
       const buttons = document.getElementById('scroll-buttons');
       if (!buttons) return;
       const scrollY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const threshold = 300;
+      
+      // 在顶部隐藏返回顶部按钮
+      const topBtn = buttons.querySelector('.scroll-to-top');
+      // 在底部隐藏跳到底部按钮
+      const bottomBtn = buttons.querySelector('.scroll-to-bottom');
+      
       if (scrollY > threshold) {
         buttons.classList.add('visible');
+        if (topBtn) topBtn.style.display = 'flex';
       } else {
+        if (topBtn) topBtn.style.display = 'none';
+      }
+      
+      if (scrollY < maxScroll - threshold) {
+        buttons.classList.add('visible');
+        if (bottomBtn) bottomBtn.style.display = 'flex';
+      } else {
+        if (bottomBtn) bottomBtn.style.display = 'none';
+      }
+      
+      // 如果两个按钮都隐藏，隐藏整个容器
+      if (scrollY <= threshold && scrollY >= maxScroll - threshold) {
         buttons.classList.remove('visible');
       }
     }
@@ -286,27 +306,35 @@
     });
 
     // 初始化 AOS
-    if (typeof AOS !== 'undefined') {
-      AOS.init({
-        duration: 800,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 50
-      });
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50
+          });
+        }
+      }, 100);
+    });
 
     // 初始化 Typed.js
-    document.querySelectorAll('.typed-text').forEach(el => {
-      const strings = JSON.parse(el.dataset.typed || '[]');
-      if (strings.length > 0 && typeof Typed !== 'undefined') {
-        new Typed(el, {
-          strings: strings,
-          typeSpeed: 60,
-          backSpeed: 40,
-          backDelay: 2000,
-          loop: true
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        document.querySelectorAll('.typed-text').forEach(el => {
+          const strings = JSON.parse(el.dataset.typed || '[]');
+          if (strings.length > 0 && typeof Typed !== 'undefined') {
+            new Typed(el, {
+              strings: strings,
+              typeSpeed: 60,
+              backSpeed: 40,
+              backDelay: 2000,
+              loop: true
+            });
+          }
         });
-      }
+      }, 200);
     });
   </script>
 </body>

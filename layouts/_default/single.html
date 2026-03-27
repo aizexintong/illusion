@@ -68,30 +68,26 @@
 
     <!-- 文章主体内容 -->
     <div class="container">
-      <!-- 文章目录 (TOC) -->
-      {{ if and .Site.Params.enableTOC .TableOfContents }}
-        <div class="article-toc" data-aos="fade-up">
-          <div class="toc-header" onclick="toggleTOC()">
-            <h3 class="toc-title">
-              <i class="fas fa-list-ul"></i>
-              文章目录
-            </h3>
-            <button class="toc-toggle" aria-label="展开/收起目录">
-              <i class="fas fa-chevron-down"></i>
-            </button>
-          </div>
-          <nav class="toc-body" id="toc-body">
-            {{ .TableOfContents }}
-          </nav>
-        </div>
-      {{ end }}
-
       <div class="article-body">
         <div class="article-content-wrapper">
           {{ .Content }}
         </div>
         
         <aside class="article-sidebar">
+          <!-- 文章目录 (TOC) - 优先显示 -->
+          {{ if and .Site.Params.enableTOC .TableOfContents }}
+            <div class="sidebar-card toc-card card">
+              <h3 class="sidebar-title">
+                <i class="fas fa-list-ul"></i>
+                文章目录
+              </h3>
+              <nav class="toc-body" id="toc-body">
+                {{ .TableOfContents }}
+              </nav>
+            </div>
+          {{ end }}
+          
+          <!-- 文章信息 -->
           <div class="sidebar-card card">
             <h3 class="sidebar-title">
               <i class="fas fa-info-circle"></i>
@@ -128,6 +124,7 @@
             </div>
           </div>
           
+          <!-- 文章标签 -->
           {{ if .Params.tags }}
             <div class="sidebar-card card">
               <h3 class="sidebar-title">
@@ -169,14 +166,4 @@
       </div>
     </footer>
   </article>
-
-  <!-- TOC 切换脚本 -->
-  <script>
-    function toggleTOC() {
-      const tocBody = document.getElementById('toc-body');
-      const tocHeader = document.querySelector('.toc-header');
-      tocBody.classList.toggle('collapsed');
-      tocHeader.classList.toggle('collapsed');
-    }
-  </script>
 {{ end }}
