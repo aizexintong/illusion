@@ -32,3 +32,8 @@
 
 <!-- RSS -->
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ "index.xml" | relURL }}">
+
+<!-- 结构化数据 -->
+{{ if .Site.Params.enableSchema }}
+  {{ partial "head/schema.html" . }}
+{{ end }}
