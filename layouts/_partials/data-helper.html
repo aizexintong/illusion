@@ -1,13 +1,17 @@
 {{/*
-  data-helper.html - 数据文件优先级说明
+  data-helper.html - 数据文件和内容优先级说明
 
-  Hugo 数据文件级联规则:
-  - 根目录 data/about.yaml  优先于  themes/illusion/data/about.yaml
-  - 根目录 data/friends.yaml 优先于  themes/illusion/data/friends.yaml
-  - 根目录 data/skills.yaml  优先于  themes/illusion/data/skills.yaml
+  === About 页面内容优先级 ===
+  1. content/about.md (站点根目录，优先使用)
+  2. data/about.yaml content 字段 (回退默认内容)
 
-  注意: 当根目录存在同名数据文件时，Hugo 使用根目录版本（非深度合并）。
-  如需自定义，建议复制主题默认数据文件到根目录 data/ 后再修改。
+  === 数据文件级联规则 ===
+  - 站点根目录 data/about.yaml  优先于  themes/illusion/data/about.yaml
+  - 站点根目录 data/friends.yaml 优先于  themes/illusion/data/friends.yaml
+  - 站点根目录 data/skills.yaml  优先于  themes/illusion/data/skills.yaml
+
+  注意: 当站点根目录存在同名数据文件时，Hugo 使用根目录版本（非深度合并）。
+  如需自定义，建议复制主题默认数据文件到站点根目录 data/ 后再修改。
 
   模板中使用 .Site.Data.xxx 即可自动获取优先级处理后的数据。
   各模板已添加 default 回退值，确保数据缺失时页面仍可正常渲染。
