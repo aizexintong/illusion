@@ -371,3 +371,69 @@
 [data-theme="dark"] .calendar-card {
   background: var(--grad-soft);
 }
+
+/* ===== 萤火虫效果深色模式 - 更靓丽的荧光绿 ===== */
+[data-theme="dark"] .firefly {
+  background: radial-gradient(circle at 40% 40%,
+    rgba(180, 255, 180, 1) 0%,
+    rgba(120, 255, 120, 0.8) 30%,
+    rgba(80, 220, 80, 0.4) 60%,
+    transparent 100%);
+  box-shadow: 0 0 15px rgba(150, 255, 150, 0.8),
+              0 0 30px rgba(120, 255, 120, 0.5),
+              0 0 45px rgba(100, 255, 100, 0.2);
+  animation: firefly-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes firefly-glow {
+  0% {
+    opacity: 0.6;
+    box-shadow: 0 0 15px rgba(150, 255, 150, 0.6),
+                0 0 30px rgba(120, 255, 120, 0.3);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(150, 255, 150, 1),
+                0 0 40px rgba(120, 255, 120, 0.6),
+                0 0 60px rgba(100, 255, 100, 0.3);
+  }
+}
+
+/* ===== 星星效果深色模式 - 闪烁增强 ===== */
+[data-theme="dark"] .star {
+  animation: star-twinkle 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes star-twinkle {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* ===== 点击星星效果 ===== */
+.click-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: star-burst 0.6s ease-out forwards;
+}
+
+@keyframes star-burst {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}

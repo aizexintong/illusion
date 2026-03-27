@@ -92,47 +92,65 @@ enableRSS = true
     name = '主页'
     pageRef = '/'
     weight = 5
+    [menus.main.params]
+      icon = 'fas fa-home'
 
   [[menus.main]]
     name = '文章'
     pageRef = '/posts'
     weight = 10
+    [menus.main.params]
+      icon = 'fas fa-file-alt'
 
   [[menus.main]]
     name = '归档'
     url = '/archives/'
     weight = 15
+    [menus.main.params]
+      icon = 'fas fa-archive'
 
   [[menus.main]]
     name = '标签'
     pageRef = '/tags'
     weight = 20
+    [menus.main.params]
+      icon = 'fas fa-tags'
 
   [[menus.main]]
     name = '关于'
     pageRef = '/about'
     weight = 30
+    [menus.main.params]
+      icon = 'fas fa-user'
 
   [[menus.main]]
     name = '技能'
     url = '/skills/'
     weight = 40
+    [menus.main.params]
+      icon = 'fas fa-code'
 
   [[menus.main]]
     name = '友链'
     url = '/links/'
     weight = 50
+    [menus.main.params]
+      icon = 'fas fa-link'
 
   # 底部链接菜单
   [[menus.footer]]
     name = '隐私政策'
     url = '/privacy/'
     weight = 10
+    [menus.footer.params]
+      icon = 'fas fa-shield-alt'
 
   [[menus.footer]]
     name = '使用条款'
     url = '/terms/'
     weight = 20
+    [menus.footer.params]
+      icon = 'fas fa-file-contract'
 
 [module]
   [module.hugoVersion]

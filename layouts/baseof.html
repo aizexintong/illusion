@@ -286,12 +286,78 @@
       updateActiveTOC();
     }
 
+    // ===== 点击星星效果 =====
+    function createClickStar(event) {
+      const star = document.createElement('div');
+      star.className = 'click-star';
+      star.innerHTML = '<i class="fas fa-star" style="color: #FFD700; font-size: 20px;"></i>';
+      star.style.left = (event.clientX - 10) + 'px';
+      star.style.top = (event.clientY - 10) + 'px';
+      document.body.appendChild(star);
+      
+      setTimeout(() => {
+        star.remove();
+      }, 600);
+    }
+
+    // ===== 梦幻云朵效果 (仅白昼模式) =====
+    function createDreamyClouds() {
+      // 检查是否为白昼模式
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) return;
+
+      const container = document.querySelector('.bg-effects-layer');
+      if (!container) return;
+
+      function createCloud() {
+        const cloud = document.createElement('div');
+        cloud.className = 'dreamy-cloud';
+        
+        // 随机大小
+        const size = Math.random() * 150 + 100;
+        cloud.style.width = size + 'px';
+        cloud.style.height = (size * 0.6) + 'px';
+        
+        // 随机位置
+        cloud.style.top = (Math.random() * 60 + 10) + '%';
+        
+        // 云朵样式
+        cloud.style.background = `radial-gradient(ellipse at center,
+          rgba(255, 255, 255, 0.8) 0%,
+          rgba(255, 240, 245, 0.5) 40%,
+          rgba(255, 230, 240, 0.2) 70%,
+          transparent 100%
+        )`;
+        cloud.style.borderRadius = '50%';
+        cloud.style.filter = 'blur(8px)';
+        
+        // 动画时长
+        const duration = Math.random() * 30 + 40;
+        cloud.style.animationDuration = duration + 's';
+        cloud.style.animationDelay = (Math.random() * 20) + 's';
+        
+        container.appendChild(cloud);
+        
+        // 动画结束后移除并创建新的
+        setTimeout(() => {
+          cloud.remove();
+          createCloud();
+        }, (duration + 20) * 1000);
+      }
+
+      // 创建多个云朵
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => createCloud(), i * 8000);
+      }
+    }
+
     // ===== 初始化 =====
     document.addEventListener('DOMContentLoaded', function() {
       createSakura();
       createStars();
       createLightParticles();
       createFireflies();
+      createDreamyClouds();
       initLightbox();
       initCodeBlocks();
       initTOCHighlight();

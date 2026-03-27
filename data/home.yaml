@@ -33,3 +33,4 @@ about:
 skills:
   title: "技术栈"
   subtitle: "不断学习，持续进步"
+  count: 6  # 显示技能数量（默认显示前6个）

@@ -44,7 +44,10 @@
     <div class="copyright">
       <div class="copyright-links">
         {{ range site.Menus.footer }}
-          <a href="{{ .URL }}" class="copyright-link">{{ .Name }}</a>
+          <a href="{{ .URL }}" class="copyright-link" onclick="createClickStar(event)">
+            {{ with .Params.icon }}<i class="{{ . }}"></i>{{ end }}
+            {{ .Name }}
+          </a>
         {{ end }}
         <a href="{{ "sitemap.xml" | relURL }}" class="copyright-link" aria-label="网站地图">
           <i class="fas fa-sitemap"></i> 网站地图

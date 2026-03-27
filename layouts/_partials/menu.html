@@ -1,10 +1,5 @@
 {{- /*
 Renders a menu for the given menu ID.
-
-@context {page} page The current page.
-@context {string} menuID The menu ID.
-
-@example: {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
 */}}
 
 {{- $page := .page }}
@@ -12,48 +7,31 @@ Renders a menu for the given menu ID.
 
 {{- with index site.Menus $menuID }}
   <ul>
-    {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
+    {{- range . }}
+      {{- $attrs := dict "href" .URL }}
+      {{- if $page.IsMenuCurrent .Menu . }}
+        {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
+      {{- else if $page.HasMenuCurrent .Menu .}}
+        {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
+      {{- end }}
+      {{- $name := .Name }}
+      {{- $icon := "" }}
+      {{- with .Params.icon }}
+        {{- $icon = . }}
+      {{- end }}
+      <li role="none">
+        <a class="nav-link" role="menuitem" onclick="createClickStar(event)"
+          {{- range $k, $v := $attrs }}
+            {{- with $v }}
+              {{- printf " %s=%q" $k $v | safeHTMLAttr }}
+            {{- end }}
+          {{- end -}}
+          tabindex="0"
+        >
+          {{- with $icon }}<i class="{{ . }}" aria-hidden="true"></i>{{ end }}
+          <span class="nav-text">{{ $name }}</span>
+        </a>
+      </li>
+    {{- end }}
   </ul>
-{{- end }}
-
-{{- define "_partials/inline/menu/walk.html" }}
-  {{- $page := .page }}
-  {{- range .menuEntries }}
-    {{- $attrs := dict "href" .URL }}
-    {{- if $page.IsMenuCurrent .Menu . }}
-      {{- $attrs = merge $attrs (dict "class" "active" "aria-current" "page") }}
-    {{- else if $page.HasMenuCurrent .Menu .}}
-      {{- $attrs = merge $attrs (dict "class" "ancestor" "aria-current" "true") }}
-    {{- end }}
-    {{- $name := .Name }}
-    {{- with .Identifier }}
-      {{- with T . }}
-        {{- $name = . }}
-      {{- end }}
-    {{- end }}
-    <li role="none">
-      <a class="nav-link" role="menuitem"
-        {{- range $k, $v := $attrs }}
-          {{- with $v }}
-            {{- printf " %s=%q" $k $v | safeHTMLAttr }}
-          {{- end }}
-        {{- end -}}
-        tabindex="0"
-      >
-        {{- if eq $name "主页" }}<i class="fas fa-home" aria-hidden="true"></i>
-        {{- else if eq $name "文章" }}<i class="fas fa-book" aria-hidden="true"></i>
-        {{- else if eq $name "标签" }}<i class="fas fa-tags" aria-hidden="true"></i>
-        {{- else if eq $name "关于" }}<i class="fas fa-user" aria-hidden="true"></i>
-        {{- else if eq $name "技能" }}<i class="fas fa-code" aria-hidden="true"></i>
-        {{- else if eq $name "友链" }}<i class="fas fa-link" aria-hidden="true"></i>
-        {{- end }}
-        <span class="nav-text">{{ $name }}</span>
-      </a>
-      {{- with .Children }}
-        <ul>
-          {{- partial "inline/menu/walk.html" (dict "page" $page "menuEntries" .) }}
-        </ul>
-      {{- end }}
-    </li>
-  {{- end }}
 {{- end }}

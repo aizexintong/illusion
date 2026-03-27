@@ -160,7 +160,8 @@
     <h2 class="section-title">{{ $skillsData.title | default "技术栈" }}</h2>
     <p class="section-subtitle">{{ $skillsData.subtitle | default "不断学习，持续进步" }}</p>
     <div class="skills-grid">
-      {{ range .Site.Params.skills }}
+      {{ $skillCount := $skillsData.count | default 6 }}
+      {{ range first $skillCount .Site.Params.skills }}
       <div class="skill-item" data-aos="zoom-in">
         <div class="skill-name">
           <span>{{ .name }}</span>
