@@ -1,0 +1,288 @@
+# ==========================================================================
+# Illusion Theme - English Translation File
+# All user-visible text should be defined here for easy maintenance
+# ==========================================================================
+
+# ----- General -----
+sitetitle:
+  other: "azxt"
+sitedescription:
+  other: "Personal Blog of azxt"
+siteauthor:
+  other: "azxt"
+sitekeywords:
+  other: "tech blog,programming,development,JavaScript,Python,Flutter,Rust"
+
+# ----- Navigation -----
+navhome:
+  other: "Home"
+navposts:
+  other: "Posts"
+navarchives:
+  other: "Archives"
+navcategories:
+  other: "Categories"
+navtags:
+  other: "Tags"
+navabout:
+  other: "About"
+navskills:
+  other: "Skills"
+navlinks:
+  other: "Links"
+navsearch:
+  other: "Search"
+
+# ----- Buttons -----
+btnreadmore:
+  other: "Read Article"
+btnabout:
+  other: "About Me"
+btnbackhome:
+  other: "Back to Home"
+btnbrowse:
+  other: "Browse Articles"
+btnlearnmore:
+  other: "Learn More"
+btnviewall:
+  other: "View All"
+btnapply:
+  other: "Apply"
+
+# ----- Posts -----
+postreadtime:
+  other: "min read"
+postwordcount:
+  other: "words"
+postpublished:
+  other: "Published"
+postupdated:
+  other: "Updated"
+postprev:
+  other: "← Previous"
+postnext:
+  other: "Next →"
+postcontents:
+  other: "Contents"
+postinfo:
+  other: "Info"
+posttags:
+  other: "Tags"
+postcategory:
+  other: "Category"
+
+# ----- Pagination -----
+pageprev:
+  other: "Previous"
+pagenext:
+  other: "Next"
+
+# ----- Archives -----
+archivestitle:
+  other: "All Posts, Archived by Time"
+archivescount:
+  other: "{{ .Count }} posts in total"
+
+# ----- 404 -----
+notfoundtitle:
+  other: "Page Not Found"
+notfounddesc:
+  other: "Sorry, the page you visited does not exist. It may have been deleted or the link is incorrect."
+
+# ----- About -----
+aboutsubtitle:
+  other: "Tech Enthusiast · Developer"
+aboutquote:
+  other: "Code is like poetry, technology is like painting. In the world of 0 and 1, creating infinite possibilities."
+aboutarticles:
+  other: "Articles"
+aboutskills:
+  other: "Skills"
+aboutphilosophy:
+  other: "Philosophy"
+aboutcontact:
+  other: "Contact"
+aboutcontactdesc:
+  other: "If you're interested in my work or have any technical questions to discuss"
+aboutcontactnote:
+  other: "Welcome to discuss technical issues, project collaboration, or open source contributions!"
+
+# ----- Skills -----
+skillstitle:
+  other: "Skills Overview"
+skillssubtitle:
+  other: "Mastering multiple technologies, continuously learning and improving"
+skillsdetail:
+  other: "Detailed Skills"
+skillsdetailsubtitle:
+  other: "Every skill has been verified through project practice"
+skillsprojects:
+  other: "Related Projects"
+skillstimeline:
+  other: "Skills Development Timeline"
+
+# ----- Links -----
+linkstitle:
+  other: "My Friends"
+linkssubtitle:
+  other: "Connecting with like-minded friends"
+linksvisit:
+  other: "Visit"
+linksapply:
+  other: "Apply"
+linksconditions:
+  other: "Conditions"
+linksinfo:
+  other: "Site Info"
+linksname:
+  other: "Name: "
+linksurl:
+  other: "URL: "
+linksdesc:
+  other: "Description: "
+linkscontact:
+  other: "Contact"
+linkscontactdesc:
+  other: "If you meet the conditions and want to exchange links, please contact through:"
+
+# ----- Home -----
+homebadge:
+  other: "Welcome to My World"
+homegreeting:
+  other: "Hello, I'm"
+homedescription:
+  other: "Welcome to my personal space, where I record my technical exploration, life insights, and growth journey."
+homequote:
+  other: "Code is poetry, keyboard is the pen, screen is the canvas. Let's write the chapters of the digital world together."
+homescroll:
+  other: "Scroll Down to Explore"
+homeposts:
+  other: "Latest Posts"
+homepostssubtitle:
+  other: "Sharing thoughts, recording growth"
+homereadtime:
+  other: "min"
+homereadmore:
+  other: "Read More"
+homeabouttitle:
+  other: "About {{ .Site.Params.author }}"
+homeaboutdesc:
+  other: "A tech enthusiast developer, focusing on front-end development, mobile apps, and emerging technologies."
+homearticlescount:
+  other: "Articles"
+hometagscount:
+  other: "Tags"
+homeskillscount:
+  other: "Skills"
+hometechstack:
+  other: "Tech Stack"
+hometechstacksubtitle:
+  other: "Never stop learning, keep improving"
+
+# ----- Footer -----
+footerabout:
+  other: "About Me"
+footeraboutdesc:
+  other: "{{ .Author }}, a tech enthusiast developer. Focusing on front-end development, mobile apps, and emerging technologies."
+footerquicklinks:
+  other: "Quick Links"
+footertechstack:
+  other: "Tech Stack"
+footerfollow:
+  other: "Follow Me"
+footermotto:
+  other: "Share knowledge, grow together"
+footersitemap:
+  other: "Sitemap"
+footercopyright:
+  other: "© {{ now.Year }} {{ .Site.Params.author }} · All Rights Reserved"
+footerpowered:
+  other: "Powered by <a href=\"{{ .HugoURL }}\" target=\"_blank\" rel=\"noopener\">Hugo</a> · Theme: <a href=\"{{ .IllusionURL }}\" target=\"_blank\" rel=\"noopener\">Illusion</a>"
+
+# ----- Search -----
+searchtitle:
+  other: "Search Articles"
+searchplaceholder:
+  other: "Search articles..."
+searchclose:
+  other: "Close Search"
+searchnoresults:
+  other: "No results found for"
+searchresults:
+  other: "related results"
+searcherror:
+  other: "Search is temporarily unavailable"
+searcherrorhint:
+  other: "Please refresh the page or browse articles directly"
+searchdisabled:
+  other: "Search is disabled."
+
+# ----- Comments -----
+commentstitle:
+  other: "Comments"
+commentsnoscript:
+  other: "Please enable JavaScript to view Disqus comments."
+commentsdisquswarn:
+  other: "Disqus not configured. Please set disqusShortname in site config."
+commentsutteranceswarn:
+  other: "Utterances not configured. Please set utterancesRepo in site config."
+commentsgiscuswarn:
+  other: "Giscus not configured. Please set giscusRepo in site config."
+commentsdisabled:
+  other: "Comments are disabled."
+
+# ----- Calendar -----
+calendarmonths:
+  other: "January,February,March,April,May,June,July,August,September,October,November,December"
+calendarweekdays:
+  other: "Sun,Mon,Tue,Wed,Thu,Fri,Sat"
+calendarweekdaysshort:
+  other: "S,M,T,W,T,F,S"
+
+# ----- Theme Toggle -----
+themelabel:
+  other: "Toggle Theme"
+themelight:
+  other: "Switch to Dark Mode"
+themedark:
+  other: "Switch to Light Mode"
+themesystem:
+  other: "Switch to Manual Mode"
+
+# ----- Scroll Buttons -----
+scrolltotop:
+  other: "Back to Top"
+scrolltobottom:
+  other: "Scroll to Bottom"
+
+# ----- Tag Cloud -----
+tagcloudtitle:
+  other: "Tag Cloud"
+
+# ----- Categories -----
+categoriestitle:
+  other: "Categories"
+taxonomycount:
+  other: "{{ .Count }} tags/categories"
+taxonomyempty:
+  other: "No tags/categories yet"
+termcount:
+  other: "{{ .Count }} posts"
+
+# ----- Skills Shortcode -----
+skillsoverview:
+  other: "Technical Skills Overview"
+
+# ----- About Stats -----
+aboutarticlesunit:
+  other: "Articles"
+abouttagsunit:
+  other: "Tags"
+aboutskillsunit:
+  other: "Skills"
+
+# ----- Defaults -----
+defaultauthor:
+  other: "azxt"
+defaultsubtitle:
+  other: "Tech Enthusiast · Developer"

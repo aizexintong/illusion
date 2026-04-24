@@ -30,7 +30,7 @@
             />
             <div class="post-image-overlay"></div>
             {{ if .Params.categories }}
-              <span class="post-category" aria-label="文章分类">
+              <span class="post-category" aria-label="{{ i18n "postcategorylabel" }}">
                 {{ index .Params.categories 0 }}
               </span>
             {{ end }}
@@ -39,12 +39,12 @@
         
         <div class="post-content">
           <h3 class="post-title" title="{{ .Title }}">
-            <a href="{{ .RelPermalink }}" aria-label="阅读文章: {{ .Title }}">
+            <a href="{{ .RelPermalink }}" aria-label="{{ i18n "postreadarticle" }}: {{ .Title }}">
               {{ .Title }}
             </a>
           </h3>
           
-          <div class="post-meta" aria-label="文章信息">
+          <div class="post-meta" aria-label="{{ i18n "postmetainfo" }}">
             {{ if .Date }}
               <span class="post-date">
                 <i class="fas fa-calendar-alt" aria-hidden="true"></i>
@@ -55,7 +55,7 @@
             {{ if .ReadingTime }}
               <span class="post-reading-time">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                {{ .ReadingTime }}分钟
+                {{ .ReadingTime }}{{ i18n "postreadtime" }}
               </span>
             {{ end }}
           </div>
@@ -77,8 +77,8 @@
             {{ with .Description }}{{ . | plainify | truncate 80 }}{{ else }}{{ .Summary | plainify | truncate 80 }}{{ end }}
           </div>
           
-          <a href="{{ .RelPermalink }}" class="read-more" aria-label="继续阅读: {{ .Title }}">
-            <span>阅读全文</span>
+          <a href="{{ .RelPermalink }}" class="read-more" aria-label="{{ i18n "postcontinue" }}: {{ .Title }}">
+            <span>{{ i18n "homereadmore" }}</span>
             <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -87,11 +87,11 @@
     </div>
 
     {{ if gt $paginator.TotalPages 1 }}
-    <nav class="pagination" aria-label="分页导航">
+    <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
       {{ if $paginator.HasPrev }}
-        <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="上一页">
+        <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}">
           <i class="fas fa-chevron-left"></i>
-          上一页
+          {{ i18n "pageprev" }}
         </a>
       {{ end }}
       
@@ -100,14 +100,14 @@
           {{ if eq . $paginator }}
             <span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
           {{ else }}
-            <a href="{{ .URL }}" class="page-link" aria-label="第{{ .PageNumber }}页">{{ .PageNumber }}</a>
+            <a href="{{ .URL }}" class="page-link" aria-label="{{ .PageNumber }}{{ i18n "page" }}">{{ .PageNumber }}</a>
           {{ end }}
         {{ end }}
       </div>
       
       {{ if $paginator.HasNext }}
-        <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="下一页">
-          下一页
+        <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">
+          {{ i18n "pagenext" }}
           <i class="fas fa-chevron-right"></i>
         </a>
       {{ end }}

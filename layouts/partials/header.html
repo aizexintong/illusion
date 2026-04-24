@@ -2,28 +2,28 @@
   <div class="container">
     <div class="header-content">
       <div class="site-brand">
-        <a href="{{ "/" | relURL }}" class="site-title" aria-label="返回首页">
+        <a href="{{ "/" | relURL }}" class="site-title" aria-label="{{ i18n "btnbackhome" }}">
           {{ site.Title }}
         </a>
-        <div class="site-subtitle" aria-label="网站副标题">爱则心痛 · azxt</div>
+        <div class="site-subtitle" aria-label="{{ i18n "headersubtitle" }}">{{ i18n "headersubtitle" }}</div>
       </div>
       
-      <nav class="main-nav" aria-label="主导航">
+      <nav class="main-nav" aria-label="{{ i18n "headermainnav" }}">
         {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
       </nav>
       
       <div class="header-actions">
         {{ if .Site.Params.enableDarkMode }}
-        <button class="theme-toggle" id="theme-toggle" aria-label="切换主题模式" title="切换深色/浅色主题">
+        <button class="theme-toggle" id="theme-toggle" aria-label="{{ i18n "themelabel" }}" title="{{ i18n "headertitletoggle" }}">
           <i class="fas fa-moon"></i>
         </button>
         {{ end }}
         {{ if .Site.Params.enableSearch }}
-        <button class="search-toggle" id="search-toggle" aria-label="搜索文章" title="搜索文章">
+        <button class="search-toggle" id="search-toggle" aria-label="{{ i18n "navsearch" }}" title="{{ i18n "navsearch" }}">
           <i class="fas fa-search"></i>
         </button>
         {{ end }}
-        <button class="mobile-menu-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
+        <button class="mobile-menu-toggle" aria-label="{{ i18n "headeropenmenu" }}" aria-expanded="false" aria-controls="mobile-menu">
           <i class="fas fa-bars"></i>
         </button>
       </div>
@@ -33,13 +33,13 @@
 
 <!-- 移动端菜单 -->
 <div class="mobile-menu-overlay" id="mobile-menu-overlay" role="presentation" aria-hidden="true"></div>
-<nav class="mobile-menu" id="mobile-menu" aria-label="移动端导航" aria-hidden="true">
-  <button class="mobile-menu-close" aria-label="关闭菜单" aria-controls="mobile-menu">
+<nav class="mobile-menu" id="mobile-menu" aria-label="{{ i18n "headermobilenav" }}" aria-hidden="true">
+  <button class="mobile-menu-close" aria-label="{{ i18n "headerclosemenu" }}" aria-controls="mobile-menu">
     <i class="fas fa-times"></i>
   </button>
   {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
   <div class="mobile-menu-footer">
-    <div class="social-links" role="list" aria-label="社交链接">
+    <div class="social-links" role="list" aria-label="{{ i18n "headersociallinks" }}">
       {{ range .Site.Params.socialLinks }}
       <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener" aria-label="{{ .platform }}">
         <i class="{{ .icon }}"></i>

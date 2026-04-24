@@ -1,7 +1,7 @@
 ﻿---
 title: "隐私政策"
 description: "幻梦主题隐私政策"
-layout: "single"
+layout: "legal"
 ---
 
 # 隐私政策

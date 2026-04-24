@@ -1,11 +1,16 @@
+{{/* ==========================================================================
+   首页模板 - 幻梦主题
+   包含：英雄区域、最新文章、关于我、技能展示
+   ========================================================================== */}}
 {{ define "main" }}
+{{/* 获取首页数据配置 */}}
 {{ $homeData := .Site.Data.home | default dict }}
 {{ $hero := $homeData.hero | default dict }}
 {{ $posts := $homeData.posts | default dict }}
 {{ $aboutData := $homeData.about | default dict }}
 {{ $skillsData := $homeData.skills | default dict }}
 
-<!-- 装饰浮动元素 -->
+{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
 <div class="floating-decorations" aria-hidden="true">
   <div class="float-shape float-shape-1"></div>
   <div class="float-shape float-shape-2"></div>
@@ -14,78 +19,95 @@
   <div class="float-shape float-shape-5"></div>
 </div>
 
-<!-- 英雄区域 -->
+{{/* ===== 英雄区域 - 首屏展示 ===== */}}
 <section class="hero" data-aos="fade-up">
   <div class="container">
     <div class="hero-inner">
+      {{/* 左侧主要内容 */}}
       <div class="hero-left">
         <div class="hero-content">
+          {{/* 欢迎徽章 */}}
           <div class="hero-badge" data-aos="zoom-in" data-aos-delay="100">
             <i class="fas fa-sparkles"></i>
-            <span>{{ $hero.badgeText | default "欢迎来到我的世界" }}</span>
+            <span>{{ $hero.badgeText | default (i18n "homebadge") }}</span>
           </div>
+          
+          {{/* 标题区域 */}}
           <h1 class="hero-title title-anime">
-            <span class="hero-greeting">{{ $hero.greeting | default "你好，我是" }}</span>
+            <span class="hero-greeting">{{ $hero.greeting | default (i18n "homegreeting") }}</span>
             <span class="hero-name">{{ $hero.title | default site.Title }}</span>
           </h1>
+          
+          {{/* 打字机效果副标题 */}}
           <p class="hero-subtitle">
             <i class="fas fa-terminal"></i>
             <span class="typed-text" data-typed='{{ $hero.subtitles | default (slice "技术开发者" "代码艺术家" "终身学习者" "梦想追逐者") | jsonify }}'></span>
           </p>
+          
+          {{/* 描述文字 */}}
           <p class="hero-description">
-            {{ $hero.description | default "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。" }}
+            {{ $hero.description | default (i18n "homedescription") }}
           </p>
+          
+          {{/* 操作按钮 */}}
           <div class="hero-actions">
             {{ with $hero.primaryBtn }}
             <a href="{{ .url | default "/posts" }}" class="btn btn-primary btn-anime">
               <i class="fas fa-book-open"></i>
-              {{ .text | default "阅读文章" }}
+              {{ .text | default (i18n "btnreadmore") }}
             </a>
             {{ end }}
             {{ with $hero.secondaryBtn }}
             <a href="{{ .url | default "/about" }}" class="btn btn-secondary btn-anime">
               <i class="fas fa-heart"></i>
-              {{ .text | default "关于我" }}
+              {{ .text | default (i18n "btnabout") }}
             </a>
             {{ end }}
           </div>
         </div>
       </div>
+      
+      {{/* 右侧引言 */}}
       <div class="hero-right">
          <div class="quote-section" data-aos="fade-up" data-aos-delay="200">
           <blockquote class="fancy-quote">
             <div class="quote-icon">
               <i class="fas fa-quote-left"></i>
             </div>
-            <p class="quote-text">{{ $hero.quote.text | default "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。" }}</p>
+            <p class="quote-text">{{ $hero.quote.text | default (i18n "homequote") }}</p>
             <footer class="quote-author">— {{ $hero.quote.author | default site.Params.author }}</footer>
           </blockquote>
         </div>
       </div>
     </div>
+    
+    {{/* 滚动提示 */}}
     <div class="hero-scroll-hint" data-aos="fade-up" data-aos-delay="500">
       <div class="scroll-mouse">
         <div class="scroll-wheel"></div>
       </div>
-      <span>向下滚动探索</span>
+      <span>{{ i18n "homescroll" }}</span>
     </div>
   </div>
 </section>
 
-<!-- 最新文章 -->
+{{/* ===== 最新文章板块 ===== */}}
 <section class="posts-section" data-aos="fade-up">
   <div class="container">
     <div class="section-header">
       <div class="section-icon">
         <i class="fas fa-feather-alt"></i>
       </div>
-      <h2 class="section-title">{{ $posts.title | default "最新文章" }}</h2>
-      <p class="section-subtitle">{{ $posts.subtitle | default "分享思考，记录成长" }}</p>
+      <h2 class="section-title">{{ $posts.title | default (i18n "homeposts") }}</h2>
+      <p class="section-subtitle">{{ $posts.subtitle | default (i18n "homepostssubtitle") }}</p>
     </div>
+    
+    {{/* 文章网格 */}}
     <div class="posts-grid">
       {{ $postCount := $posts.count | default 6 }}
       {{ range $index, $element := first $postCount (where site.RegularPages "Type" "posts") }}
       <article class="post-card" data-aos="fade-up" data-aos-delay="{{ mul $index 100 }}" role="listitem">
+        {{/* 文章封面图片 */}}
         {{ if .Params.image }}
           <div class="post-image">
             <img 
@@ -97,21 +119,23 @@
             />
             <div class="post-image-overlay"></div>
             {{ if .Params.categories }}
-              <span class="post-category" aria-label="文章分类">
+              <span class="post-category" aria-label="{{ i18n "postcategory" }}">
                 {{ index .Params.categories 0 }}
               </span>
             {{ end }}
           </div>
         {{ end }}
         
+        {{/* 文章内容 */}}
         <div class="post-content">
           <h3 class="post-title" title="{{ .Title }}">
-            <a href="{{ .RelPermalink }}" aria-label="阅读文章: {{ .Title }}">
+            <a href="{{ .RelPermalink }}" aria-label="{{ i18n "btnreadmore" }}: {{ .Title }}">
               {{ .Title }}
             </a>
           </h3>
           
-          <div class="post-meta" aria-label="文章信息">
+          {{/* 文章元信息 */}}
+          <div class="post-meta" aria-label="{{ i18n "postinfo" }}">
             {{ if .Date }}
               <span class="post-date">
                 <i class="fas fa-calendar-alt" aria-hidden="true"></i>
@@ -122,11 +146,12 @@
             {{ if .ReadingTime }}
               <span class="post-reading-time">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                {{ .ReadingTime }}分钟
+                {{ .ReadingTime }}{{ i18n "postreadtime" }}
               </span>
             {{ end }}
           </div>
           
+          {{/* 文章标签 */}}
           {{ if .Params.tags }}
           <div class="post-tags-container" title="{{ delimit .Params.tags ", " }}">
             <div class="post-tags">
@@ -140,23 +165,27 @@
           </div>
           {{ end }}
           
+          {{/* 文章摘要 */}}
           <div class="post-excerpt">
             {{ with .Description }}{{ . | plainify | truncate 80 }}{{ else }}{{ .Summary | plainify | truncate 80 }}{{ end }}
           </div>
           
-          <a href="{{ .RelPermalink }}" class="read-more" aria-label="继续阅读: {{ .Title }}">
-            <span>阅读全文</span>
+          {{/* 阅读更多链接 */}}
+          <a href="{{ .RelPermalink }}" class="read-more" aria-label="{{ i18n "btnreadmore" }}: {{ .Title }}">
+            <span>{{ i18n "homereadmore" }}</span>
             <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
       </article>
       {{ end }}
     </div>
+    
+    {{/* 查看所有文章按钮 */}}
     {{ if gt (len (where site.RegularPages "Type" "posts")) ($posts.count | default 6) }}
     <div class="text-center" data-aos="fade-up">
       <a href="{{ $posts.showMore.url | default "/posts" }}" class="btn btn-outline">
         <i class="fas fa-th-large"></i>
-        <span>{{ $posts.showMore.text | default "查看所有文章" }}</span>
+        <span>{{ $posts.showMore.text | default (i18n "btnviewall") }}</span>
         <i class="fas fa-arrow-right"></i>
       </a>
     </div>
@@ -164,7 +193,7 @@
   </div>
 </section>
 
-<!-- 关于我 -->
+{{/* ===== 关于我板块 ===== */}}
 <section class="about-section" data-aos="fade-up">
   <div class="container">
     <div class="about-card card">
@@ -173,36 +202,42 @@
           <div class="section-icon">
             <i class="fas fa-user-circle"></i>
           </div>
-          <h2 class="section-title">{{ $aboutData.title | default "关于爱则心痛" }}</h2>
+          <h2 class="section-title">{{ $aboutData.title | default (i18n "homeabouttitle") }}</h2>
         </div>
-        <p class="about-description">{{ $aboutData.description | default "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。" }}</p>
+        <p class="about-description">{{ $aboutData.description | default (i18n "homeaboutdesc") }}</p>
+        
+        {{/* 统计数据 */}}
         <div class="about-stats">
           <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
             <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
             <div class="stat-number">{{ len (where site.RegularPages "Type" "posts") }}</div>
-            <div class="stat-label">篇文章</div>
+            <div class="stat-label">{{ i18n "homearticlescount" }}</div>
           </div>
           <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
             <div class="stat-icon"><i class="fas fa-tags"></i></div>
             <div class="stat-number">{{ len .Site.Taxonomies.tags }}</div>
-            <div class="stat-label">个标签</div>
+            <div class="stat-label">{{ i18n "hometagscount" }}</div>
           </div>
           <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
             <div class="stat-icon"><i class="fas fa-code"></i></div>
             <div class="stat-number">{{ len .Site.Params.skills }}</div>
-            <div class="stat-label">项技能</div>
+            <div class="stat-label">{{ i18n "homeskillscount" }}</div>
           </div>
         </div>
+        
+        {{/* 了解更多按钮 */}}
         <div class="about-cta">
           <a href="{{ $aboutData.btnUrl | default "/about" }}" class="btn btn-primary">
             <i class="fas fa-arrow-right"></i>
-            <span>{{ $aboutData.btnText | default "了解更多" }}</span>
+            <span>{{ $aboutData.btnText | default (i18n "btnlearnmore") }}</span>
           </a>
         </div>
       </div>
+      
+      {{/* 关于图片 */}}
       <div class="about-image-wrapper">
         <div class="about-image">
-          <img src="{{ .Site.Params.avatarImage }}" alt="爱则心痛" loading="lazy">
+          <img src="{{ .Site.Params.avatarImage }}" alt="{{ i18n "defaultauthor" }}" loading="lazy">
         </div>
         <div class="about-image-decoration"></div>
       </div>
@@ -210,16 +245,18 @@
   </div>
 </section>
 
-<!-- 技能展示 -->
+{{/* ===== 技能展示板块 ===== */}}
 <section class="skills-section" data-aos="fade-up">
   <div class="container">
     <div class="section-header">
       <div class="section-icon">
         <i class="fas fa-rocket"></i>
       </div>
-      <h2 class="section-title">{{ $skillsData.title | default "技术栈" }}</h2>
-      <p class="section-subtitle">{{ $skillsData.subtitle | default "不断学习，持续进步" }}</p>
+      <h2 class="section-title">{{ $skillsData.title | default (i18n "hometechstack") }}</h2>
+      <p class="section-subtitle">{{ $skillsData.subtitle | default (i18n "hometechstacksubtitle") }}</p>
     </div>
+    
+    {{/* 技能网格 */}}
     <div class="skills-grid">
       {{ $skillCount := $skillsData.count | default 6 }}
       {{ range $index, $element := first $skillCount .Site.Params.skills }}

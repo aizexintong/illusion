@@ -13,8 +13,8 @@
 
   <section class="skills-overview" data-aos="fade-up">
     <div class="skills-summary card">
-      <h2 class="section-title">{{ $overview.title | default "技能总览" }}</h2>
-      <p class="section-subtitle">{{ $overview.subtitle | default "掌握多项技术，持续学习进步" }}</p>
+      <h2 class="section-title">{{ $overview.title | default (i18n "skillstitle") }}</h2>
+      <p class="section-subtitle">{{ $overview.subtitle | default (i18n "skillssubtitle") }}</p>
       <div class="skills-categories">
         {{ with $overview.categories }}
           {{ range . }}
@@ -31,8 +31,8 @@
   </section>
 
   <section class="detailed-skills" data-aos="fade-up">
-    <h2 class="section-title">详细技能</h2>
-    <p class="section-subtitle">每一项技能都经过项目实践验证</p>
+    <h2 class="section-title">{{ i18n "skillsdetail" }}</h2>
+    <p class="section-subtitle">{{ i18n "skillsdetailsubtitle" }}</p>
     <div class="skills-detailed-grid">
       {{ $skillsList := $skillsData.skills | default .Site.Params.skills | default slice }}
       {{ range $skillsList }}
@@ -45,7 +45,7 @@
         {{ with .description }}<div class="skill-description">{{ . }}</div>{{ end }}
         {{ with .projects }}{{ if gt (len .) 0 }}
         <div class="skill-projects">
-          <h4>相关项目</h4>
+          <h4>{{ i18n "skillsprojects" }}</h4>
           <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
         </div>
         {{ end }}{{ end }}
@@ -56,7 +56,7 @@
 
   <section class="skill-development" data-aos="fade-up">
     <div class="development-timeline card">
-      <h2 class="section-title">技能发展历程</h2>
+      <h2 class="section-title">{{ i18n "skillstimeline" }}</h2>
       <div class="timeline">
         {{ with $skillsData.timeline }}
           {{ range . }}

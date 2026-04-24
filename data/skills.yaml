@@ -8,19 +8,19 @@ overview:
     - icon: "fas fa-code"
       title: "前端开发"
       description: "HTML5、CSS3、JavaScript、React"
-      progress: 90
+      progress: 100
     - icon: "fas fa-server"
       title: "后端开发"
-      description: "Node.js、Python、数据库、API设计"
-      progress: 85
+      description: "Node.js、Python、数据库、API"
+      progress: 100
     - icon: "fas fa-mobile-alt"
       title: "移动开发"
       description: "Flutter、React Native、原生开发"
-      progress: 75
+      progress: 100
     - icon: "fas fa-tools"
       title: "开发工具"
       description: "Git、Docker、VS Code、构建工具"
-      progress: 80
+      progress: 100
 
 # 详细技能列表（hugo.toml中的skills参数也有效）
 skills:

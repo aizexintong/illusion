@@ -8,8 +8,8 @@
   {{ $applyInfo := $friendsData.apply | default dict }}
 
   <section class="friends-links" data-aos="fade-up">
-    <h2 class="section-title">{{ $pageInfo.title | default "我的朋友们" }}</h2>
-    <p class="section-subtitle">{{ $pageInfo.subtitle | default "与志同道合的朋友们互相链接" }}</p>
+    <h2 class="section-title">{{ $pageInfo.title | default (i18n "linkstitle") }}</h2>
+    <p class="section-subtitle">{{ $pageInfo.subtitle | default (i18n "linkssubtitle") }}</p>
     <div class="links-container">
       <div class="links-grid">
         {{ with $friendsData.friends }}
@@ -21,7 +21,7 @@
               <p class="link-desc">{{ .description }}</p>
               <div class="link-meta">
                 <span class="link-category">{{ .category }}</span>
-                <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> 访问网站</a>
+                <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> {{ i18n "linksvisit" }}</a>
               </div>
             </div>
           </div>
@@ -33,10 +33,10 @@
 
   <section class="apply-links" data-aos="fade-up">
     <div class="apply-card card">
-      <h2 class="section-title">{{ $applyInfo.title | default "申请友链" }}</h2>
+      <h2 class="section-title">{{ $applyInfo.title | default (i18n "linksapply") }}</h2>
       <div class="apply-content">
         <div class="apply-info">
-          <h3>申请条件</h3>
+          <h3>{{ i18n "linksconditions" }}</h3>
           <ul class="apply-conditions">
             {{ with $applyInfo.conditions }}
               {{ range . }}
@@ -45,17 +45,17 @@
             {{ end }}
           </ul>
           {{ with $applyInfo.siteInfo }}
-          <h3>本站信息</h3>
+          <h3>{{ i18n "linksinfo" }}</h3>
           <div class="site-info">
-            <div class="info-item"><span class="info-label">名称：</span><span class="info-value">{{ .name }}</span></div>
-            <div class="info-item"><span class="info-label">网址：</span><span class="info-value">{{ .url }}</span></div>
-            <div class="info-item"><span class="info-label">描述：</span><span class="info-value">{{ .description }}</span></div>
+            <div class="info-item"><span class="info-label">{{ i18n "linksname" }}</span><span class="info-value">{{ .name }}</span></div>
+            <div class="info-item"><span class="info-label">{{ i18n "linksurl" }}</span><span class="info-value">{{ .url }}</span></div>
+            <div class="info-item"><span class="info-label">{{ i18n "linksdesc" }}</span><span class="info-value">{{ .description }}</span></div>
           </div>
           {{ end }}
         </div>
         <div class="apply-contact">
-          <h3>{{ $applyInfo.contactTitle | default "联系方式" }}</h3>
-          <p>{{ $applyInfo.contactDescription | default "如果你符合条件并希望交换链接，请通过以下方式联系：" }}</p>
+          <h3>{{ $applyInfo.contactTitle | default (i18n "linkscontact") }}</h3>
+          <p>{{ $applyInfo.contactDescription | default (i18n "linkscontactdesc") }}</p>
           <div class="contact-methods">
             {{ with $applyInfo.contactMethods }}
               {{ range . }}

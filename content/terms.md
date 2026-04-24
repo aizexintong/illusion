@@ -1,7 +1,7 @@
 ﻿---
 title: "使用条款"
 description: "幻梦主题使用条款"
-layout: "single"
+layout: "legal"
 ---
 
 # 使用条款

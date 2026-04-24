@@ -140,24 +140,32 @@ const EffectsManager = {
   animationId: null,
   currentMode: null,
   isRunning: false,
+  lastTime: 0,
+  frameCount: 0,
+  fps: 0,
+  targetFPS: 60,
+  frameInterval: 1000 / 60,
+  performanceMultiplier: 1,
+  offscreenCanvas: null,
+  offscreenCtx: null,
 
   config: {
     candy: {
-      ribbonCount: 40,
-      candyCount: 25,
-      heartCount: 10,
-      starCount: 15,
+      ribbonCount: 20,
+      candyCount: 12,
+      heartCount: 5,
+      starCount: 8,
       colors: ['#B3A0FF', '#9B84FF', '#FF9CB8', '#FF7A9E', '#6EE7B7', '#FCD34D', '#34D399', '#7D64FF', '#E83068', '#F59E0B'],
       candyColors: ['#B3A0FF', '#E83068', '#FCD34D', '#34D399', '#7D64FF', '#F59E0B', '#FF9CB8']
     },
     star: {
-      count: 120,
+      count: 60,
       colors: ['#E8E4F5', '#E8C880', '#FFF0A0', '#D0B0FF', '#F0A0D8', '#C8A060'],
       minSize: 1,
       maxSize: 4
     },
     firefly: {
-      count: 40,
+      count: 20,
       colors: ['#389068', '#50C878', '#70E0A0', '#98F0C0', '#50C878'],
       minSize: 1.5,
       maxSize: 3,
@@ -167,10 +175,28 @@ const EffectsManager = {
 
   init() {
     if (this.isRunning) return;
+    this.detectPerformance();
     this.createCanvas();
+    this.createOffscreenCanvas();
     this.bindEvents();
     this.detectMode();
     this.isRunning = true;
+  },
+
+  detectPerformance() {
+    const isLowEnd = navigator.hardwareConcurrency <= 2 || 
+                     navigator.deviceMemory <= 2 ||
+                     /Mobi|Android/i.test(navigator.userAgent);
+    this.performanceMultiplier = isLowEnd ? 0.5 : 1;
+    
+    if (isLowEnd) {
+      this.config.candy.ribbonCount = Math.floor(this.config.candy.ribbonCount * 0.5);
+      this.config.candy.candyCount = Math.floor(this.config.candy.candyCount * 0.5);
+      this.config.candy.heartCount = Math.floor(this.config.candy.heartCount * 0.5);
+      this.config.candy.starCount = Math.floor(this.config.candy.starCount * 0.5);
+      this.config.star.count = Math.floor(this.config.star.count * 0.5);
+      this.config.firefly.count = Math.floor(this.config.firefly.count * 0.5);
+    }
   },
 
   createCanvas() {
@@ -185,6 +211,7 @@ const EffectsManager = {
       height: 100vh;
       pointer-events: none;
       z-index: -2;
+      will-change: transform;
     `;
     const overlay = document.querySelector('.bg-overlay-layer');
     if (overlay && overlay.nextSibling) {
@@ -192,18 +219,36 @@ const EffectsManager = {
     } else {
       document.body.insertBefore(this.canvas, document.body.firstChild);
     }
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d', { alpha: true });
     this.resize();
+  },
+
+  createOffscreenCanvas() {
+    this.offscreenCanvas = document.createElement('canvas');
+    this.offscreenCtx = this.offscreenCanvas.getContext('2d', { alpha: true });
   },
 
   resize() {
     if (!this.canvas) return;
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = window.innerWidth * dpr;
+    this.canvas.height = window.innerHeight * dpr;
+    this.canvas.style.width = window.innerWidth + 'px';
+    this.canvas.style.height = window.innerHeight + 'px';
+    this.ctx.scale(dpr, dpr);
+    
+    if (this.offscreenCanvas) {
+      this.offscreenCanvas.width = this.canvas.width;
+      this.offscreenCanvas.height = this.canvas.height;
+    }
   },
 
   bindEvents() {
-    window.addEventListener('resize', () => this.resize());
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => this.resize(), 100);
+    });
 
     const observer = new MutationObserver(() => this.detectMode());
     observer.observe(document.documentElement, {
@@ -229,6 +274,7 @@ const EffectsManager = {
       this.animationId = null;
     }
     this.particles = [];
+    this.shootingStars = [];
     this.currentMode = mode;
 
     if (mode === 'day') {
@@ -237,10 +283,10 @@ const EffectsManager = {
       this.initNightEffects();
     }
 
+    this.lastTime = performance.now();
     this.animate();
   },
 
-  // 白天效果
   initDayEffects() {
     const config = this.config.candy;
     for (let i = 0; i < config.ribbonCount; i++) this.particles.push(this.createRibbon(config));
@@ -253,8 +299,8 @@ const EffectsManager = {
     const depth = Math.random();
     return {
       type: 'ribbon',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height * 2 - this.canvas.height,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
       speed: 0.6 + depth * 1.5,
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       rotation: Math.random() * Math.PI * 2,
@@ -271,8 +317,8 @@ const EffectsManager = {
     const depth = Math.random();
     return {
       type: 'candy',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height * 2 - this.canvas.height,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
       speed: 0.5 + depth * 1.2,
       color: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
       stripeColor: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
@@ -291,8 +337,8 @@ const EffectsManager = {
     const colors = ['#B3A0FF', '#9B84FF', '#FF9CB8', '#E83068'];
     return {
       type: 'heart',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height * 2 - this.canvas.height,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
       speed: 0.4 + depth * 0.8,
       color: colors[Math.floor(Math.random() * 4)],
       size: 6 + Math.random() * 10,
@@ -309,8 +355,8 @@ const EffectsManager = {
     const colors = ['#FCD34D', '#F59E0B', '#9B84FF', '#FF9CB8'];
     return {
       type: 'dayStar',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height * 2 - this.canvas.height,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
       speed: 0.3 + depth * 0.7,
       color: colors[Math.floor(Math.random() * 4)],
       size: 5 + Math.random() * 8,
@@ -323,7 +369,6 @@ const EffectsManager = {
     };
   },
 
-  // 夜间效果
   initNightEffects() {
     const starConfig = this.config.star;
     for (let i = 0; i < starConfig.count; i++) this.particles.push(this.createStar(starConfig));
@@ -334,8 +379,8 @@ const EffectsManager = {
   createStar(config) {
     return {
       type: 'star',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height * 0.85,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 0.85,
       size: config.minSize + Math.random() * (config.maxSize - config.minSize),
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       twinkle: Math.random() * Math.PI * 2,
@@ -350,8 +395,8 @@ const EffectsManager = {
     const speed = 0.3 + Math.random() * 0.8;
     return {
       type: 'firefly',
-      x: Math.random() * this.canvas.width,
-      y: Math.random() * this.canvas.height,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
       size: config.minSize + Math.random() * (config.maxSize - config.minSize),
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       glowSize: config.glowSize + Math.random() * 15,
@@ -363,7 +408,6 @@ const EffectsManager = {
     };
   },
 
-  // 绘制函数
   drawRibbon(p) {
     this.ctx.save();
     this.ctx.translate(p.x, p.y);
@@ -557,9 +601,9 @@ const EffectsManager = {
     p.x += Math.sin(p.wobble) * 0.8;
     if (p.rotation !== undefined) p.rotation += p.rotationSpeed || 0;
     if (p.pulse !== undefined) p.pulse += 0.05;
-    if (p.y > this.canvas.height + 50) {
+    if (p.y > window.innerHeight + 50) {
       p.y = -50;
-      p.x = Math.random() * this.canvas.width;
+      p.x = Math.random() * window.innerWidth;
     }
   },
 
@@ -579,16 +623,107 @@ const EffectsManager = {
       }
       p.x += p.vx;
       p.y += p.vy;
-      if (p.x < -p.glowSize) p.x = this.canvas.width + p.glowSize;
-      if (p.x > this.canvas.width + p.glowSize) p.x = -p.glowSize;
-      if (p.y < -p.glowSize) p.y = this.canvas.height + p.glowSize;
-      if (p.y > this.canvas.height + p.glowSize) p.y = -p.glowSize;
+      if (p.x < -p.glowSize) p.x = window.innerWidth + p.glowSize;
+      if (p.x > window.innerWidth + p.glowSize) p.x = -p.glowSize;
+      if (p.y < -p.glowSize) p.y = window.innerHeight + p.glowSize;
+      if (p.y > window.innerHeight + p.glowSize) p.y = -p.glowSize;
     }
   },
 
-  animate() {
+  // 流星效果
+  shootingStars: [],
+  lastShootingStarTime: 0,
+
+  createShootingStar() {
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight * 0.5;
+    const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.5;
+    const speed = 8 + Math.random() * 6;
+    return {
+      x: startX,
+      y: startY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      length: 80 + Math.random() * 60,
+      life: 1,
+      decay: 0.015 + Math.random() * 0.01,
+      width: 1.5 + Math.random() * 1
+    };
+  },
+
+  updateShootingStars() {
+    if (this.currentMode !== 'night') return;
+    
+    const now = Date.now();
+    if (now - this.lastShootingStarTime > 4000 + Math.random() * 6000) {
+      this.shootingStars.push(this.createShootingStar());
+      this.lastShootingStarTime = now;
+    }
+    
+    for (let i = this.shootingStars.length - 1; i >= 0; i--) {
+      const star = this.shootingStars[i];
+      star.x += star.vx;
+      star.y += star.vy;
+      star.life -= star.decay;
+      
+      if (star.life <= 0 || star.x > window.innerWidth + 100 || star.y > window.innerHeight + 100) {
+        this.shootingStars.splice(i, 1);
+      }
+    }
+  },
+
+  drawShootingStars() {
+    for (const star of this.shootingStars) {
+      this.ctx.save();
+      this.ctx.globalAlpha = star.life;
+      
+      const gradient = this.ctx.createLinearGradient(
+        star.x, star.y,
+        star.x - star.vx * 0.1 * star.length / 8,
+        star.y - star.vy * 0.1 * star.length / 8
+      );
+      gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      gradient.addColorStop(0.3, 'rgba(208, 176, 255, 0.8)');
+      gradient.addColorStop(1, 'transparent');
+      
+      this.ctx.strokeStyle = gradient;
+      this.ctx.lineWidth = star.width;
+      this.ctx.lineCap = 'round';
+      this.ctx.beginPath();
+      this.ctx.moveTo(star.x, star.y);
+      this.ctx.lineTo(
+        star.x - star.vx * 0.1 * star.length / 8,
+        star.y - star.vy * 0.1 * star.length / 8
+      );
+      this.ctx.stroke();
+      
+      // 星头光晕
+      const headGradient = this.ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, 4);
+      headGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      headGradient.addColorStop(1, 'transparent');
+      this.ctx.fillStyle = headGradient;
+      this.ctx.beginPath();
+      this.ctx.arc(star.x, star.y, 4, 0, Math.PI * 2);
+      this.ctx.fill();
+      
+      this.ctx.restore();
+    }
+  },
+
+  animate(currentTime) {
     if (!this.ctx || !this.canvas) return;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    const deltaTime = currentTime - this.lastTime;
+    
+    if (deltaTime < this.frameInterval) {
+      this.animationId = requestAnimationFrame((t) => this.animate(t));
+      return;
+    }
+    
+    this.lastTime = currentTime - (deltaTime % this.frameInterval);
+    
+    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    
     for (const p of this.particles) {
       switch (p.type) {
         case 'ribbon': this.updateDayParticle(p); this.drawRibbon(p); break;
@@ -599,7 +734,12 @@ const EffectsManager = {
         case 'firefly': this.updateNightParticle(p); this.drawFirefly(p); break;
       }
     }
-    this.animationId = requestAnimationFrame(() => this.animate());
+    
+    // 绘制流星
+    this.updateShootingStars();
+    this.drawShootingStars();
+    
+    this.animationId = requestAnimationFrame((t) => this.animate(t));
   },
 
   destroy() {
@@ -611,7 +751,12 @@ const EffectsManager = {
       this.canvas.remove();
       this.canvas = null;
     }
+    if (this.offscreenCanvas) {
+      this.offscreenCanvas = null;
+      this.offscreenCtx = null;
+    }
     this.particles = [];
+    this.shootingStars = [];
     this.isRunning = false;
   }
 };
@@ -626,19 +771,53 @@ const AnimationManager = {
     this.initScrollProgress();
     this.initSkillBars();
     this.initTypedJS();
+    
+    // Safety mechanism: ensure all data-aos elements become visible after timeout
+    this.ensureVisibility();
+  },
+
+  ensureVisibility() {
+    setTimeout(() => {
+      const hiddenElements = document.querySelectorAll('[data-aos]:not(.aos-animate)');
+      if (hiddenElements.length > 0) {
+        hiddenElements.forEach(el => {
+          if (getComputedStyle(el).opacity === '0') {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+            el.style.transition = 'none';
+          }
+        });
+      }
+    }, 2000);
   },
 
   initAOS() {
     if (typeof AOS !== 'undefined') {
       AOS.init({
-        duration: 600,
+        duration: 400,
         easing: 'ease-out-cubic',
         once: true,
-        offset: 100,
-        delay: 100
+        offset: 80,
+        delay: 50,
+        disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
       });
     } else {
-      this.initScrollAnimations();
+      // AOS not loaded yet, retry after a short delay
+      setTimeout(() => {
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 400,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 80,
+            delay: 50,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          });
+        } else {
+          // AOS still not available, use custom scroll animations
+          this.initScrollAnimations();
+        }
+      }, 500);
     }
   },
 
@@ -653,7 +832,7 @@ const AnimationManager = {
           const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
           const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
           const scrolled = (winScroll / height) * 100;
-          progressBar.style.width = scrolled + '%';
+          progressBar.style.transform = `scaleX(${scrolled / 100})`;
           ticking = false;
         });
         ticking = true;
@@ -669,8 +848,12 @@ const AnimationManager = {
         if (entry.isIntersecting) {
           const bar = entry.target;
           const level = bar.getAttribute('data-level');
+          bar.style.willChange = 'width';
           bar.style.width = `${level}%`;
           bar.style.opacity = '1';
+          setTimeout(() => {
+            bar.style.willChange = 'auto';
+          }, 1500);
           observer.unobserve(bar);
         }
       });
@@ -678,7 +861,7 @@ const AnimationManager = {
     skillBars.forEach(bar => {
       bar.style.width = '0%';
       bar.style.opacity = '0.3';
-      bar.style.transition = 'width 1.5s ease-out, opacity 0.5s ease-out';
+      bar.style.transition = 'width 1s ease-out, opacity 0.5s ease-out';
       observer.observe(bar);
     });
   },
@@ -687,56 +870,79 @@ const AnimationManager = {
     const typedElements = document.querySelectorAll('.typed-text');
     if (typedElements.length === 0) return;
     if (typeof Typed !== 'undefined') {
-      typedElements.forEach(el => {
-        try {
-          const data = JSON.parse(el.getAttribute('data-typed') || '[]');
-          new Typed(el, {
-            strings: data,
-            typeSpeed: 60,
-            backSpeed: 40,
-            backDelay: 2000,
-            startDelay: 500,
-            loop: true,
-            showCursor: true,
-            cursorChar: '|'
-          });
-        } catch (e) {
-          console.warn('Typed.js初始化失败:', e);
+      this.initTypedElements(typedElements);
+    } else {
+      // Typed.js not loaded yet, retry after a short delay
+      setTimeout(() => {
+        if (typeof Typed !== 'undefined') {
+          this.initTypedElements(typedElements);
+        } else {
+          console.warn('Typed.js未加载，跳过打字机效果');
         }
-      });
+      }, 500);
     }
+  },
+
+  initTypedElements(elements) {
+    elements.forEach(el => {
+      try {
+        const data = JSON.parse(el.getAttribute('data-typed') || '[]');
+        new Typed(el, {
+          strings: data,
+          typeSpeed: 60,
+          backSpeed: 40,
+          backDelay: 2000,
+          startDelay: 500,
+          loop: true,
+          showCursor: true,
+          cursorChar: '|'
+        });
+      } catch (e) {
+        console.warn('Typed.js初始化失败:', e);
+      }
+    });
   },
 
   initScrollAnimations() {
     const animatedElements = document.querySelectorAll('[data-aos]');
     if (animatedElements.length === 0) return;
+    
+    // Set initial styles for all animated elements
+    animatedElements.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      el.style.willChange = 'opacity, transform';
+      const animation = el.getAttribute('data-aos');
+      switch (animation) {
+        case 'fade-up': el.style.transform = 'translateY(16px)'; break;
+        case 'fade-down': el.style.transform = 'translateY(-16px)'; break;
+        case 'fade-left': el.style.transform = 'translateX(16px)'; break;
+        case 'fade-right': el.style.transform = 'translateX(-16px)'; break;
+        case 'zoom-in': el.style.transform = 'scale(0.95)'; break;
+        case 'zoom-out': el.style.transform = 'scale(1.05)'; break;
+        default: el.style.transform = 'none';
+      }
+    });
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const el = entry.target;
-          const animation = el.getAttribute('data-aos');
-          const delay = el.getAttribute('data-aos-delay') || 0;
+          const delay = parseInt(el.getAttribute('data-aos-delay') || '0');
           setTimeout(() => {
-            el.classList.add('aos-animate');
             el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-            switch (animation) {
-              case 'fade-up': el.style.transform = 'translateY(20px)'; break;
-              case 'fade-down': el.style.transform = 'translateY(-20px)'; break;
-              case 'fade-left': el.style.transform = 'translateX(20px)'; break;
-              case 'fade-right': el.style.transform = 'translateX(-20px)'; break;
-              case 'zoom-in': el.style.transform = 'scale(0.9)'; break;
-              case 'zoom-out': el.style.transform = 'scale(1.1)'; break;
-            }
-          }, parseInt(delay));
+            el.style.transform = 'none';
+            el.classList.add('aos-animate');
+            setTimeout(() => {
+              el.style.willChange = 'auto';
+            }, 500);
+          }, delay);
+          observer.unobserve(el);
         }
       });
     }, { threshold: 0.1 });
-    animatedElements.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(el);
-    });
+
+    animatedElements.forEach(el => observer.observe(el));
   }
 };
 
@@ -877,18 +1083,23 @@ const InteractionManager = {
   initCardHover() {
     const cards = document.querySelectorAll('.card, .post-card, .skill-item, .link-card');
     cards.forEach(card => {
+      let rafId = null;
       card.addEventListener('mousemove', (e) => {
         if (!card.classList.contains('enable-3d')) return;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateY = ((x - centerX) / centerX) * 5;
-        const rotateX = ((centerY - y) / centerY) * 5;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateY = ((x - centerX) / centerX) * 5;
+          const rotateX = ((centerY - y) / centerY) * 5;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
       });
       card.addEventListener('mouseleave', () => {
+        if (rafId) cancelAnimationFrame(rafId);
         card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
       });
     });
@@ -1105,8 +1316,8 @@ const UtilsManager = {
       style.id = 'click-effect-style';
       style.textContent = `
         @keyframes clickRipple {
-          0% { width: 0; height: 0; opacity: 0.8; }
-          100% { width: 200px; height: 200px; opacity: 0; }
+          0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
         }
       `;
       document.head.appendChild(style);
@@ -1120,17 +1331,18 @@ const UtilsManager = {
         position: fixed;
         left: ${x}px;
         top: ${y}px;
-        width: 0;
-        height: 0;
+        width: 200px;
+        height: 200px;
         border-radius: 50%;
         background: radial-gradient(circle, var(--c-primary-400) 0%, transparent 70%);
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) scale(0);
         pointer-events: none;
         z-index: 10000;
-        animation: clickRipple 0.6s ease-out;
+        animation: clickRipple 0.5s ease-out forwards;
+        will-change: transform, opacity;
       `;
       document.body.appendChild(effect);
-      setTimeout(() => effect.remove(), 600);
+      setTimeout(() => effect.remove(), 500);
     });
   }
 };
@@ -1140,36 +1352,62 @@ const UtilsManager = {
 // ==========================================================================
 
 function initIllusionTheme() {
+  // Prevent multiple initializations
+  if (window.IllusionThemeInitialized) return;
+  window.IllusionThemeInitialized = true;
+
+  // 1. 初始化主题管理系统
   ThemeManager.init();
+  
+  // 2. 初始化通用交互功能 (不依赖外部库)
   UtilsManager.init();
-  AnimationManager.init();
-  InteractionManager.init();
+  
+  // 3. 初始化增强功能 (不依赖外部库)
   EnhancementManager.init();
 
+  // 4. 初始化动画和特效 (依赖外部库，需要确保它们已加载)
+  AnimationManager.init();
+  
+  // 只有在用户没有开启减少动画偏好时才初始化特效
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     EffectsManager.init();
   }
+  
+  InteractionManager.init();
 
+  // 5. 确保某些延迟加载功能在 DOMContentLoaded 后运行
   document.addEventListener('DOMContentLoaded', () => {
+    // 技能进度条需要等待DOM渲染
     setTimeout(() => {
       AnimationManager.initSkillBars();
     }, 500);
   });
 
-  window.IllusionTheme = {
-    ThemeManager,
-    EffectsManager,
-    AnimationManager,
-    InteractionManager,
-    EnhancementManager,
-    UtilsManager
-  };
-
   console.log('幻梦主题 v2.2.0 初始化完成');
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initIllusionTheme);
-} else {
-  initIllusionTheme();
-}
+// ==========================================================================
+// 启动逻辑优化：使用 window.onload 确保所有脚本都已加载
+// ==========================================================================
+window.addEventListener('load', initIllusionTheme);
+
+// 保留 DOMContentLoaded 监听器作为备用，但主要逻辑现在依赖 window.onload
+document.addEventListener('DOMContentLoaded', () => {
+  // 如果 window.onload 尚未触发 (极少见)，则调用
+  if (!window.IllusionThemeInitialized) {
+      initIllusionTheme();
+      window.IllusionThemeInitialized = true;
+  }
+});
+
+// 导出接口 (保持不变)
+window.IllusionTheme = {
+  ThemeManager,
+  EffectsManager,
+  AnimationManager,
+  InteractionManager,
+  EnhancementManager,
+  UtilsManager
+};
+
+console.log('幻梦主题 v2.2.0 启动逻辑已切换至 window.onload.');

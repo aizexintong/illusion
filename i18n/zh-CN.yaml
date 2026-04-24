@@ -1,0 +1,380 @@
+# ==========================================================================
+# 幻梦主题 - 中文翻译文件
+# 所有用户可见的文字都应在此定义，方便维护和多语言支持
+# ==========================================================================
+
+# ----- 通用 -----
+sitetitle:
+  other: "爱则心痛 · azxt"
+sitedescription:
+  other: "爱则心痛的个人博客"
+siteauthor:
+  other: "爱则心痛"
+sitekeywords:
+  other: "技术博客,编程,开发,JavaScript,Python,Flutter,Rust"
+
+# ----- 导航 -----
+navhome:
+  other: "首页"
+navposts:
+  other: "文章"
+navarchives:
+  other: "归档"
+navcategories:
+  other: "分类"
+navtags:
+  other: "标签"
+navabout:
+  other: "关于"
+navskills:
+  other: "技能"
+navlinks:
+  other: "友链"
+navsearch:
+  other: "搜索"
+
+# ----- 按钮 -----
+btnreadmore:
+  other: "阅读文章"
+btnabout:
+  other: "关于我"
+btnbackhome:
+  other: "返回首页"
+btnbrowse:
+  other: "浏览文章"
+btnlearnmore:
+  other: "了解更多"
+btnviewall:
+  other: "查看所有文章"
+btnapply:
+  other: "申请友链"
+
+# ----- 文章相关 -----
+postreadtime:
+  other: "分钟"
+postwordcount:
+  other: "字"
+postpublished:
+  other: "发布"
+postupdated:
+  other: "更新"
+postprev:
+  other: "← 上一篇"
+postnext:
+  other: "下一篇 →"
+postcontents:
+  other: "目录"
+postinfo:
+  other: "信息"
+posttags:
+  other: "标签"
+postcategory:
+  other: "分类"
+
+# ----- 分页 -----
+pageprev:
+  other: "上一页"
+pagenext:
+  other: "下一页"
+
+# ----- 归档页 -----
+archivestitle:
+  other: "所有文章，按时间归档"
+archivescount:
+  other: "共 {{ .Count }} 篇文章"
+archivesyearcount:
+  other: "{{ .Count }} 篇"
+
+# ----- 404页 -----
+notfoundtitle:
+  other: "页面不存在或已被移除"
+notfounddesc:
+  other: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"
+
+# ----- 关于页 -----
+aboutsubtitle:
+  other: "技术爱好者 · 开发贡献者"
+aboutquote:
+  other: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"
+aboutarticles:
+  other: "技术文章"
+aboutskills:
+  other: "技术技能"
+aboutphilosophy:
+  other: "技术理念"
+aboutcontact:
+  other: "保持联系"
+aboutcontactdesc:
+  other: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"
+aboutcontactnote:
+  other: "欢迎交流技术问题、项目合作或开源贡献！"
+
+# ----- 技能页 -----
+skillstitle:
+  other: "技能总览"
+skillssubtitle:
+  other: "掌握多项技术，持续学习进步"
+skillsdetail:
+  other: "详细技能"
+skillsdetailsubtitle:
+  other: "每一项技能都经过项目实践验证"
+skillsprojects:
+  other: "相关项目"
+skillstimeline:
+  other: "技能发展历程"
+
+# ----- 友链页 -----
+linkstitle:
+  other: "我的朋友们"
+linkssubtitle:
+  other: "与志同道合的朋友们互相链接"
+linksvisit:
+  other: "访问网站"
+linksapply:
+  other: "申请友链"
+linksconditions:
+  other: "申请条件"
+linksinfo:
+  other: "本站信息"
+linksname:
+  other: "名称："
+linksurl:
+  other: "网址："
+linksdesc:
+  other: "描述："
+linkscontact:
+  other: "联系方式"
+linkscontactdesc:
+  other: "如果你符合条件并希望交换链接，请通过以下方式联系："
+
+# ----- 首页 -----
+homebadge:
+  other: "欢迎来到我的世界"
+homegreeting:
+  other: "你好，我是"
+homedescription:
+  other: "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。"
+homequote:
+  other: "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。"
+homescroll:
+  other: "向下滚动探索"
+homeposts:
+  other: "最新文章"
+homepostssubtitle:
+  other: "分享思考，记录成长"
+homereadtime:
+  other: "分钟"
+homereadmore:
+  other: "阅读全文"
+homeabouttitle:
+  other: "关于{{ .Site.Params.author }}"
+homeaboutdesc:
+  other: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。"
+homearticlescount:
+  other: "篇文章"
+hometagscount:
+  other: "个标签"
+homeskillscount:
+  other: "项技能"
+hometechstack:
+  other: "技术栈"
+hometechstacksubtitle:
+  other: "不断学习，持续进步"
+
+# ----- 页脚 -----
+footerabout:
+  other: "关于我"
+footeraboutdesc:
+  other: "{{ .Author }}，一名热爱技术的开发者。专注于前端开发、移动应用和新兴技术。"
+footerquicklinks:
+  other: "快速链接"
+footertechstack:
+  other: "技术栈"
+footerfollow:
+  other: "关注我"
+footermotto:
+  other: "分享知识，共同进步"
+footersitemap:
+  other: "网站地图"
+footercopyright:
+  other: "© {{ .Year }} {{ .Author }} · 保留所有权利"
+footerpowered:
+  other: "由 <a href=\"{{ .HugoURL }}\" target=\"_blank\" rel=\"noopener\">Hugo</a> 强力驱动 · 主题：<a href=\"{{ .IllusionURL }}\" target=\"_blank\" rel=\"noopener\">幻梦 Illusion</a>"
+
+# ----- 搜索 -----
+searchtitle:
+  other: "搜索文章"
+searchplaceholder:
+  other: "搜索文章..."
+searchclose:
+  other: "关闭搜索"
+searchnoresults:
+  other: "未找到包含"
+searchresults:
+  other: "个相关结果"
+searcherror:
+  other: "搜索功能暂时不可用"
+searcherrorhint:
+  other: "请刷新页面重试或直接浏览文章"
+searchdisabled:
+  other: "搜索功能已关闭。"
+
+# ----- 评论 -----
+commentstitle:
+  other: "评论"
+commentsnoscript:
+  other: "请启用JavaScript以查看Disqus评论。"
+commentsdisquswarn:
+  other: "Disqus配置未完成，请在站点配置中设置disqusShortname。"
+commentsutteranceswarn:
+  other: "Utterances配置未完成，请在站点配置中设置utterancesRepo。"
+commentsgiscuswarn:
+  other: "Giscus配置未完成，请在站点配置中设置giscusRepo。"
+commentsdisabled:
+  other: "评论功能已关闭。"
+
+# ----- 日历 -----
+calendarmonths:
+  other: "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月"
+month01:
+  other: "一月"
+month02:
+  other: "二月"
+month03:
+  other: "三月"
+month04:
+  other: "四月"
+month05:
+  other: "五月"
+month06:
+  other: "六月"
+month07:
+  other: "七月"
+month08:
+  other: "八月"
+month09:
+  other: "九月"
+month10:
+  other: "十月"
+month11:
+  other: "十一月"
+month12:
+  other: "十二月"
+calendarweekdays:
+  other: "日,一,二,三,四,五,六"
+calendarweekdaysshort:
+  other: "日,一,二,三,四,五,六"
+
+# ----- 主题切换 -----
+themelabel:
+  other: "切换主题模式"
+themelight:
+  other: "切换到深色模式"
+themedark:
+  other: "切换到浅色模式"
+themesystem:
+  other: "切换到手动模式"
+
+# ----- 滚动按钮 -----
+scrolltotop:
+  other: "返回顶部"
+scrolltobottom:
+  other: "跳到底部"
+
+# ----- 标签云 -----
+tagcloudtitle:
+  other: "标签云"
+
+# ----- 分类 -----
+categoriestitle:
+  other: "分类"
+taxonomycount:
+  other: "共 {{ .Count }} 个标签/分类/条目"
+taxonomyempty:
+  other: "暂无标签/分类/条目"
+termcount:
+  other: "共 {{ .Count }} 篇文章"
+
+# ----- 技能短代码 -----
+skillsoverview:
+  other: "技术技能概览"
+
+# ----- 关于页统计 -----
+aboutarticlesunit:
+  other: "篇文章"
+abouttagsunit:
+  other: "个标签"
+aboutskillsunit:
+  other: "项技能"
+
+# ----- 页头 -----
+headersubtitle:
+  other: "爱则心痛 · azxt"
+headermainnav:
+  other: "主导航"
+headeropenmenu:
+  other: "打开菜单"
+headerclosemenu:
+  other: "关闭菜单"
+headermobilenav:
+  other: "移动端导航"
+headersociallinks:
+  other: "社交链接"
+headertitletoggle:
+  other: "切换深色/浅色主题"
+
+# ----- 默认值 -----
+defaultauthor:
+  other: "爱则心痛"
+defaultsubtitle:
+  other: "技术爱好者 · 开发贡献者"
+
+# ----- 列表/章节页 -----
+sectiontitle:
+  other: "文字随笔"
+sectionsubtitle:
+  other: "记录生活，分享思考"
+minread:
+  other: "分钟阅读"
+paginationnav:
+  other: "分页导航"
+page:
+  other: "页"
+
+# ----- 日历（JavaScript用） -----
+calendaryear:
+  other: "年"
+calendardateformat:
+  other: "年"
+calendardatemonth:
+  other: "月"
+calendardateday:
+  other: "日"
+calendarweekday0:
+  other: "星期日"
+calendarweekday1:
+  other: "星期一"
+calendarweekday2:
+  other: "星期二"
+calendarweekday3:
+  other: "星期三"
+calendarweekday4:
+  other: "星期四"
+calendarweekday5:
+  other: "星期五"
+calendarweekday6:
+  other: "星期六"
+
+# ----- 文章信息标签 -----
+postwordcountlabel:
+  other: "字数"
+postreadlabel:
+  other: "阅读"
+postcategorylabel:
+  other: "文章分类"
+postreadarticle:
+  other: "阅读文章"
+postmetainfo:
+  other: "文章信息"
+postcontinue:
+  other: "继续阅读"

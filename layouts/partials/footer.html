@@ -2,8 +2,8 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-section">
-        <h2 id="about-me" class="title-anime">关于我</h2>
-        <p>爱则心痛 (azxt)，一名热爱技术的开发者。专注于前端开发、移动应用和新兴技术。</p>
+        <h2 id="about-me" class="title-anime">{{ i18n "footerabout" }}</h2>
+        <p>{{ i18n "footeraboutdesc" (dict "Author" .Site.Params.author) }}</p>
         <div class="contact-info">
           <p><i class="fas fa-envelope" aria-hidden="true"></i> {{ .Site.Params.email }}</p>
           <p><i class="fas fa-globe" aria-hidden="true"></i> {{ .Site.Params.domain }}</p>
@@ -11,7 +11,7 @@
       </div>
       
       <div class="footer-section">
-        <h2 id="quick-links" class="title-anime">快速链接</h2>
+        <h2 id="quick-links" class="title-anime">{{ i18n "footerquicklinks" }}</h2>
         <ul class="footer-links quick-links-grid" role="list" aria-labelledby="quick-links">
           {{ range site.Menus.main }}
           <li role="listitem">
@@ -25,7 +25,7 @@
       </div>
       
       <div class="footer-section">
-        <h2 id="tech-stack" class="title-anime">技术栈</h2>
+        <h2 id="tech-stack" class="title-anime">{{ i18n "footertechstack" }}</h2>
         <div class="tech-tags" role="list" aria-labelledby="tech-stack">
           {{ range .Site.Params.skills }}
           <span class="tech-tag" role="listitem" aria-label="技能: {{ .name }}">{{ .name }}</span>
@@ -34,7 +34,7 @@
       </div>
       
       <div class="footer-section">
-        <h2 id="follow-me" class="title-anime">关注我</h2>
+        <h2 id="follow-me" class="title-anime">{{ i18n "footerfollow" }}</h2>
         <div class="social-links" role="list" aria-labelledby="follow-me">
           {{ range .Site.Params.socialLinks }}
           <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener" aria-label="{{ .platform }}" role="listitem">
@@ -42,27 +42,34 @@
           </a>
           {{ end }}
         </div>
-        <p class="footer-note" aria-label="网站座右铭">分享知识，共同进步</p>
+        <p class="footer-note" aria-label="网站座右铭">{{ i18n "footermotto" }}</p>
       </div>
     </div>
     
     <div class="copyright">
       <div class="copyright-links">
+        {{/* 底部菜单链接 */}}
         {{ range site.Menus.footer }}
           <a href="{{ .URL }}" class="copyright-link" onclick="createClickStar(event)">
             {{ with .Params.icon }}<i class="{{ . }}"></i>{{ end }}
             {{ .Name }}
           </a>
         {{ end }}
-        <a href="{{ "sitemap.xml" | relURL }}" class="copyright-link" aria-label="网站地图">
-          <i class="fas fa-sitemap"></i> 网站地图
+        
+        {{/* 网站地图链接 */}}
+        <a href="{{ "sitemap.xml" | relURL }}" class="copyright-link" aria-label="{{ i18n "footersitemap" }}">
+          <i class="fas fa-sitemap"></i> {{ i18n "footersitemap" }}
         </a>
+        
+        {{/* RSS 订阅链接 */}}
         <a href="{{ "index.xml" | relURL }}" class="copyright-link" aria-label="RSS 订阅">
           <i class="fas fa-rss"></i> RSS
         </a>
       </div>
-      <p>© {{ now.Year }} 爱则心痛 (azxt) · 保留所有权利</p>
-      <p class="powered-by">由 <a href="https://gohugo.io/" target="_blank" rel="noopener" aria-label="访问 Hugo 官网">Hugo</a> 强力驱动 · 主题：<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener" class="theme-github-link" aria-label="访问幻梦 Illusion GitHub 仓库">幻梦 Illusion <i class="fab fa-github"></i></a></p>
+      <p>{{ i18n "footercopyright" (dict "Year" (now.Year) "Author" .Site.Params.author) }}</p>
+      <p class="powered-by">
+        {{ i18n "footerpowered" (dict "HugoURL" "https://gohugo.io/" "IllusionURL" "https://github.com/aizexintong/illusion") | safeHTML }}
+      </p>
     </div>
   </div>
 </footer>

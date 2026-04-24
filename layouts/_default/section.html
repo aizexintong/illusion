@@ -2,9 +2,9 @@
   <div class="section-content" role="main">
     <header class="section-header">
       <h1 class="section-title">
-        <i class="fas fa-feather-alt" style="margin-right: 0.5rem; color: var(--c-primary);"></i>文字随笔
+        <i class="fas fa-feather-alt" style="margin-right: 0.5rem; color: var(--c-primary);"></i>{{ i18n "sectiontitle" }}
       </h1>
-      <p class="section-subtitle">记录生活，分享思考</p>
+      <p class="section-subtitle">{{ i18n "sectionsubtitle" }}</p>
       {{ if .Content }}
         <div class="section-description">
           {{ .Content }}
@@ -28,7 +28,7 @@
                       loading="lazy"
                     />
                     {{ if .Params.categories }}
-                      <span class="post-category" aria-label="文章分类">
+                      <span class="post-category" aria-label="{{ i18n "postcategorylabel" }}">
                         {{ index .Params.categories 0 }}
                       </span>
                     {{ end }}
@@ -37,12 +37,12 @@
                 
                 <div class="post-item-content">
                   <h3 class="post-title" title="{{ .Title }}">
-                    <a href="{{ .RelPermalink }}" aria-label="阅读文章: {{ .Title }}">
+                    <a href="{{ .RelPermalink }}" aria-label="{{ i18n "postreadarticle" }}: {{ .Title }}">
                       {{ .Title }}
                     </a>
                   </h3>
                   
-                  <div class="post-meta" aria-label="文章信息">
+                  <div class="post-meta" aria-label="{{ i18n "postmetainfo" }}">
                     {{ if .Date }}
                       <span class="post-date">
                         <i class="fas fa-calendar" aria-hidden="true"></i>
@@ -53,7 +53,7 @@
                     {{ if .ReadingTime }}
                       <span class="post-reading-time">
                         <i class="fas fa-clock" aria-hidden="true"></i>
-                        {{ .ReadingTime }}分钟阅读
+                        {{ .ReadingTime }}{{ i18n "minread" }}
                       </span>
                     {{ end }}
                   </div>
@@ -75,8 +75,8 @@
                     {{ with .Description }}{{ . | plainify | truncate 100 }}{{ else }}{{ .Summary | plainify | truncate 100 }}{{ end }}
                   </div>
                   
-                  <a href="{{ .RelPermalink }}" class="read-more" aria-label="继续阅读: {{ .Title }}">
-                    阅读全文
+                  <a href="{{ .RelPermalink }}" class="read-more" aria-label="{{ i18n "postcontinue" }}: {{ .Title }}">
+                    {{ i18n "homereadmore" }}
                     <i class="fas fa-arrow-right" aria-hidden="true"></i>
                   </a>
                 </div>
@@ -86,11 +86,11 @@
           
           <!-- 分页 -->
           {{ if gt $paginator.TotalPages 1 }}
-          <nav class="pagination" aria-label="分页导航">
+          <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
             {{ if $paginator.HasPrev }}
-              <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="上一页">
+              <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}">
                 <i class="fas fa-chevron-left"></i>
-                上一页
+                {{ i18n "pageprev" }}
               </a>
             {{ end }}
             
@@ -99,14 +99,14 @@
                 {{ if eq . $paginator }}
                   <span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
                 {{ else }}
-                  <a href="{{ .URL }}" class="page-link" aria-label="第{{ .PageNumber }}页">{{ .PageNumber }}</a>
+                  <a href="{{ .URL }}" class="page-link" aria-label="{{ .PageNumber }}{{ i18n "page" }}">{{ .PageNumber }}</a>
                 {{ end }}
               {{ end }}
             </div>
             
             {{ if $paginator.HasNext }}
-              <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="下一页">
-                下一页
+              <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">
+                {{ i18n "pagenext" }}
                 <i class="fas fa-chevron-right"></i>
               </a>
             {{ end }}
@@ -124,7 +124,7 @@
             </div>
             <div class="calendar-body">
               <div class="calendar-weekdays">
-                <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                {{ range split (i18n "calendarweekdays") "," }}<span>{{ . }}</span>{{ end }}
               </div>
               <div class="calendar-days" id="calendar-days"></div>
             </div>
@@ -137,7 +137,7 @@
           <div class="sidebar-card sidebar-widget">
             <h3 class="sidebar-title">
               <i class="fas fa-fire"></i>
-              最新文章
+              {{ i18n "homeposts" }}
             </h3>
             <ul class="recent-posts-list">
               {{ range first 5 (where site.RegularPages "Type" "posts") }}
@@ -155,7 +155,7 @@
           <div class="sidebar-card sidebar-widget">
             <h3 class="sidebar-title">
               <i class="fas fa-cloud"></i>
-              标签云
+              {{ i18n "tagcloudtitle" }}
             </h3>
             <div class="tag-cloud">
               {{ $tags := site.Taxonomies.tags }}
@@ -180,10 +180,10 @@
       const month = now.getMonth();
       const today = now.getDate();
       
-      const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+      const monthNames = [{{ i18n "month01" }}, {{ i18n "month02" }}, {{ i18n "month03" }}, {{ i18n "month04" }}, {{ i18n "month05" }}, {{ i18n "month06" }}, {{ i18n "month07" }}, {{ i18n "month08" }}, {{ i18n "month09" }}, {{ i18n "month10" }}, {{ i18n "month11" }}, {{ i18n "month12" }}];
       
       document.getElementById('calendar-month').textContent = monthNames[month];
-      document.getElementById('calendar-year').textContent = year + '年';
+      document.getElementById('calendar-year').textContent = year + '{{ i18n "calendaryear" }}';
       
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -191,14 +191,12 @@
       const daysContainer = document.getElementById('calendar-days');
       daysContainer.innerHTML = '';
       
-      // 添加空白天数
       for (let i = 0; i < firstDay; i++) {
         const emptyDay = document.createElement('span');
         emptyDay.className = 'calendar-day empty';
         daysContainer.appendChild(emptyDay);
       }
       
-      // 添加天数
       for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement('span');
         dayElement.className = 'calendar-day' + (day === today ? ' today' : '');
@@ -206,9 +204,8 @@
         daysContainer.appendChild(dayElement);
       }
       
-      // 显示当前日期
-      const dateStr = year + '年' + (month + 1) + '月' + today + '日';
-      const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+      const dateStr = year + '{{ i18n "calendaryear" }}' + (month + 1) + '{{ i18n "calendardatemonth" }}' + today + '{{ i18n "calendardateday" }}';
+      const weekDays = [{{ i18n "calendarweekday0" }}, {{ i18n "calendarweekday1" }}, {{ i18n "calendarweekday2" }}, {{ i18n "calendarweekday3" }}, {{ i18n "calendarweekday4" }}, {{ i18n "calendarweekday5" }}, {{ i18n "calendarweekday6" }}];
       document.getElementById('current-date').textContent = dateStr + ' ' + weekDays[now.getDay()];
     }
     

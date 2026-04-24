@@ -10,16 +10,16 @@
         <i class="{{ $page.icon | default "fas fa-ghost" }}"></i>
       </div>
       <h1 class="page-title">{{ $page.title | default "404" }}</h1>
-      <p class="page-description">{{ $page.description | default "页面不存在或已被移除" }}</p>
-      <p class="error-message">{{ $page.message | default "抱歉，你访问的页面不存在。可能已被删除或链接有误。" }}</p>
+      <p class="page-description">{{ $page.description | default (i18n "notfoundtitle") }}</p>
+      <p class="error-message">{{ $page.message | default (i18n "notfounddesc") }}</p>
       <div class="error-actions">
         <a href="{{ $buttons.home.url | default "/" | relURL }}" class="btn btn-primary">
           <i class="{{ $buttons.home.icon | default "fas fa-home" }}"></i>
-          {{ $buttons.home.text | default "返回首页" }}
+          {{ $buttons.home.text | default (i18n "btnbackhome") }}
         </a>
         <a href="{{ $buttons.posts.url | default "/posts/" | relURL }}" class="btn btn-secondary">
           <i class="{{ $buttons.posts.icon | default "fas fa-file-alt" }}"></i>
-          {{ $buttons.posts.text | default "浏览文章" }}
+          {{ $buttons.posts.text | default (i18n "btnbrowse") }}
         </a>
       </div>
     </section>

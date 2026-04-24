@@ -21,10 +21,10 @@
         <div class="intro-content">
           <div class="intro-text">
             <h2>{{ $intro.name | default .Site.Params.author }}</h2>
-            <p class="intro-subtitle">{{ $intro.title | default "技术爱好者 · 开源贡献者" }}</p>
+            <p class="intro-subtitle">{{ $intro.title | default (i18n "aboutsubtitle") }}</p>
             <div class="intro-quote">
               <i class="fas fa-quote-left"></i>
-              <p>{{ $intro.quote | default "代码如诗，技术如画。在0和1的世界里，创造无限可能。" }}</p>
+              <p>{{ $intro.quote | default (i18n "aboutquote") }}</p>
               <i class="fas fa-quote-right"></i>
             </div>
           </div>
@@ -44,8 +44,8 @@
               <div class="stat-content">
                 <div class="stat-number">
                   {{ if eq .number "auto" }}
-                    {{ if eq .label "技术文章" }}{{ len (where site.RegularPages "Type" "posts") }}
-                    {{ else if eq .label "技术技能" }}{{ len site.Params.skills }}
+                    {{ if eq .label (i18n "aboutarticles") }}{{ len (where site.RegularPages "Type" "posts") }}
+                    {{ else if eq .label (i18n "aboutskills") }}{{ len site.Params.skills }}
                     {{ else }}{{ .number }}{{ end }}
                   {{ else }}{{ .number }}{{ end }}
                 </div>
@@ -60,7 +60,7 @@
 
     <!-- 技术理念 -->
     <section class="about-philosophy" data-aos="fade-up">
-      <h2 class="section-title">{{ $philosophy.title | default "技术理念" }}</h2>
+      <h2 class="section-title">{{ $philosophy.title | default (i18n "aboutphilosophy") }}</h2>
       <div class="philosophy-grid">
         {{ with $philosophy.items }}
           {{ range . }}
@@ -90,8 +90,8 @@
     <!-- 联系方式 -->
     <section class="about-contact" data-aos="fade-up">
       <div class="contact-card card">
-        <h2 class="section-title">{{ $contact.title | default "保持联系" }}</h2>
-        <p class="section-subtitle">{{ $contact.subtitle | default "如果你对我的工作感兴趣，或者有任何技术问题想要讨论" }}</p>
+        <h2 class="section-title">{{ $contact.title | default (i18n "aboutcontact") }}</h2>
+        <p class="section-subtitle">{{ $contact.subtitle | default (i18n "aboutcontactdesc") }}</p>
 
         <div class="contact-methods">
           {{ with $contact.methods }}
@@ -110,7 +110,7 @@
         </div>
 
         <div class="contact-note">
-          <p>{{ $contact.note | default "欢迎交流技术问题、项目合作或开源贡献！" }}</p>
+          <p>{{ $contact.note | default (i18n "aboutcontactnote") }}</p>
         </div>
       </div>
     </section>

@@ -23,7 +23,7 @@
       <div class="tag-header-meta">
         <span class="tag-article-count">
           <i class="fas fa-tag" aria-hidden="true"></i>
-          共 {{ len .Data.Terms }} 个{{ if eq .Data.Singular "tags" }}标签{{ else if eq .Data.Singular "categories" }}分类{{ else }}条目{{ end }}
+          {{ i18n "taxonomycount" }}
         </span>
       </div>
       {{ end }}
@@ -44,7 +44,7 @@
       </div>
       {{ else }}
       <div class="no-terms-message" data-aos="fade-up">
-        <p>暂无{{ if eq .Data.Singular "tags" }}标签{{ else if eq .Data.Singular "categories" }}分类{{ else }}条目{{ end }}</p>
+        <p>{{ i18n "taxonomyempty" }}</p>
       </div>
       {{ end }}
     </div>

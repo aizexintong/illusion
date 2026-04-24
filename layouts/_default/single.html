@@ -15,8 +15,8 @@
           <h1 class="article-h1">{{ .Title }}</h1>
           <div class="article-meta-row">
             {{ if .Date }}<span><i class="far fa-calendar"></i> {{ .Date.Format "2006-01-02" }}</span>{{ end }}
-            {{ if .ReadingTime }}<span><i class="far fa-clock"></i> {{ .ReadingTime }} 分钟</span>{{ end }}
-            {{ if .WordCount }}<span><i class="far fa-file-alt"></i> {{ .WordCount }} 字</span>{{ end }}
+            {{ if .ReadingTime }}<span><i class="far fa-clock"></i> {{ .ReadingTime }} {{ i18n "postreadtime" }}</span>{{ end }}
+            {{ if .WordCount }}<span><i class="far fa-file-alt"></i> {{ .WordCount }} {{ i18n "postwordcount" }}</span>{{ end }}
           </div>
           {{ if .Params.tags }}
             <div class="article-tag-list">
@@ -40,22 +40,22 @@
         <aside class="article-right">
           {{ if and .Site.Params.enableTOC .TableOfContents }}
             <div class="side-box">
-              <div class="side-box-title"><i class="fas fa-list"></i> 目录</div>
+              <div class="side-box-title"><i class="fas fa-list"></i> {{ i18n "postcontents" }}</div>
               <div class="side-toc">{{ .TableOfContents }}</div>
             </div>
           {{ end }}
           <div class="side-box">
-            <div class="side-box-title"><i class="fas fa-info"></i> 信息</div>
+            <div class="side-box-title"><i class="fas fa-info"></i> {{ i18n "postinfo" }}</div>
             <div class="side-info">
-              {{ if .Date }}<p><span>发布</span><span>{{ .Date.Format "2006-01-02" }}</span></p>{{ end }}
-              {{ if .Lastmod }}<p><span>更新</span><span>{{ .Lastmod.Format "2006-01-02" }}</span></p>{{ end }}
-              {{ if .WordCount }}<p><span>字数</span><span>{{ .WordCount }}</span></p>{{ end }}
-              {{ if .ReadingTime }}<p><span>阅读</span><span>{{ .ReadingTime }}分钟</span></p>{{ end }}
+              {{ if .Date }}<p><span>{{ i18n "postpublished" }}</span><span>{{ .Date.Format "2006-01-02" }}</span></p>{{ end }}
+              {{ if .Lastmod }}<p><span>{{ i18n "postupdated" }}</span><span>{{ .Lastmod.Format "2006-01-02" }}</span></p>{{ end }}
+              {{ if .WordCount }}<p><span>{{ i18n "postwordcountlabel" }}</span><span>{{ .WordCount }}</span></p>{{ end }}
+              {{ if .ReadingTime }}<p><span>{{ i18n "postreadlabel" }}</span><span>{{ .ReadingTime }}{{ i18n "postreadtime" }}</span></p>{{ end }}
             </div>
           </div>
           {{ if .Params.tags }}
             <div class="side-box">
-              <div class="side-box-title"><i class="fas fa-tags"></i> 标签</div>
+              <div class="side-box-title"><i class="fas fa-tags"></i> {{ i18n "posttags" }}</div>
               <div class="side-tags">
                 {{ range .Params.tags }}
                   <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
@@ -70,13 +70,13 @@
       <div class="article-nav">
         {{ with .PrevInSection }}
           <a href="{{ .RelPermalink }}" class="nav-item">
-            <small>← 上一篇</small>
+            <small>{{ i18n "postprev" }}</small>
             <span>{{ .Title }}</span>
           </a>
         {{ end }}
         {{ with .NextInSection }}
           <a href="{{ .RelPermalink }}" class="nav-item next">
-            <small>下一篇 →</small>
+            <small>{{ i18n "postnext" }}</small>
             <span>{{ .Title }}</span>
           </a>
         {{ end }}

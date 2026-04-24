@@ -3,7 +3,7 @@
   <div class="container">
     <section class="page-header" data-aos="fade-up">
       <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description | default "所有文章，按时间归档" }}</p>
+      <p class="page-description">{{ .Description | default (i18n "archivestitle") }}</p>
     </section>
 
     <div class="archives-container" data-aos="fade-up">
@@ -13,7 +13,7 @@
       <div class="archives-summary">
         <span class="archives-count">
           <i class="fas fa-file-alt"></i>
-          共 {{ $totalPosts }} 篇文章
+          {{ i18n "archivescount" (dict "Count" $totalPosts) }}
         </span>
       </div>
 
@@ -22,19 +22,20 @@
         <h2 class="archive-year-title">
           <i class="fas fa-calendar-alt"></i>
           {{ .Key }}
-          <span class="archive-year-count">{{ len .Pages }} 篇</span>
+          <span class="archive-year-count">{{ i18n "archivesyearcount" (dict "Count" (len .Pages)) }}</span>
         </h2>
         
         <div class="archive-months">
           {{ range (.Pages.GroupByDate "01") }}
            <div class="archive-month">
             {{ $monthNum := .Key }}
-            {{ $monthNames := dict 
-              "01" "一月" "02" "二月" "03" "三月" "04" "四月" 
-              "05" "五月" "06" "六月" "07" "七月" "08" "八月" 
-              "09" "九月" "10" "十月" "11" "十一月" "12" "十二月" 
+            {{ $monthKeys := dict 
+              "01" "month01" "02" "month02" "03" "month03" "04" "month04" 
+              "05" "month05" "06" "month06" "07" "month07" "08" "month08" 
+              "09" "month09" "10" "month10" "11" "month11" "12" "month12" 
             }}
-            {{ $monthName := index $monthNames $monthNum | default $monthNum }}
+            {{ $monthKey := index $monthKeys $monthNum | default $monthNum }}
+            {{ $monthName := i18n $monthKey | default $monthNum }}
             
             <h3 class="archive-month-title">{{ $monthName }}</h3>
             

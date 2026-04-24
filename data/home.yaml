@@ -13,7 +13,7 @@ hero:
     text: "阅读文章"
     url: "/posts"
   secondaryBtn:
-    text: "关于我"
+    text: "关于我们"
     url: "/about"
   badgeText: "欢迎来到我的世界"
   greeting: "你好，我是"
