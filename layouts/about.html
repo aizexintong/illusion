@@ -46,7 +46,7 @@
                 <div class="stat-number">
                   {{ if eq .number "auto" }}
                     {{ if eq .label (i18n "aboutarticles") }}{{ len (where site.RegularPages "Type" "posts") }}
-                    {{ else if eq .label (i18n "aboutskills") }}{{ len (default 6 (index hugo.Data "skills").skills) }}
+                    {{ else if eq .label (i18n "aboutskills") }}{{ len (default slice (index hugo.Data "skills").skills) }}
                     {{ else }}{{ .number }}{{ end }}
                   {{ else }}{{ .number }}{{ end }}
                 </div>

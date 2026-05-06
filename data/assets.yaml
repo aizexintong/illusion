@@ -6,10 +6,10 @@
 # ========== 头像 ==========
 avatar:
   # 站点头像（用于作者信息、分享等）
-  url: "https://t.alcy.cc/tx"
+  url: "/headimg.jpg"
   alt: "站点头像"
   # 用于 RSS 和 Open Graph
-  rss: "https://t.alcy.cc/tx"
+  rss: "/headimg.jpg"
 
 # ========== 背景图片 ==========
 background:
