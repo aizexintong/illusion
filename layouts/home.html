@@ -39,9 +39,10 @@
           </h1>
           
           {{/* 打字机效果副标题 */}}
+          {{- $subtitles := $hero.subtitles | default (slice "技术开发者" "代码艺术家" "终身学习者" "梦想追逐者") -}}
           <p class="hero-subtitle">
             <i class="fas fa-terminal"></i>
-            <span class="typed-text" data-typed='{{ $hero.subtitles | default (slice "技术开发者" "代码艺术家" "终身学习者" "梦想追逐者") | jsonify }}'></span>
+            <span class="typed-text" data-typed='{{ $subtitles | jsonify }}' data-placeholder="{{ index $subtitles 0 }}">{{ index $subtitles 0 }}</span>
           </p>
           
           {{/* 描述文字 */}}

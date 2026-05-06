@@ -11,5 +11,7 @@
   (resources.Get "css/_search.css")
   (resources.Get "css/_theme.css")
   (resources.Get "css/_responsive.css")
-  | resources.Concat "css/main.css" -}}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  | resources.Concat "css/main.css"
+  | resources.Minify
+  | resources.Fingerprint "sha256" -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

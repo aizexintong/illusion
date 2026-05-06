@@ -9,13 +9,22 @@
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | relURL }}">
 
-<!-- 第三方库 CDN优先，本地回退 -->
+<!-- 预连接：CDN 和图片源 -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous">
+<link rel="dns-prefetch" href="https://tc.alcy.cc">
+
+<!-- 字体定义（仅 local() 回退，无下载）- 保持阻塞，体积极小 -->
 <link rel="stylesheet" href="{{ "lib/fonts/fonts.css" | relURL }}">
 
-{{/* CDN CSS 回退到本地 */}}
+<!-- Font Awesome CSS - 延迟加载，避免渲染阻塞 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous"></noscript>
+
+<!-- AOS CSS - 延迟加载，避免渲染阻塞 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous"></noscript>
+
+{{/* CDN CSS 本地回退（1秒快速检测） */}}
 <script>
 (function(){
   setTimeout(function(){
@@ -25,7 +34,7 @@
     document.body.appendChild(t);
     if(t.offsetWidth<5){var l=document.createElement('link');l.rel='stylesheet';l.href='{{ "lib/fontawesome/css/all.min.css" | relURL }}';document.head.appendChild(l);}
     document.body.removeChild(t);
-  },2500);
+  },1000);
 })();
 </script>
 

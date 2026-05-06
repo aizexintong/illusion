@@ -173,6 +173,15 @@ p:last-child { margin-bottom: 0; }
   min-height: 1.5em;
 }
 
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Font Awesome 6 Brands';
+  font-display: swap;
+}
+
 .markdown-content {
   line-height: var(--lh-loose);
 }

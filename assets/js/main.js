@@ -236,10 +236,12 @@ const EffectsManager = {
   resize() {
     if (!this.canvas) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    this.canvas.width = window.innerWidth * dpr;
-    this.canvas.height = window.innerHeight * dpr;
-    this.canvas.style.width = window.innerWidth + 'px';
-    this.canvas.style.height = window.innerHeight + 'px';
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    this.canvas.width = w * dpr;
+    this.canvas.height = h * dpr;
+    this.canvas.style.width = w + 'px';
+    this.canvas.style.height = h + 'px';
     this.ctx.scale(dpr, dpr);
     
     if (this.offscreenCanvas) {
@@ -281,6 +283,8 @@ const EffectsManager = {
     this.particles = [];
     this.shootingStars = [];
     this.currentMode = mode;
+    this._w = window.innerWidth;
+    this._h = window.innerHeight;
 
     if (mode === 'day') {
       this.initDayEffects();
@@ -304,8 +308,8 @@ const EffectsManager = {
     const depth = Math.random();
     return {
       type: 'ribbon',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h * 2 - this._h,
       speed: 0.6 + depth * 1.5,
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       rotation: Math.random() * Math.PI * 2,
@@ -322,8 +326,8 @@ const EffectsManager = {
     const depth = Math.random();
     return {
       type: 'candy',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h * 2 - this._h,
       speed: 0.5 + depth * 1.2,
       color: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
       stripeColor: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
@@ -342,8 +346,8 @@ const EffectsManager = {
     const colors = ['#FF6B6B', '#F783AC', '#FFA94D', '#FF8787', '#9775FA', '#4DABF7'];
     return {
       type: 'heart',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h * 2 - this._h,
       speed: 0.4 + depth * 0.8,
       color: colors[Math.floor(Math.random() * colors.length)],
       size: 6 + Math.random() * 10,
@@ -360,8 +364,8 @@ const EffectsManager = {
     const colors = ['#FFD43B', '#FFA94D', '#FF6B6B', '#69DB7C', '#4DABF7', '#F783AC'];
     return {
       type: 'dayStar',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight * 2 - window.innerHeight,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h * 2 - this._h,
       speed: 0.3 + depth * 0.7,
       color: colors[Math.floor(Math.random() * 4)],
       size: 5 + Math.random() * 8,
@@ -393,8 +397,8 @@ const EffectsManager = {
     const isBright = size > 2.5;
     return {
       type: 'star',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight * 0.85,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h * 0.85,
       size: size,
       color: type.colors[Math.floor(Math.random() * type.colors.length)],
       twinkle: Math.random() * Math.PI * 2,
@@ -409,8 +413,8 @@ const EffectsManager = {
     const speed = 0.3 + Math.random() * 0.8;
     return {
       type: 'firefly',
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
+      x: Math.random() * this._w,
+      y: Math.random() * this._h,
       size: config.minSize + Math.random() * (config.maxSize - config.minSize),
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       glowSize: config.glowSize + Math.random() * 15,
@@ -615,9 +619,9 @@ const EffectsManager = {
     p.x += Math.sin(p.wobble) * 0.8;
     if (p.rotation !== undefined) p.rotation += p.rotationSpeed || 0;
     if (p.pulse !== undefined) p.pulse += 0.05;
-    if (p.y > window.innerHeight + 50) {
+    if (p.y > this._h + 50) {
       p.y = -50;
-      p.x = Math.random() * window.innerWidth;
+      p.x = Math.random() * this._w;
     }
   },
 
@@ -637,10 +641,10 @@ const EffectsManager = {
       }
       p.x += p.vx;
       p.y += p.vy;
-      if (p.x < -p.glowSize) p.x = window.innerWidth + p.glowSize;
-      if (p.x > window.innerWidth + p.glowSize) p.x = -p.glowSize;
-      if (p.y < -p.glowSize) p.y = window.innerHeight + p.glowSize;
-      if (p.y > window.innerHeight + p.glowSize) p.y = -p.glowSize;
+      if (p.x < -p.glowSize) p.x = this._w + p.glowSize;
+      if (p.x > this._w + p.glowSize) p.x = -p.glowSize;
+      if (p.y < -p.glowSize) p.y = this._h + p.glowSize;
+      if (p.y > this._h + p.glowSize) p.y = -p.glowSize;
     }
   },
 
@@ -649,8 +653,8 @@ const EffectsManager = {
   lastShootingStarTime: 0,
 
   createShootingStar() {
-    const startX = Math.random() * window.innerWidth;
-    const startY = Math.random() * window.innerHeight * 0.5;
+    const startX = Math.random() * this._w;
+    const startY = Math.random() * this._h * 0.5;
     const angle = Math.PI / 3 + (Math.random() - 0.5) * 0.8;
     const speed = 6 + Math.random() * 12;
     return {
@@ -689,7 +693,7 @@ const EffectsManager = {
       star.y += star.vy;
       star.life -= star.decay;
       
-      if (star.life <= 0 || star.x > window.innerWidth + 100 || star.y > window.innerHeight + 100) {
+      if (star.life <= 0 || star.x > this._w + 100 || star.y > this._h + 100) {
         this.shootingStars.splice(i, 1);
       }
     }
@@ -752,7 +756,7 @@ const EffectsManager = {
     
     this.lastTime = currentTime - (deltaTime % this.frameInterval);
     
-    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    this.ctx.clearRect(0, 0, this._w, this._h);
     
     for (const p of this.particles) {
       switch (p.type) {
@@ -1084,12 +1088,17 @@ const InteractionManager = {
   initHeaderScroll() {
     const header = document.querySelector('.site-header');
     if (!header) return;
-    let lastScroll = 0;
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      const currentScroll = window.pageYOffset;
-      if (currentScroll > 50) header.classList.add('scrolled');
-      else header.classList.remove('scrolled');
-      lastScroll = currentScroll;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScroll = window.pageYOffset;
+          if (currentScroll > 50) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+          ticking = false;
+        });
+        ticking = true;
+      }
     }, { passive: true });
   },
 
@@ -1279,6 +1288,7 @@ const UtilsManager = {
     bottomBtn?.addEventListener('click', () => {
       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
     });
+    let ticking = false;
     const updateButtons = () => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -1298,8 +1308,14 @@ const UtilsManager = {
       if (scrollY <= threshold && scrollY >= maxScroll - threshold) {
         buttons.classList.remove('visible');
       }
+      ticking = false;
     };
-    window.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateButtons);
+        ticking = true;
+      }
+    }, { passive: true });
     updateButtons();
   },
 
@@ -1342,6 +1358,7 @@ const UtilsManager = {
         if (heading) headings.push({ element: heading, link: link });
       }
     });
+    let ticking = false;
     const updateActiveTOC = () => {
       let current = headings[0];
       const scrollTop = window.scrollY + 100;
@@ -1350,8 +1367,14 @@ const UtilsManager = {
       });
       tocLinks.forEach(link => link.classList.remove('active'));
       if (current) current.link.classList.add('active');
+      ticking = false;
     };
-    window.addEventListener('scroll', updateActiveTOC, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateActiveTOC);
+        ticking = true;
+      }
+    }, { passive: true });
     updateActiveTOC();
   },
 
@@ -1432,20 +1455,11 @@ function initIllusionTheme() {
 }
 
 // ==========================================================================
-// 启动逻辑优化：使用 window.onload 确保所有脚本都已加载
+// 启动逻辑：立即初始化核心功能，动画/特效等待外部库就绪
 // ==========================================================================
-window.addEventListener('load', initIllusionTheme);
+initIllusionTheme();
 
-// 保留 DOMContentLoaded 监听器作为备用，但主要逻辑现在依赖 window.onload
-document.addEventListener('DOMContentLoaded', () => {
-  // 如果 window.onload 尚未触发 (极少见)，则调用
-  if (!window.IllusionThemeInitialized) {
-      initIllusionTheme();
-      window.IllusionThemeInitialized = true;
-  }
-});
-
-// 导出接口 (保持不变)
+// 导出接口
 window.IllusionTheme = {
   ThemeManager,
   EffectsManager,
@@ -1455,4 +1469,4 @@ window.IllusionTheme = {
   UtilsManager
 };
 
-console.log('幻梦主题 v2.2.0 启动逻辑已切换至 window.onload.');
+console.log('幻梦主题 v2.2.0 已初始化');

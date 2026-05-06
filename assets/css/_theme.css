@@ -483,6 +483,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradientFlow 8s ease infinite;
+  will-change: background-position;
 }
 
 [data-theme="dark"] .hero-name {
@@ -492,6 +493,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradientFlow 8s ease infinite;
+  will-change: background-position;
 }
 
 @keyframes gradientFlow {
