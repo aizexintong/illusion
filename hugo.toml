@@ -1,5 +1,5 @@
 baseURL = 'https://azxt.org/'
-languageCode = 'zh-CN'
+locale = 'zh-CN'
 languageName = '中文'
 title = '爱则心痛 | azxt'
 theme = 'illusion'

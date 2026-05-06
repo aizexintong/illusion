@@ -144,7 +144,7 @@ azxt/
 ```toml
 # ========== 基础信息 ==========
 baseURL = 'https://azxt.org/'           # 网站域名
-languageCode = 'zh-CN'                  # 语言代码
+locale = 'zh-CN'                        # 语言代码
 languageName = '中文'                    # 语言名称
 title = '爱则心痛 | azxt'               # 站点标题
 theme = 'illusion'                       # 使用的主题
