@@ -1,4 +1,4 @@
-# 爱则心痛 | azxt
+# 幻梦 (Illusion)
 
 > 基于 Hugo + 幻梦 (Illusion) 主题构建的个人博客网站
 
