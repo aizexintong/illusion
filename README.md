@@ -114,7 +114,7 @@ azxt/
 ├── hugo.toml            # ★ 站点主配置文件
 ├── public/              # 构建输出目录
 └── themes/
-    └── illusion/        # ★ 幻梦主题
+    └── illusion/        # ★ 幻梦 (Illusion) 主题
         ├── archetypes/
         ├── assets/
         │   ├── css/     # 12个CSS模块文件
@@ -577,7 +577,7 @@ links:
 footer:
   layout: "columns"                    # columns | simple | social
   showCopyright: true
-  showPoweredBy: true                  # "由 Hugo + Illusion 驱动"
+  showPoweredBy: true                  # "由 Hugo + 幻梦 (Illusion) 驱动"
   showSocial: true
   showQuickLinks: true
 
