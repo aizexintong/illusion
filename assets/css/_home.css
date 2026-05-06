@@ -435,7 +435,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--c-primary-500);
+  color: var(--c-primary-700);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   transition: all var(--t-fast);

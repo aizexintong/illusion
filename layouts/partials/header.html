@@ -14,6 +14,7 @@
 <script>
 (function(){
   var m=document.getElementById('mobile-menu');
+  if(!m) return;
   m.querySelectorAll('a,button').forEach(function(e){e.setAttribute('tabindex','-1')});
 })();
 </script>
