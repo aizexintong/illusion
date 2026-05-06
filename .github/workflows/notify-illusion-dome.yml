@@ -1,0 +1,17 @@
+name: 主题更新时通知站点重建
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 触发 illusion-dome 重建
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: aizexintong/illusion-dome
+          event-type: theme-updated
+          client-payload: '{"theme_commit": "${{ github.sha }}", "message": "${{ github.event.head_commit.message }}"}'
