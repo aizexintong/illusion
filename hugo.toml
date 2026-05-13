@@ -5,6 +5,7 @@ title = '爱则心痛 | azxt'
 theme = 'illusion'
 defaultContentLanguage = 'zh'
 defaultContentLanguageInSubdir = false
+enableGitInfo = true
 
 [params]
   author = "爱则心痛"

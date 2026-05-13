@@ -1083,6 +1083,62 @@
 
 .article-meta-row i { margin-right: var(--sp-1); }
 
+.meta-relative {
+  color: var(--c-text-disabled);
+  font-size: 0.85em;
+}
+
+.meta-modified {
+  color: var(--c-primary-500);
+}
+
+.meta-status {
+  font-size: var(--fs-xs);
+  padding: 2px var(--sp-2);
+  border-radius: var(--r-full);
+  font-weight: var(--fw-medium);
+}
+
+.meta-status-updated {
+  background: rgba(100, 180, 100, 0.15);
+  color: #4A8;
+}
+
+.meta-status-new {
+  background: rgba(232, 146, 124, 0.15);
+  color: var(--c-primary-500);
+}
+
+.side-status {
+  padding-top: var(--sp-2);
+  border-top: 1px dashed var(--c-border-main);
+  margin-top: var(--sp-1);
+}
+
+.side-status-text {
+  font-size: var(--fs-xs);
+}
+
+.side-status-first {
+  color: var(--c-text-disabled);
+}
+
+.side-status-text i { margin-right: var(--sp-1); }
+
+.post-badge-updated {
+  background: rgba(100, 180, 100, 0.12);
+  color: #4A8;
+  font-size: var(--fs-xs);
+  padding: 1px var(--sp-2);
+  border-radius: var(--r-sm);
+  font-weight: var(--fw-medium);
+}
+
+.post-date-modified {
+  color: var(--c-primary-400);
+  font-weight: var(--fw-bold);
+}
+
 .article-desc {
   margin: var(--sp-6) 0;
   padding: var(--sp-5) var(--sp-6);

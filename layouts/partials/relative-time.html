@@ -1,0 +1,17 @@
+{{- $date := . -}}
+{{- $secs := (now.Sub $date).Seconds -}}
+{{- if lt $secs 60 -}}
+  {{ i18n "reljustnow" }}
+{{- else if lt $secs 3600 -}}
+  {{ printf "%.0f" (div $secs 60) }}{{ i18n "relminutesago" }}
+{{- else if lt $secs 86400 -}}
+  {{ printf "%.0f" (div $secs 3600) }}{{ i18n "relhoursago" }}
+{{- else if lt $secs 604800 -}}
+  {{ printf "%.0f" (div $secs 86400) }}{{ i18n "reldaysago" }}
+{{- else if lt $secs 2592000 -}}
+  {{ printf "%.0f" (div $secs 604800) }}{{ i18n "relweeksago" }}
+{{- else if lt $secs 31536000 -}}
+  {{ printf "%.0f" (div $secs 2592000) }}{{ i18n "relmonthsago" }}
+{{- else -}}
+  {{ printf "%.0f" (div $secs 31536000) }}{{ i18n "relyearsago" }}
+{{- end -}}

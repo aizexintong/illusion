@@ -389,7 +389,29 @@ postmetainfo:
 postcontinue:
   other: "继续阅读"
 
-# ----- 页脚额外 ----- 
+# ----- 相对时间 -----
+reljustnow:
+  other: "刚刚"
+relminutesago:
+  other: " 分钟前"
+relhoursago:
+  other: " 小时前"
+reldaysago:
+  other: " 天前"
+relweeksago:
+  other: " 周前"
+relmonthsago:
+  other: " 个月前"
+relyearsago:
+  other: " 年前"
+
+# ----- 文章修改状态 -----
+postfirstpublished:
+  other: "首次发布，未修改"
+postrecentlyupdated:
+  other: "最近更新过"
+postmodifiedafter:
+  other: "发布 {{ .Days }} 天后修改" 
 siteuptime:
   other: "建站运行时长"
 rsssub:
