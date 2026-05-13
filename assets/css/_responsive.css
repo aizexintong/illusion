@@ -151,7 +151,6 @@
     top: calc(var(--header-h) + var(--sp-4));
     align-self: flex-start;
     max-height: calc(100vh - var(--header-h) - var(--sp-8));
-    overflow-y: auto;
   }
 
   .article-text { padding: var(--sp-8); }
