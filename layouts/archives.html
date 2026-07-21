@@ -1,4 +1,13 @@
 {{ define "main" }}
+{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
+<div class="floating-decorations" aria-hidden="true">
+  <div class="float-shape float-shape-1"></div>
+  <div class="float-shape float-shape-2"></div>
+  <div class="float-shape float-shape-3"></div>
+  <div class="float-shape float-shape-4"></div>
+  <div class="float-shape float-shape-5"></div>
+</div>
+
 <div class="section-content">
   <div class="container">
     <section class="page-header" data-aos="fade-up">
@@ -6,193 +15,257 @@
       <p class="page-description">{{ .Description | default (i18n "archivestitle") }}</p>
     </section>
 
-    <div class="archives-container" data-aos="fade-up">
-      {{ $posts := where site.RegularPages "Type" "posts" }}
-      {{ $totalPosts := len $posts }}
-      
-      <div class="archives-summary">
-        <span class="archives-count">
-          <i class="fas fa-file-alt"></i>
-          {{ i18n "archivescount" (dict "Count" $totalPosts) }}
-        </span>
+    {{ $posts := where site.RegularPages "Type" "posts" }}
+    {{ $totalPosts := len $posts }}
+    {{ $years := slice }}
+    {{ range $posts.GroupByDate "2006" }}
+      {{ $years = $years | append .Key }}
+    {{ end }}
+    {{ $sortedYears := sort $years "" "desc" }}
+
+    <div class="archives-layout">
+      <!-- 主内容区 - 文章列表 -->
+      <div class="archives-main">
+        <div class="archives-summary">
+          <span class="archives-count">
+            <i class="fas fa-file-alt"></i>
+            {{ i18n "archivescount" (dict "Count" $totalPosts) }}
+          </span>
+        </div>
+
+        {{ range ($posts.GroupByDate "2006") }}
+        <div class="archive-year" data-aos="fade-up" id="year-{{ .Key }}">
+          <h2 class="archive-year-title">
+            <i class="fas fa-calendar-alt"></i>
+            {{ .Key }}
+            <span class="archive-year-count">{{ i18n "archivesyearcount" (dict "Count" (len .Pages)) }}</span>
+          </h2>
+          
+          <div class="archive-months">
+            {{ range (.Pages.GroupByDate "01") }}
+             <div class="archive-month" id="month-{{ .Key }}">
+              {{ $monthNum := .Key }}
+              {{ $monthKeys := dict 
+                "01" "一月" "02" "二月" "03" "三月" "04" "四月" 
+                "05" "五月" "06" "六月" "07" "七月" "08" "八月" 
+                "09" "九月" "10" "十月" "11" "十一月" "12" "十二月"
+              }}
+              {{ $monthName := index $monthKeys $monthNum | default $monthNum }}
+              
+              <h3 class="archive-month-title">{{ $monthName }} <span class="archive-month-count">({{ len .Pages }})</span></h3>
+              
+              <ul class="archive-list">
+                {{ range .Pages }}
+                <li class="archive-item">
+                  <a href="{{ .RelPermalink }}" class="archive-link">
+                    <span class="archive-date">{{ .Date.Format "01-02" }}</span>
+                    <span class="archive-title">{{ .Title }}</span>
+                    {{ if .Params.categories }}
+                      <span class="archive-category">{{ index .Params.categories 0 }}</span>
+                    {{ end }}
+                  </a>
+                </li>
+                {{ end }}
+              </ul>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
       </div>
 
-      {{ range ($posts.GroupByDate "2006") }}
-      <div class="archive-year" data-aos="fade-up">
-        <h2 class="archive-year-title">
-          <i class="fas fa-calendar-alt"></i>
-          {{ .Key }}
-          <span class="archive-year-count">{{ i18n "archivesyearcount" (dict "Count" (len .Pages)) }}</span>
-        </h2>
-        
-        <div class="archive-months">
-          {{ range (.Pages.GroupByDate "01") }}
-           <div class="archive-month">
-            {{ $monthNum := .Key }}
-            {{ $monthKeys := dict 
-              "01" "month01" "02" "month02" "03" "month03" "04" "month04" 
-              "05" "month05" "06" "month06" "07" "month07" "08" "month08" 
-              "09" "month09" "10" "month10" "11" "month11" "12" "month12" 
-            }}
-            {{ $monthKey := index $monthKeys $monthNum | default $monthNum }}
-            {{ $monthName := i18n $monthKey | default $monthNum }}
-            
-            <h3 class="archive-month-title">{{ $monthName }}</h3>
-            
-            <ul class="archive-list">
-              {{ range .Pages }}
-              <li class="archive-item">
-                <a href="{{ .RelPermalink }}" class="archive-link">
-                  <span class="archive-date">{{ .Date.Format "01-02" }}</span>
-                  <span class="archive-title">{{ .Title }}</span>
-                  {{ if .Params.categories }}
-                    <span class="archive-category">{{ index .Params.categories 0 }}</span>
-                  {{ end }}
-                </a>
-              </li>
-              {{ end }}
-            </ul>
+      <!-- 右侧边栏 - 年份/月份导航 -->
+      <aside class="archives-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-title">
+            <i class="fas fa-calendar-alt"></i>
+            归档导航
           </div>
-          {{ end }}
+          
+          <!-- 年份选择器 -->
+          <div class="year-navigation">
+            <button class="year-nav-btn" id="year-prev" aria-label="上一年">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="current-year-display" id="current-year-display">
+              {{ index $sortedYears 0 | default "2024" }}
+            </span>
+            <button class="year-nav-btn" id="year-next" aria-label="下一年">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- 月份列表 -->
+          <div class="month-list" id="month-list">
+            {{ $currentYear := index $sortedYears 0 | default "2024" }}
+            {{ $monthNames := slice "一月" "二月" "三月" "四月" "五月" "六月" "七月" "八月" "九月" "十月" "十一月" "十二月" }}
+            {{ range $i, $name := $monthNames }}
+            {{ $monthNum := printf "%02d" (add $i 1) }}
+            {{ $count := 0 }}
+            {{ range where $posts "Date.Year" (int $currentYear) }}
+              {{ if eq (printf "%02d" .Date.Month) $monthNum }}
+                {{ $count = add $count 1 }}
+              {{ end }}
+            {{ end }}
+            <div class="month-item" data-month="{{ $monthNum }}" data-year="{{ $currentYear }}">
+              <span class="month-name">{{ $name }}</span>
+              <span class="month-count">{{ $count }}</span>
+            </div>
+            {{ end }}
+          </div>
+
+          <!-- 统计信息 -->
+          <div class="archive-stats">
+            <div class="stat-row">
+              <span>总文章</span>
+              <span>{{ $totalPosts }}</span>
+            </div>
+            <div class="stat-row">
+              <span>总年份</span>
+              <span>{{ len $sortedYears }}</span>
+            </div>
+          </div>
         </div>
-      </div>
-      {{ end }}
+      </aside>
     </div>
   </div>
 </div>
 
-<style>
-  .archives-summary {
-    text-align: center;
-    margin-bottom: var(--sp-8);
-  }
+<script>
+(function() {
+  // 年份导航功能
+  var years = {{ $sortedYears | jsonify }};
+  var currentYearIndex = 0; // 默认显示最新年份
   
-  .archives-count {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-2);
-    background: var(--c-primary-ll);
-    color: var(--c-primary-d);
-    padding: var(--sp-3) var(--sp-5);
-    border-radius: var(--r-full);
-    font-weight: var(--fw-medium);
-  }
-  
-  .archive-year {
-    margin-bottom: var(--sp-10);
-  }
-  
-  .archive-year-title {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    font-size: var(--fs-xl);
-    color: var(--c-text);
-    padding-bottom: var(--sp-3);
-    border-bottom: 2px solid var(--c-border);
-    margin-bottom: var(--sp-6);
-  }
-  
-  .archive-year-title i {
-    color: var(--c-primary);
-  }
-  
-  .archive-year-count {
-    font-size: var(--fs-sm);
-    color: var(--c-text-2);
-    font-weight: var(--fw-normal);
-    margin-left: auto;
-  }
-  
-  .archive-month {
-    margin-bottom: var(--sp-6);
-  }
-  
-  .archive-month-title {
-    font-size: var(--fs-base);
-    color: var(--c-text-2);
-    margin-bottom: var(--sp-3);
-    padding-left: var(--sp-4);
-    font-weight: var(--fw-medium);
-  }
-  
-  .archive-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .archive-item {
-    margin-bottom: var(--sp-2);
-  }
-  
-  .archive-link {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    padding: var(--sp-3) var(--sp-4);
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: var(--r-lg);
-    text-decoration: none;
-    transition: all var(--t-fast) var(--ease-out);
-    border: 1px solid transparent;
-  }
-  
-  .archive-link:hover {
-    background: var(--c-primary-ll);
-    border-color: var(--c-primary-l);
-    transform: translateX(4px);
-  }
+  var yearDisplay = document.getElementById('current-year-display');
+  var prevBtn = document.getElementById('year-prev');
+  var nextBtn = document.getElementById('year-next');
+  var monthItems = document.querySelectorAll('.month-item');
+  var yearSections = document.querySelectorAll('.archive-year');
 
-  [data-theme="dark"] .archive-link {
-    background: rgba(26, 27, 58, 0.5);
-  }
-
-  [data-theme="dark"] .archive-link:hover {
-    background: rgba(26, 27, 58, 0.7);
-    border-color: var(--c-primary-400);
-  }
-  
-  .archive-date {
-    font-size: var(--fs-sm);
-    color: var(--c-text-3);
-    font-family: var(--ff-mono);
-    flex-shrink: 0;
-  }
-  
-  .archive-title {
-    flex: 1;
-    color: var(--c-text);
-    font-weight: var(--fw-medium);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .archive-link:hover .archive-title {
-    color: var(--c-primary);
-  }
-  
-  .archive-category {
-    font-size: var(--fs-xs);
-    background: var(--c-primary-ll);
-    color: var(--c-primary-d);
-    padding: var(--sp-1) var(--sp-2);
-    border-radius: var(--r-full);
-    flex-shrink: 0;
-  }
-  
-  @media (max-width: 575px) {
-    .archive-link {
-      flex-wrap: wrap;
-    }
+  function updateYearDisplay() {
+    if (years.length === 0) return;
     
-    .archive-category {
-      width: 100%;
-      margin-top: var(--sp-1);
+    var year = years[currentYearIndex];
+    if (!year) return;
+    
+    yearDisplay.textContent = year;
+    
+    // 更新月份列表 - 显示对应年份的月份数据
+    // 获取该年所有文章
+    var allPosts = document.querySelectorAll('.archive-year');
+    var targetYearSection = null;
+    var monthCounts = {};
+    
+    allPosts.forEach(function(section) {
+      if (section.id === 'year-' + year) {
+        targetYearSection = section;
+        // 统计各月文章数
+        var months = section.querySelectorAll('.archive-month');
+        months.forEach(function(month) {
+          var id = month.id;
+          if (id && id.startsWith('month-')) {
+            var monthNum = id.replace('month-', '');
+            var items = month.querySelectorAll('.archive-item');
+            monthCounts[monthNum] = items.length;
+          }
+        });
+      }
+    });
+    
+    // 更新月份显示
+    monthItems.forEach(function(item) {
+      var month = item.dataset.month;
+      var countSpan = item.querySelector('.month-count');
+      
+      // 显示/隐藏月份
+      if (targetYearSection) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+      
+      // 更新计数
+      if (countSpan) {
+        countSpan.textContent = monthCounts[month] || 0;
+      }
+      
+      // 高亮当前年份
+      if (item.dataset.year === year) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+      item.dataset.year = year;
+    });
+    
+    // 显示/隐藏年份区块
+    yearSections.forEach(function(section) {
+      if (section.id === 'year-' + year) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+    
+    // 更新按钮状态
+    if (prevBtn) {
+      prevBtn.disabled = currentYearIndex <= 0;
+      prevBtn.style.opacity = currentYearIndex <= 0 ? '0.3' : '1';
+    }
+    if (nextBtn) {
+      nextBtn.disabled = currentYearIndex >= years.length - 1;
+      nextBtn.style.opacity = currentYearIndex >= years.length - 1 ? '0.3' : '1';
     }
   }
-</style>
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function() {
+      if (currentYearIndex > 0) {
+        currentYearIndex--;
+        updateYearDisplay();
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      if (currentYearIndex < years.length - 1) {
+        currentYearIndex++;
+        updateYearDisplay();
+      }
+    });
+  }
+
+  // 点击月份跳转
+  monthItems.forEach(function(item) {
+    item.addEventListener('click', function() {
+      var month = this.dataset.month;
+      var year = this.dataset.year;
+      
+      // 切换到对应年份
+      var yearIndex = years.indexOf(year);
+      if (yearIndex !== -1) {
+        currentYearIndex = yearIndex;
+        updateYearDisplay();
+      }
+      
+      // 滚动到对应月份
+      var targetId = 'month-' + month;
+      var targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        setTimeout(function() {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      }
+    });
+  });
+
+  // 初始化显示
+  if (years.length > 0) {
+    currentYearIndex = 0; // 最新年份
+    updateYearDisplay();
+  }
+})();
+</script>
 {{ end }}

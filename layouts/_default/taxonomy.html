@@ -1,40 +1,139 @@
 {{ define "main" }}
-  <div class="section-content" role="main">
-    <header class="section-header">
-      <h1 class="section-title">
-        {{ if eq .Data.Singular "tags" }}
-          <i class="fas fa-tags section-title-icon"></i>{{ i18n "tagstitle" }}
-        {{ else if eq .Data.Singular "categories" }}
-          <i class="fas fa-folder section-title-icon"></i>{{ i18n "categoriestitle" }}
-        {{ else }}
-          <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
-        {{ end }}
-      </h1>
-      {{ if .Content }}
-        <div class="section-description">{{ .Content }}</div>
-      {{ else if .Description }}
-        <div class="section-description">{{ .Description }}</div>
-      {{ end }}
-      <div class="tag-header-meta">
-        <span class="tag-article-count">
-          <i class="fas fa-tag" aria-hidden="true"></i>
-          {{ if .Data.Terms }}{{ i18n "taxonomycount" (dict "Count" (len .Data.Terms)) }}{{ end }}
-          {{ if and (not .Data.Terms) .Pages }}{{ i18n "termcount" (dict "Count" (len .Pages)) }}{{ end }}
-        </span>
-      </div>
-    </header>
+{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
+<div class="floating-decorations" aria-hidden="true">
+  <div class="float-shape float-shape-1"></div>
+  <div class="float-shape float-shape-2"></div>
+  <div class="float-shape float-shape-3"></div>
+  <div class="float-shape float-shape-4"></div>
+  <div class="float-shape float-shape-5"></div>
+</div>
 
-    <div class="container">
-      {{ if .Data.Terms }}
+<div class="section-content" role="main">
+  <header class="section-header">
+    <h1 class="section-title">
+      {{ if eq .Data.Singular "tags" }}
+        <i class="fas fa-tags section-title-icon"></i>{{ i18n "tagstitle" }}
+      {{ else if eq .Data.Singular "categories" }}
+        <i class="fas fa-folder section-title-icon"></i>{{ i18n "categoriestitle" }}
+      {{ else }}
+        <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
+      {{ end }}
+    </h1>
+    {{ if .Content }}
+      <div class="section-description">{{ .Content }}</div>
+    {{ else if .Description }}
+      <div class="section-description">{{ .Description }}</div>
+    {{ end }}
+    <div class="tag-header-meta">
+      <span class="tag-article-count">
+        <i class="fas fa-tag" aria-hidden="true"></i>
+        {{ if .Data.Terms }}
+          {{ $totalTags := len .Data.Terms }}
+          {{ i18n "taxonomycount" (dict "Count" $totalTags) }}
+        {{ end }}
+        {{ if and (not .Data.Terms) .Pages }}
+          {{ i18n "termcount" (dict "Count" (len .Pages)) }}
+        {{ end }}
+      </span>
+    </div>
+  </header>
+
+  <div class="container">
+    {{ if .Data.Terms }}
+      {{ $allTags := sort .Data.Terms ".Count" "desc" }}
+      {{ $perPage := 50 }}
+      {{ $totalTags := len $allTags }}
+      {{ $totalPages := math.Ceil (div $totalTags $perPage) }}
+      
+      {{ $currentPage := 1 }}
+      {{ with .Paginator }}
+        {{ if ne .PageNumber 0 }}
+          {{ $currentPage = .PageNumber }}
+        {{ end }}
+      {{ end }}
+      
+      {{/* 安全计算起始和结束索引 */}}
+      {{ $startIndex := mul (sub $currentPage 1) $perPage }}
+      {{ $endIndex := add $startIndex $perPage }}
+      {{ if gt $endIndex $totalTags }}
+        {{ $endIndex = $totalTags }}
+      {{ end }}
+      
+      {{/* 确保起始索引有效 */}}
+      {{ if lt $startIndex 0 }}
+        {{ $startIndex = 0 }}
+      {{ end }}
+      
+      {{/* 计算切片长度 */}}
+      {{ $sliceLen := sub $endIndex $startIndex }}
+      {{ if lt $sliceLen 0 }}
+        {{ $sliceLen = 0 }}
+      {{ end }}
+      
+      {{/* 安全获取当前页标签 */}}
+      {{ $pageTags := slice }}
+      {{ if and (gt $sliceLen 0) (le $startIndex $totalTags) }}
+        {{ $tempTags := after $startIndex $allTags }}
+        {{ if gt (len $tempTags) 0 }}
+          {{ $pageTags = first $sliceLen $tempTags }}
+        {{ end }}
+      {{ end }}
+
       <div class="tags-grid" data-aos="fade-up">
-        {{ range sort .Data.Terms ".Count" "desc" }}
+        {{ range $pageTags }}
         <a href="{{ .Page.RelPermalink }}" class="tags-card">
           <span class="tags-card-name">{{ .Page.Title }}</span>
           <span class="tags-card-count">{{ .Count }} 篇文章</span>
         </a>
         {{ end }}
       </div>
-      {{ else if .Pages }}
+
+      {{ if gt $totalPages 1 }}
+      <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
+        {{ if gt $currentPage 1 }}
+        <a href="?page={{ sub $currentPage 1 }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}">
+          <i class="fas fa-chevron-left"></i>
+          {{ i18n "pageprev" }}
+        </a>
+        {{ end }}
+        
+        <div class="page-numbers">
+          {{ $startPage := math.Max 1 (sub $currentPage 3) }}
+          {{ $endPage := math.Min $totalPages (add $currentPage 3) }}
+          
+          {{ if gt $startPage 1 }}
+            <a href="?page=1" class="page-link">1</a>
+            {{ if gt $startPage 2 }}
+              <span class="page-link dots">…</span>
+            {{ end }}
+          {{ end }}
+          
+          {{ range seq $startPage $endPage }}
+            {{ if eq . $currentPage }}
+              <span class="page-link current" aria-current="page">{{ . }}</span>
+            {{ else }}
+              <a href="?page={{ . }}" class="page-link">{{ . }}</a>
+            {{ end }}
+          {{ end }}
+          
+          {{ if lt $endPage $totalPages }}
+            {{ if lt (add $endPage 1) $totalPages }}
+              <span class="page-link dots">…</span>
+            {{ end }}
+            <a href="?page={{ $totalPages }}" class="page-link">{{ $totalPages }}</a>
+          {{ end }}
+        </div>
+
+        {{ if lt $currentPage $totalPages }}
+        <a href="?page={{ add $currentPage 1 }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">
+          {{ i18n "pagenext" }}
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        {{ end }}
+      </nav>
+      {{ end }}
+      
+    {{ else if .Pages }}
       <div class="term-posts-grid" role="list">
         {{ $paginator := .Paginate .Pages 16 }}
         {{ range $paginator.Pages }}
@@ -60,82 +159,38 @@
         </article>
         {{ end }}
       </div>
+      
+      {{ if gt $paginator.TotalPages 1 }}
+      <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
+        {{ if $paginator.HasPrev }}
+        <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}">
+          <i class="fas fa-chevron-left"></i>
+          {{ i18n "pageprev" }}
+        </a>
+        {{ end }}
+        <div class="page-numbers">
+          {{ range $paginator.Pagers }}
+            {{ if eq . $paginator }}
+              <span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
+            {{ else }}
+              <a href="{{ .URL }}" class="page-link" aria-label="{{ .PageNumber }}{{ i18n "page" }}">{{ .PageNumber }}</a>
+            {{ end }}
+          {{ end }}
+        </div>
+        {{ if $paginator.HasNext }}
+        <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">
+          {{ i18n "pagenext" }}
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        {{ end }}
+      </nav>
       {{ end }}
-    </div>
+      
+    {{ else }}
+      <div class="no-terms-message" data-aos="fade-up">
+        <p>{{ i18n "taxonomyempty" }}</p>
+      </div>
+    {{ end }}
   </div>
-
-<style>
-.term-posts-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-6);
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.tag-header-meta { margin-top: var(--sp-5); }
-
-.tags-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--sp-3);
-}
-
-.tags-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-  padding: var(--sp-4) var(--sp-5);
-  border-radius: var(--r-xl);
-  border: 1px solid var(--c-border-main);
-  border-left: 3px solid var(--c-primary-300);
-  background: var(--c-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  text-decoration: none;
-  transition: all var(--t-base);
-}
-
-.tags-card:hover {
-  border-color: var(--c-primary-300);
-  border-left-color: var(--c-primary-500);
-  box-shadow: var(--shadow-medium);
-  transform: translateY(-3px);
-}
-
-.tags-card-name {
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  color: var(--c-text-main);
-}
-
-.tags-card-count {
-  font-size: var(--fs-xs);
-  color: var(--c-text-subtle);
-}
-
-.tag-article-count {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  background: var(--c-primary-100);
-  color: var(--c-primary-500);
-  padding: var(--sp-2) var(--sp-5);
-  border-radius: var(--r-full);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-}
-
-@media (min-width: 576px) {
-  .term-posts-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 768px) {
-  .term-posts-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (min-width: 992px) {
-  .term-posts-grid { grid-template-columns: repeat(4, 1fr); }
-}
-</style>
+</div>
 {{ end }}

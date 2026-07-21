@@ -1,206 +1,59 @@
-{{- /*
- * 工具页面 (Tools Page)
- * 数据来源: data/theme.yaml 中的 tools 字段
- * 开关控制: params.featuredPages.enableTools
- */ -}}
+{{- /* 工具页面 (Tools Page) 数据来源: data/theme.yaml 中的 tools 字段 */ -}}
 {{ define "main" }}
+{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
+<div class="floating-decorations" aria-hidden="true">
+  <div class="float-shape float-shape-1"></div>
+  <div class="float-shape float-shape-2"></div>
+  <div class="float-shape float-shape-3"></div>
+  <div class="float-shape float-shape-4"></div>
+  <div class="float-shape float-shape-5"></div>
+</div>
+
 {{- $toolsData := hugo.Data.theme.tools -}}
 {{- $pageInfo := $toolsData.page -}}
 {{- $categories := $toolsData.categories -}}
 
-<div class="container">
-  <section class="page-header" data-aos="fade-up">
-    <h1 class="page-title">{{ .Title }}</h1>
-    <p class="page-description">{{ .Description }}</p>
-  </section>
+<div class="section-content">
+  <div class="container">
+    <section class="page-header" data-aos="fade-up">
+      <h1 class="page-title">{{ .Title }}</h1>
+      <p class="page-description">{{ .Description }}</p>
+    </section>
 
-  <section class="tools-section">
-    {{- range $categories -}}
-    <div class="tools-category" data-aos="fade-up">
-      <div class="category-header">
-        <div class="category-icon"><i class="{{ .icon }}"></i></div>
-        <div class="category-info">
-          <h2 class="category-title">{{ .name }}</h2>
-          <p class="category-description">{{ .description }}</p>
+    <section class="tools-section">
+      {{- range $categories -}}
+      <div class="tools-category" data-aos="fade-up">
+        <div class="category-header">
+          <div class="category-icon"><i class="{{ .icon }}"></i></div>
+          <div class="category-info">
+            <h2 class="category-title">{{ .name }}</h2>
+            <p class="category-description">{{ .description }}</p>
+          </div>
+        </div>
+
+        <div class="tools-grid">
+          {{- range .tools -}}
+          <a href="{{ .url }}" class="tool-card" target="_blank" rel="noopener nofollow" data-aos="zoom-in">
+            <div class="tool-icon">
+              {{- if hasPrefix .icon "http" -}}
+              <img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">
+              {{- else -}}
+              <i class="{{ .icon }}"></i>
+              {{- end -}}
+            </div>
+            <div class="tool-content">
+              <h3 class="tool-name">{{ .name }}</h3>
+              <p class="tool-description">{{ .description }}</p>
+            </div>
+            <div class="tool-arrow">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </a>
+          {{- end -}}
         </div>
       </div>
-
-      <div class="tools-grid">
-        {{- range .tools -}}
-        <a href="{{ .url }}" class="tool-card" target="_blank" rel="noopener nofollow" data-aos="zoom-in">
-          <div class="tool-icon">
-            {{- if hasPrefix .icon "http" -}}
-            <img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">
-            {{- else -}}
-            <i class="{{ .icon }}"></i>
-            {{- end -}}
-          </div>
-          <div class="tool-content">
-            <h3 class="tool-name">{{ .name }}</h3>
-            <p class="tool-description">{{ .description }}</p>
-          </div>
-          <div class="tool-arrow">
-            <i class="fas fa-external-link-alt"></i>
-          </div>
-        </a>
-        {{- end -}}
-      </div>
-    </div>
-    {{- end -}}
-  </section>
+      {{- end -}}
+    </section>
+  </div>
 </div>
-
-<style>
-.tools-section { margin: var(--sp-8) 0; }
-
-.tools-category { margin-bottom: var(--sp-12); }
-
-.category-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  margin-bottom: var(--sp-6);
-  padding-bottom: var(--sp-4);
-  border-bottom: 1px solid var(--c-border-main);
-}
-
-.category-header .category-icon {
-  width: 56px;
-  height: 56px;
-  background: var(--grad-primary);
-  border-radius: var(--r-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: var(--fs-xl);
-  flex-shrink: 0;
-}
-
-.category-info { flex: 1; }
-
-.category-title {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
-  color: var(--c-text-main);
-  margin-bottom: var(--sp-1);
-}
-
-.category-description {
-  color: var(--c-text-muted);
-  font-size: var(--fs-sm);
-  margin: 0;
-}
-
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--sp-5);
-}
-
-.tool-card {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  padding: var(--sp-4) var(--sp-5);
-  background: var(--c-surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--c-border-main);
-  border-radius: var(--r-lg);
-  text-decoration: none;
-  transition: all var(--t-base) var(--ease-slow);
-  position: relative;
-  overflow: hidden;
-}
-
-.tool-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--grad-primary);
-  opacity: 0;
-  transition: opacity var(--t-base) var(--ease-fluid);
-}
-
-.tool-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--c-primary-300);
-}
-
-.tool-card:hover::before { opacity: 1; }
-
-.tool-icon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--c-primary-100);
-  border-radius: var(--r-md);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.tool-icon i {
-  font-size: var(--fs-xl);
-  color: var(--c-primary-500);
-}
-
-.tool-icon img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-}
-
-.tool-content { flex: 1; min-width: 0; }
-
-.tool-name {
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  color: var(--c-text-main);
-  margin-bottom: var(--sp-1);
-}
-
-.tool-description {
-  color: var(--c-text-muted);
-  font-size: var(--fs-sm);
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.tool-arrow {
-  color: var(--c-text-subtle);
-  font-size: var(--fs-sm);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: all var(--t-fast) var(--ease-fluid);
-}
-
-.tool-card:hover .tool-arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: var(--c-primary-400);
-}
-
-@media (max-width: 576px) {
-  .category-header {
-    flex-direction: column;
-    text-align: center;
-  }
-  .tools-grid { grid-template-columns: 1fr; }
-  .tool-card {
-    flex-direction: column;
-    text-align: center;
-  }
-  .tool-arrow { display: none; }
-}
-</style>
 {{ end }}

@@ -1,8 +1,4 @@
-{{- /*
- * 搜索功能组件 (Search Component)
- * 数据来源: Site.Params.enableSearch, Site.Params.searchProvider
- * 依赖文件: index.json (本地搜索)
- */ -}}
+{{- /* 搜索功能组件 (Search Component) 数据来源: Site.Params.enableSearch, Site.Params.searchProvider 依赖文件: index.json (本地搜索) */ -}}
 
 {{- if .Site.Params.enableSearch -}}
 <div class="search-component" role="search" aria-label='{{ i18n "searchtitle" }}'>

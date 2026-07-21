@@ -10,14 +10,7 @@
 
       <nav class="main-nav" aria-label="{{ i18n "headermainnav" }}">
         {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
-</nav>
-<script>
-(function(){
-  var m=document.getElementById('mobile-menu');
-  if(!m) return;
-  m.querySelectorAll('a,button').forEach(function(e){e.setAttribute('tabindex','-1')});
-})();
-</script>
+      </nav>
 
       <div class="header-actions">
         {{- $params := .Site.Params -}}
