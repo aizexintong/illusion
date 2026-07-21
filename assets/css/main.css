@@ -183,37 +183,34 @@
   --c-shine: rgba(245, 204, 184, 0.1);
   --c-glow-primary: rgba(232, 146, 124, 0.35);
 
-  --color-bg-main: var(--c-bg-main);
-  --color-bg-alt: var(--c-bg-alt);
-  --color-bg-subtle: var(--c-bg-subtle);
-  --color-surface-main: var(--c-surface-main);
-  --color-surface-alt: var(--c-surface-alt);
-  --color-surface-glass: var(--c-surface-glass);
-
+  /* 语义化变量映射 - 兼容所有模板 */
   --color-text-primary: var(--c-text-main);
   --color-text-secondary: var(--c-text-muted);
   --color-text-subtle: var(--c-text-subtle);
   --color-text-disabled: var(--c-text-disabled);
-
-  --color-accent: var(--c-primary-500);
-  --color-accent-low: var(--c-primary-100);
-  --color-accent-medium: var(--c-primary-400);
-  --color-accent-high: var(--c-primary-600);
-
   --color-border-main: var(--c-border-main);
   --color-border-light: var(--c-border-light);
   --color-border-strong: var(--c-border-strong);
-
-  --color-shadow-subtle: var(--shadow-subtle);
-  --color-shadow-medium: var(--shadow-medium);
-  --color-shadow-lg: var(--shadow-lg);
-
+  --color-accent: var(--c-primary-400);
+  --color-accent-soft: var(--c-primary-100);
+  --color-accent-low: var(--c-primary-200);
+  --color-accent-medium: var(--c-primary-300);
+  --color-accent-strong: var(--c-primary-500);
+  --color-surface-main: var(--c-surface-main);
+  --color-surface-alt: var(--c-surface-alt);
+  --color-surface-glass: var(--c-surface-glass);
+  --color-bg-main: var(--c-bg-main);
+  --color-bg-alt: var(--c-bg-alt);
+  --color-bg-subtle: var(--c-bg-subtle);
   --color-grad-primary: var(--grad-primary);
   --color-grad-soft: var(--grad-soft);
   --color-grad-surface: var(--grad-surface);
-  --color-accent-muted: var(--c-primary-300);
-  --color-accent-soft: var(--c-primary-100);
-  --color-accent-strong: var(--c-primary-600);
+  --color-shadow-subtle: var(--shadow-subtle);
+  --color-shadow-medium: var(--shadow-medium);
+  --color-shadow-lg: var(--shadow-lg);
+  --color-shadow-halo: var(--shadow-halo);
+  --color-shadow-glow: var(--shadow-glow);
+  --color-shadow-xs: var(--shadow-xs);
 }
 
 [data-theme="dark"] {
@@ -321,30 +318,32 @@
   --c-star-4: rgba(240, 168, 136, 0.7);
   --c-star-5: rgba(240, 238, 235, 0.9);
 
-  --color-bg-main: var(--c-bg-main);
-  --color-bg-alt: var(--c-bg-alt);
-  --color-bg-subtle: var(--c-bg-subtle);
-  --color-surface-main: var(--c-surface-main);
-  --color-surface-alt: var(--c-surface-alt);
-  --color-surface-glass: var(--c-surface-glass);
+  /* 语义化变量映射 - 兼容所有模板 */
   --color-text-primary: var(--c-text-main);
   --color-text-secondary: var(--c-text-muted);
   --color-text-subtle: var(--c-text-subtle);
   --color-text-disabled: var(--c-text-disabled);
-  --color-accent: var(--c-primary-500);
-  --color-accent-low: var(--c-primary-100);
-  --color-accent-medium: var(--c-primary-400);
-  --color-accent-high: var(--c-primary-600);
   --color-border-main: var(--c-border-main);
   --color-border-light: var(--c-border-light);
   --color-border-strong: var(--c-border-strong);
-  --color-shadow-subtle: var(--shadow-subtle);
-  --color-shadow-medium: var(--shadow-medium);
-  --color-shadow-lg: var(--shadow-lg);
+  --color-accent: var(--c-primary-400);
+  --color-accent-soft: var(--c-primary-100);
+  --color-accent-low: var(--c-primary-200);
+  --color-accent-medium: var(--c-primary-300);
+  --color-accent-strong: var(--c-primary-500);
+  --color-surface-main: var(--c-surface-main);
+  --color-surface-alt: var(--c-surface-alt);
+  --color-surface-glass: var(--c-surface-glass);
+  --color-bg-main: var(--c-bg-main);
+  --color-bg-alt: var(--c-bg-alt);
+  --color-bg-subtle: var(--c-bg-subtle);
   --color-grad-primary: var(--grad-primary);
   --color-grad-soft: var(--grad-soft);
   --color-grad-surface: var(--grad-surface);
-  --color-accent-muted: var(--c-primary-300);
-  --color-accent-soft: var(--c-primary-100);
-  --color-accent-strong: var(--c-primary-600);
+  --color-shadow-subtle: var(--shadow-subtle);
+  --color-shadow-medium: var(--shadow-medium);
+  --color-shadow-lg: var(--shadow-lg);
+  --color-shadow-halo: var(--shadow-halo);
+  --color-shadow-glow: var(--shadow-glow);
+  --color-shadow-xs: var(--shadow-xs);
 }

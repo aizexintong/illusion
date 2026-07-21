@@ -1,5 +1,5 @@
 {{ define "main" }}
-{{ $errorData := hugo.Data.error404 | default dict }}
+{{ $errorData := hugo.Data.theme.error404 | default dict }}
 {{ $page := $errorData.page | default dict }}
 {{ $buttons := $errorData.buttons | default dict }}
 

@@ -1,0 +1,483 @@
+# ============================================================================
+# 主题统一配置文件 theme.yaml
+# 所有页面数据集中管理，按功能模块分区
+# 引用方式: {{ hugo.Data.theme.模块名.字段名 }}
+# 数据优先级: 项目根目录 data/theme.yaml > 主题 data/theme.yaml
+# ============================================================================
+
+# ============================================================================
+# 首页配置
+# ============================================================================
+home:
+  hero:
+    title: "爱则心痛"
+    subtitles:
+      - "技术开发者"
+      - "代码艺术家"
+      - "终身学习者"
+      - "梦想追逐者"
+    description: "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。"
+    primaryBtn:
+      text: "阅读文章"
+      url: "/posts"
+    secondaryBtn:
+      text: "关于我们"
+      url: "/about"
+    badgeText: "欢迎来到我的世界"
+    greeting: "你好，我是"
+    quote:
+      text: "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。"
+      author: "爱则心痛"
+
+  posts:
+    title: "最新文章"
+    subtitle: "分享思考，记录成长"
+    count: 6
+    showMore:
+      text: "查看所有文章"
+      url: "/posts"
+
+  about:
+    title: "关于爱则心痛"
+    description: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。相信代码可以改变世界，享受解决问题的过程，热爱分享知识。"
+    btnText: "了解更多"
+    btnUrl: "/about"
+
+  skills:
+    title: "技术栈"
+    subtitle: "不断学习，持续进步"
+    count: 6
+
+# ============================================================================
+# 关于页面配置
+# ============================================================================
+about:
+  intro:
+    name: "爱则心痛 (azxt)"
+    title: "全栈开发者 · 技术爱好者 · 开源贡献者"
+    quote: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"
+
+  stats:
+    - icon: "fas fa-code"
+      number: "auto"
+      label: "技术文章"
+    - icon: "fas fa-project-diagram"
+      number: "auto"
+      label: "技术技能"
+    - icon: "fas fa-calendar-alt"
+      number: "8+"
+      label: "开发经验"
+    - icon: "fas fa-heart"
+      number: "∞"
+      label: "热爱程度"
+
+  philosophy:
+    title: "技术理念"
+    items:
+      - icon: "fas fa-feather-alt"
+        title: "优雅简洁"
+        description: "追求代码的简洁性和可维护性，相信好的代码本身就是最好的文档"
+      - icon: "fas fa-graduation-cap"
+        title: "持续学习"
+        description: "技术日新月异，保持好奇心和学习能力是开发者最重要的品质"
+      - icon: "fas fa-share-alt"
+        title: "分享共赢"
+        description: "知识因分享而更有价值，开源精神推动技术进步"
+      - icon: "fas fa-user-check"
+        title: "用户体验"
+        description: "技术服务于人，优秀的用户体验是产品的灵魂"
+
+  contact:
+    title: "保持联系"
+    subtitle: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"
+    methods:
+      - type: "email"
+        icon: "fas fa-envelope"
+        label: "邮箱"
+        value: "admin@azxt.org"
+        link: "mailto:admin@azxt.org"
+      - type: "github"
+        icon: "fab fa-github"
+        label: "GitHub"
+        value: "aizexintong"
+        link: "https://github.com/aizexintong"
+      - type: "website"
+        icon: "fas fa-globe"
+        label: "网站"
+        value: "azxt.org"
+        link: "https://azxt.org"
+    note: "欢迎交流技术问题、项目合作或开源贡献！"
+
+# ============================================================================
+# 图片资源管理
+# ============================================================================
+assets:
+  avatar:
+    url: "/headimg.jpg"
+    alt: "站点头像"
+    rss: "/headimg.jpg"
+
+  background:
+    mobile:
+      url: "https://t.alcy.cc/mp"
+      alt: "移动端背景"
+    desktop:
+      url: "https://t.alcy.cc/pc"
+      alt: "桌面端背景"
+    adaptive:
+      url: "https://t.alcy.cc/ycy"
+      alt: "自适应背景"
+      description: "推荐使用，自动适配不同设备"
+      breakpoint: "768px"
+
+  openGraph:
+    default:
+      url: "https://t.alcy.cc/og"
+      alt: "分享配图"
+      width: 1200
+      height: 630
+    article:
+      fallback: "https://t.alcy.cc/ycy"
+
+  defaults:
+    postCover: "https://t.alcy.cc/ycy"
+    friendAvatar: "https://t.alcy.cc/tx"
+    skillIcon: "fas fa-code"
+
+  imageService:
+    cdn: "https://t.alcy.cc"
+    lazyLoad: true
+    responsive: false
+
+# ============================================================================
+# 社交链接
+# ============================================================================
+social:
+  links:
+    - platform: "github"
+      url: "https://github.com/aizexintong"
+      icon: "fab fa-github"
+      label: "GitHub"
+      show: true
+    - platform: "email"
+      url: "mailto:admin@azxt.org"
+      icon: "fas fa-envelope"
+      label: "邮箱"
+      show: true
+    - platform: "rss"
+      url: "/index.xml"
+      icon: "fas fa-rss"
+      label: "RSS 订阅"
+      show: true
+    - platform: "twitter"
+      url: "https://twitter.com"
+      icon: "fab fa-twitter"
+      label: "Twitter"
+      show: false
+    - platform: "telegram"
+      url: "https://telegram.org"
+      icon: "fab fa-telegram"
+      label: "Telegram"
+      show: false
+    - platform: "wechat"
+      url: ""
+      icon: "fab fa-weixin"
+      label: "微信"
+      show: false
+
+  footer:
+    icp: ""
+    police: ""
+    year: ""
+    since: "2024"
+
+# ============================================================================
+# 技能页面
+# ============================================================================
+skills:
+  overview:
+    title: "技能总览"
+    subtitle: "掌握多项技术，持续学习进步"
+    categories:
+      - icon: "fas fa-code"
+        title: "前端开发"
+        description: "HTML5、CSS3、JavaScript、React"
+        progress: 100
+      - icon: "fas fa-server"
+        title: "后端开发"
+        description: "Node.js、Python、数据库、API"
+        progress: 100
+      - icon: "fas fa-mobile-alt"
+        title: "移动开发"
+        description: "Flutter、React Native、原生开发"
+        progress: 100
+      - icon: "fas fa-tools"
+        title: "开发工具"
+        description: "Git、Docker、VS Code、构建工具"
+        progress: 100
+
+  skills:
+    - name: "JavaScript"
+      level: 90
+      description: "掌握ES6+特性、异步编程、模块化开发，熟悉Vue.js和React框架。"
+      projects:
+        - "个人博客系统"
+        - "数据可视化平台"
+        - "在线编辑器"
+    - name: "HTML5"
+      level: 90
+      description: "精通语义化标签、Canvas绘图、Web Storage等HTML5新特性。"
+      projects: []
+    - name: "CSS3"
+      level: 90
+      description: "熟练使用Flexbox、Grid布局，掌握CSS动画和响应式设计。"
+      projects: []
+    - name: "Python"
+      level: 90
+      description: "熟悉Django、Flask框架，掌握数据分析和机器学习基础。"
+      projects:
+        - "自动化脚本工具"
+        - "Web爬虫系统"
+        - "数据分析报告"
+    - name: "Flutter"
+      level: 75
+      description: "掌握Dart语言，熟悉Widget系统，能够开发跨平台应用。"
+      projects:
+        - "跨平台电商应用"
+        - "社交应用开发"
+        - "工具类应用"
+    - name: "Rust"
+      level: 55
+      description: "了解Rust语言特性，掌握基础语法和内存安全机制。"
+      projects: []
+
+  timeline:
+    - year: "2022"
+      title: "基础学习"
+      description: "掌握HTML、CSS、JavaScript基础，完成第一个个人网站项目。"
+    - year: "2023"
+      title: "框架掌握"
+      description: "学习Vue.js和React框架，参与团队项目开发，掌握前后端分离架构。"
+    - year: "2024"
+      title: "全栈发展"
+      description: "学习Node.js和Python后端开发，掌握数据库设计和API开发。"
+    - year: "2025"
+      title: "移动开发"
+      description: "学习Flutter跨平台开发，完成多个移动应用项目。"
+    - year: "2026"
+      title: "技术深化"
+      description: "学习Rust语言，深入研究性能优化和系统架构设计。"
+
+# ============================================================================
+# 友链页面
+# ============================================================================
+friends:
+  page:
+    title: "我的朋友们"
+    subtitle: "与志同道合的朋友们互相链接"
+
+  friends:
+    - name: "示例友链"
+      url: "https://example.com"
+      avatar: "https://t.alcy.cc/tx"
+      description: "这是一个示例友链的描述"
+      category: "技术博客"
+    - name: "技术博客示例"
+      url: "https://tech.example.com"
+      avatar: "https://t.alcy.cc/ai"
+      description: "分享前沿技术文章和开发经验"
+      category: "技术分享"
+    - name: "学习笔记"
+      url: "https://learn.example.com"
+      avatar: "https://t.alcy.cc/moe"
+      description: "记录学习过程中的心得体会"
+      category: "学习笔记"
+    - name: "开源项目"
+      url: "https://opensource.example.com"
+      avatar: "https://t.alcy.cc/pc"
+      description: "优秀的开源项目展示"
+      category: "开源项目"
+
+  apply:
+    title: "申请友链"
+    conditions:
+      - "内容优质，原创技术文章优先"
+      - "定期更新，保持活跃"
+      - "无不良内容，健康向上"
+      - "已添加本站链接"
+    siteInfo:
+      name: "爱则心痛 (azxt)"
+      url: "https://azxt.org"
+      description: "爱则心痛的个人博客 - 分享技术、生活和思考"
+    contactTitle: "联系方式"
+    contactDescription: "如果你符合条件并希望交换链接，请通过以下方式联系："
+    contactMethods:
+      - icon: "fas fa-envelope"
+        label: "发送邮件"
+        link: "mailto:admin@azxt.org"
+      - icon: "fab fa-github"
+        label: "GitHub Issues"
+        link: "https://github.com/aizexintong/azxt-blog/issues"
+
+# ============================================================================
+# 工具页面
+# ============================================================================
+tools:
+  page:
+    title: "我的工具"
+    subtitle: "日常使用的效率工具集合"
+    enable: true
+
+  categories:
+    - name: "开发工具"
+      icon: "fas fa-code"
+      description: "编程开发相关的工具软件"
+      tools:
+        - name: "Visual Studio Code"
+          url: "https://code.visualstudio.com"
+          description: "强大的代码编辑器，支持多种编程语言"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visualstudiocode.svg"
+        - name: "Git"
+          url: "https://git-scm.com"
+          description: "分布式版本控制系统"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/git.svg"
+        - name: "Docker"
+          url: "https://www.docker.com"
+          description: "容器化平台"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/docker.svg"
+        - name: "Postman"
+          url: "https://www.postman.com"
+          description: "API 测试和开发工具"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/postman.svg"
+
+    - name: "设计工具"
+      icon: "fas fa-palette"
+      description: "UI/UX 设计和图像处理工具"
+      tools:
+        - name: "Figma"
+          url: "https://www.figma.com"
+          description: "协作式 UI 设计工具"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/figma.svg"
+        - name: "Canva"
+          url: "https://www.canva.com"
+          description: "在线图形设计平台"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/canva.svg"
+
+    - name: "效率工具"
+      icon: "fas fa-bolt"
+      description: "提升工作效率的辅助工具"
+      tools:
+        - name: "Notion"
+          url: "https://www.notion.so"
+          description: "全能笔记和知识管理工具"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/notion.svg"
+        - name: "Raycast"
+          url: "https://raycast.com"
+          description: "Mac 效率启动器"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/raycast.svg"
+        - name: "Obsidian"
+          url: "https://obsidian.md"
+          description: "基于 Markdown 的双向链接笔记"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/obsidian.svg"
+
+    - name: "在线服务"
+      icon: "fas fa-cloud"
+      description: "常用的在线服务和平台"
+      tools:
+        - name: "GitHub"
+          url: "https://github.com"
+          description: "代码托管和协作平台"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg"
+        - name: "Vercel"
+          url: "https://vercel.com"
+          description: "前端部署平台"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/vercel.svg"
+        - name: "Cloudflare"
+          url: "https://www.cloudflare.com"
+          description: "CDN 和网络安全服务"
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/cloudflare.svg"
+
+# ============================================================================
+# 404 页面
+# ============================================================================
+error404:
+  page:
+    title: "404"
+    description: "页面不存在或已被移除"
+    message: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"
+    icon: "fas fa-ghost"
+
+  buttons:
+    home:
+      text: "返回首页"
+      icon: "fas fa-home"
+      url: "/"
+    posts:
+      text: "浏览文章"
+      icon: "fas fa-file-alt"
+      url: "/posts/"
+
+# ============================================================================
+# 布局与功能开关
+# ============================================================================
+layout:
+  hero:
+    layout: "centered"
+    showAvatar: true
+    showTitle: true
+    showSubtitle: true
+    typewriter: true
+
+  posts:
+    layout: "grid"
+    columns: 2
+    perPage: 12
+    showDate: true
+    showCategory: true
+    showTags: true
+    showExcerpt: true
+    excerptLength: 160
+
+  skills:
+    layout: "grid"
+    showCategories: true
+    showDetailed: true
+    showTimeline: true
+    showProjects: true
+
+  links:
+    showApply: true
+    showCategory: true
+
+  footer:
+    layout: "columns"
+    showCopyright: true
+    showPoweredBy: true
+    showSocial: true
+    showQuickLinks: true
+
+  sidebar:
+    enable: true
+    position: "right"
+    showTOC: true
+    showInfo: true
+    showTags: true
+
+  codeblock:
+    showLang: true
+    showCopy: true
+    expandLines: 0
+    lineNumbers: false
+
+  animations:
+    scroll: true
+    particles: true
+    typewriter: true
+    card3D: true
+
+  seo:
+    schema: true
+    openGraph: true
+    twitterCards: true
+    baiduVerification: ""
+    googleVerification: ""

@@ -1,52 +1,84 @@
-baseURL = 'https://azxt.org/'
-locale = 'zh-CN'
-languageName = '中文'
-title = '爱则心痛 | azxt'
-theme = 'illusion'
-defaultContentLanguage = 'zh'
-defaultContentLanguageInSubdir = false
-enableGitInfo = true
+# =============================================================================
+# 幻梦 Illusion 主题配置文件
+# =============================================================================
+# 本文件为 Hugo 站点核心配置，包含:
+#   1. 站点基本信息（标题、语言、作者等）
+#   2. 主题功能开关（搜索、动画、评论等）
+#   3. 导航菜单（主导航 + 页脚导航）
+#   4. Markdown 渲染与代码高亮
+#   5. 输出格式与 SEO 相关
+#
+# 数据文件: data/theme.yaml（统一管理页面内容数据）
+# 样式文件: assets/css/main.css（仅主题 CSS 变量）
+# 内联样式: 各布局模板的 <style> 标签内
+# =============================================================================
 
+# ---------------------------------------------------------------------------
+# 站点基本信息
+# ---------------------------------------------------------------------------
+baseURL = 'https://azxt.org/'           # 站点域名（结尾必须带 /）
+locale = 'zh-CN'                         # 语言区域
+languageName = '中文'                    # 语言显示名称
+title = '爱则心痛 | azxt'               # 站点标题（显示在浏览器标签栏）
+theme = 'illusion'                       # 主题名称（与 themes/ 目录一致）
+defaultContentLanguage = 'zh'           # 默认内容语言
+defaultContentLanguageInSubdir = false   # URL 中是否包含语言子目录
+enableGitInfo = true                     # 在页面中显示 Git 提交信息
+
+# ---------------------------------------------------------------------------
+# 站点参数（通过 .Site.Params 调用）
+# ---------------------------------------------------------------------------
 [params]
-  author = "爱则心痛"
-  description = "爱则心痛的个人博客 - 分享技术、生活和思考"
-  email = "admin@azxt.org"
-  github = "aizexintong"
-  domain = "azxt.org"
+  # -- 个人信息 --
+  author = "爱则心痛"                    # 作者名称
+  description = "爱则心痛的个人博客 - 分享技术、生活和思考"  # 站点描述（SEO）
+  email = "admin@azxt.org"               # 联系邮箱
+  github = "aizexintong"                 # GitHub 用户名
+  domain = "azxt.org"                    # 站点域名
 
-  enableDarkMode = true
-  enableSearch = true
-  searchProvider = "local"
-  enableParticles = true
-  enable3DEffects = true
-  enableScrollAnimations = true
-  enableTypewriter = true
-  enableAccessibility = true
-  enableTOC = true
-  enableComments = false
-  lazyLoadImages = true
+  # -- 功能开关 --
+  enableDarkMode = true                  # 深色模式切换
+  enableSearch = true                    # 站内搜索功能
+  searchProvider = "local"               # 搜索引擎: local | algolia | meilisearch
+  enableParticles = true                 # 背景粒子特效
+  enable3DEffects = true                 # 卡片 3D 倾斜效果
+  enableScrollAnimations = true          # 滚动动画（AOS）
+  enableTypewriter = true                # 打字机效果
+  enableAccessibility = true             # 无障碍辅助功能
+  enableTOC = true                       # 文章目录
+  enableComments = false                 # 评论区（需接入评论系统）
+  lazyLoadImages = true                  # 图片懒加载
 
-  enableSchema = true
-  enableOpenGraph = true
-  enableTwitterCards = true
+  # -- SEO / 社交分享 --
+  enableSchema = true                    # Schema.org 结构化数据
+  enableOpenGraph = true                 # Open Graph 协议
+  enableTwitterCards = true              # Twitter 卡片
 
-  siteTime = "2026-04-01T00:00:00+08:00"
+  # -- 站点时间 --
+  siteTime = "2026-04-01T00:00:00+08:00" # 站点上线时间（用于页脚显示运营时长）
 
+# ---------------------------------------------------------------------------
+# Markdown 渲染与代码高亮
+# ---------------------------------------------------------------------------
 [markup]
   [markup.highlight]
-    codeFences = true
-    guessSyntax = true
-    noClasses = false
-    tabWidth = 2
-    lineNos = false
+    codeFences = true                    # 启用围栏代码块
+    guessSyntax = true                   # 自动猜测语言
+    noClasses = false                    # 使用 CSS 类而非内联样式
+    tabWidth = 2                         # 制表符宽度
+    lineNos = false                      # 默认不显示行号
 
+# ---------------------------------------------------------------------------
+# 导航菜单
+# ---------------------------------------------------------------------------
 [menus]
+  # -- 主导航（顶部菜单栏） --
   [[menus.main]]
-    name = '主页'
-    pageRef = '/'
-    weight = 5
+    name = '主页'                        # 显示名称
+    pageRef = '/'                        # 页面路径
+    weight = 5                           # 排序权重（越小越靠前）
     [menus.main.params]
-      icon = 'fas fa-home'
+      icon = 'fas fa-home'               # FontAwesome 图标
 
   [[menus.main]]
     name = '文章'
@@ -97,6 +129,7 @@ enableGitInfo = true
     [menus.main.params]
       icon = 'fas fa-tools'
 
+  # -- 页脚导航（底部快捷链接） --
   [[menus.footer]]
     name = '隐私政策'
     url = '/privacy/'
@@ -111,11 +144,17 @@ enableGitInfo = true
     [menus.footer.params]
       icon = 'fas fa-file-contract'
 
+# ---------------------------------------------------------------------------
+# 输出格式
+# ---------------------------------------------------------------------------
 [outputs]
-  home = ["HTML", "JSON", "RSS"]
-  page = ["HTML"]
+  home = ["HTML", "JSON", "RSS"]         # 首页额外输出 JSON（用于搜索）和 RSS
+  page = ["HTML"]                        # 普通页面仅输出 HTML
 
+# ---------------------------------------------------------------------------
+# Sitemap（站点地图）
+# ---------------------------------------------------------------------------
 [sitemap]
-  changefreq = "weekly"
-  filename = "sitemap.xml"
-  priority = 0.5
+  changefreq = "weekly"                  # 更新频率
+  filename = "sitemap.xml"               # 文件名
+  priority = 0.5                         # 默认优先级（0.0 - 1.0）

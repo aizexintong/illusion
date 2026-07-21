@@ -6,25 +6,19 @@
 
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
 
-<!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | relURL }}">
 
-<!-- 预连接：CDN 和图片源 -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="dns-prefetch" href="https://tc.alcy.cc">
 
-<!-- 字体定义（仅 local() 回退，无下载）- 保持阻塞，体积极小 -->
 <link rel="stylesheet" href="{{ "lib/fonts/fonts.css" | relURL }}">
 
-<!-- Font Awesome CSS - 延迟加载，避免渲染阻塞 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous"></noscript>
 
-<!-- AOS CSS - 延迟加载，避免渲染阻塞 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous"></noscript>
 
-{{/* CDN CSS 本地回退（1秒快速检测） */}}
 <script>
 (function(){
   setTimeout(function(){
@@ -39,30 +33,30 @@
 </script>
 
 <!-- Open Graph -->
-{{- $assets := hugo.Data.assets -}}
+{{- $assets := hugo.Data.theme.assets -}}
 {{- $avatar := $assets.avatar.url | default "https://t.alcy.cc/tx" -}}
+{{- $ogImage := $avatar -}}
+{{- if .IsPage -}}
+  {{- with .Params.image -}}
+    {{- $ogImage = . -}}
+  {{- end -}}
+{{- end -}}
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta property="og:description" content="{{ .Description | default .Site.Params.description }}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta property="og:image" content="{{ $avatar }}">
+<meta property="og:image" content="{{ $ogImage }}">
 
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}">
-<meta name="twitter:image" content="{{ $avatar }}">
+<meta name="twitter:image" content="{{ $ogImage }}">
 
-<!-- RSS -->
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ "index.xml" | relURL }}">
 
-<!-- 自定义样式 -->
 {{ partial "head/css.html" . }}
-
-<!-- 自定义脚本 -->
 {{ partial "head/js.html" . }}
 
-<!-- 结构化数据 -->
 {{ if .Site.Params.enableSchema }}
   {{ partial "head/schema.html" . }}
 {{ end }}

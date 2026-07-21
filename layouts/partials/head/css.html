@@ -1,17 +1,2 @@
-{{- $css := slice
-  (resources.Get "css/_variables.css")
-  (resources.Get "css/_base.css")
-  (resources.Get "css/_chroma.css")
-  (resources.Get "css/_layout.css")
-  (resources.Get "css/_components.css")
-  (resources.Get "css/_home.css")
-  (resources.Get "css/_list.css")
-  (resources.Get "css/_pages.css")
-  (resources.Get "css/_animations.css")
-  (resources.Get "css/_search.css")
-  (resources.Get "css/_theme.css")
-  (resources.Get "css/_responsive.css")
-  | resources.Concat "css/main.css"
-  | resources.Minify
-  | resources.Fingerprint "sha256" -}}
+{{- $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint "sha256" -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

@@ -48,7 +48,7 @@
   {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
   <div class="mobile-menu-footer">
     <div class="social-links" role="list" aria-label="{{ i18n "headersociallinks" }}">
-      {{- $social := (hugo.Data.social).links -}}
+      {{- $social := (hugo.Data.theme.social).links -}}
       {{- range $social -}}
         {{- if and .show .url -}}
         <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener nofollow" aria-label="{{ .label }}">

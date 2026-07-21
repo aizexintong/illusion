@@ -27,7 +27,7 @@
       <div class="footer-section">
         <h2 id="tech-stack" class="title-anime">{{ i18n "footertechstack" }}</h2>
         <div class="tech-tags" role="list" aria-labelledby="tech-stack">
-          {{- with hugo.Data.skills.skills -}}
+          {{- with hugo.Data.theme.skills.skills -}}
             {{- range first 6 . -}}
           <span class="tech-tag" role="listitem" aria-label="技能: {{ .name }}">{{ .name }}</span>
             {{- end -}}
@@ -38,7 +38,7 @@
       <div class="footer-section">
         <h2 id="follow-me" class="title-anime">{{ i18n "footerfollow" }}</h2>
         <div class="social-links" role="list" aria-labelledby="follow-me">
-          {{- range hugo.Data.social.links -}}
+          {{- range hugo.Data.theme.social.links -}}
             {{- if and .show .url -}}
           <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener nofollow" aria-label="{{ .label }}" role="listitem">
             <i class="{{ .icon }}" aria-hidden="true"></i>
@@ -102,7 +102,7 @@
     var yearStr = currentYear === startYear ? "\u00A9 " + currentYear : "\u00A9 " + startYear + " - " + currentYear;
 
     document.getElementById("footer-copyright").innerHTML =
-      yearStr + ' ' + author + '·网站版权由 <a href="' + siteUrl + '" style="color: var(--c-primary-500);">' + author + '</a> 所有';
+      yearStr + ' ' + author + '·网站版权由 <a href="' + siteUrl + '" style="color: var(--color-accent);">' + author + '</a> 所有';
 
     document.getElementById("footer-powered").innerHTML =
       '\u7531 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> \u5F3A\u529B\u9A71\u52A8 \u00B7 \u4E3B\u9898\uFF1A<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">\u5E7B\u68A6 Illusion</a> \u00B7 \u4F5C\u8005\uFF1A<a href="https://github.com/aizexintong" target="_blank" rel="noopener">' + author + '</a>';
@@ -129,11 +129,11 @@
 
     var nums = [pad4(years), pad2(months), pad2(days), pad2(hours), pad2(minutes), pad2(seconds)];
     var seps = [
-      '<span style="color:var(--c-text-disabled);margin:0 1px;">-</span>',
-      '<span style="color:var(--c-text-disabled);margin:0 1px;">-</span>',
+      '<span style="color:var(--color-text-disabled);margin:0 1px;">-</span>',
+      '<span style="color:var(--color-text-disabled);margin:0 1px;">-</span>',
       '<span style="color:#D4B040;margin:0 1px;font-weight:var(--fw-bold);">T</span>',
-      '<span style="color:var(--c-text-disabled);margin:0 1px;">:</span>',
-      '<span style="color:var(--c-text-disabled);margin:0 1px;">:</span>'
+      '<span style="color:var(--color-text-disabled);margin:0 1px;">:</span>',
+      '<span style="color:var(--color-text-disabled);margin:0 1px;">:</span>'
     ];
 
     var html = '\u5DF2\u8FD0\u884C ';
