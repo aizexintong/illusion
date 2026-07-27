@@ -1,8 +1,55 @@
-/*
- * 幻梦 Illusion v2.2.0
- * 合并所有JS模块到单个文件
- * 包含：主题管理、特效管理、动画管理、交互管理、文档增强、通用功能
- */
+// ==========================================================================
+// 幻梦 Illusion v2.2.0 - TypeScript 版本
+// 合并所有JS模块到单个文件
+// 包含：主题管理、特效管理、动画管理、交互管理、文档增强、通用功能
+// ==========================================================================
+
+// ==========================================================================
+// 类型定义
+// ==========================================================================
+
+interface ThemeConfig {
+  light: {
+    name: string;
+    icon: string;
+    label: string;
+  };
+  dark: {
+    name: string;
+    icon: string;
+    label: string;
+  };
+  system: {
+    name: string;
+    icon: string;
+    label: string;
+  };
+}
+
+interface Particle {
+  type: string;
+  x: number;
+  y: number;
+  [key: string]: unknown;
+}
+
+interface ShootingStar {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  length: number;
+  life: number;
+  decay: number;
+  width: number;
+}
+
+interface SpectralType {
+  minSize: number;
+  maxSize: number;
+  colors: string[];
+  weight: number;
+}
 
 // ==========================================================================
 // 主题管理系统
@@ -25,11 +72,11 @@ const ThemeManager = {
       icon: 'fas fa-desktop',
       label: window.themeConfig?.systemLabel || '切换到手动模式'
     }
-  },
+  } satisfies ThemeConfig,
 
-  currentTheme: null,
+  currentTheme: null as string | null,
 
-  init() {
+  init(): void {
     this.setThemeImmediately();
 
     if (document.readyState === 'loading') {
@@ -41,13 +88,13 @@ const ThemeManager = {
     this.watchSystemTheme();
   },
 
-  setThemeImmediately() {
+  setThemeImmediately(): void {
     const savedTheme = localStorage.getItem('theme') || 'system';
     this.currentTheme = savedTheme;
     this.applyTheme(savedTheme);
   },
 
-  applyTheme(theme) {
+  applyTheme(theme: string): void {
     let themeToApply = theme;
 
     if (theme === 'system') {
@@ -58,7 +105,7 @@ const ThemeManager = {
     document.documentElement.setAttribute('data-theme', themeToApply);
   },
 
-  initToggle() {
+  initToggle(): void {
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
 
@@ -71,16 +118,16 @@ const ThemeManager = {
     });
   },
 
-  cycleTheme() {
-    const themes = ['system', 'light', 'dark'];
-    const currentIndex = themes.indexOf(this.currentTheme);
+  cycleTheme(): void {
+    const themes = ['system', 'light', 'dark'] as const;
+    const currentIndex = themes.indexOf(this.currentTheme as typeof themes[number]);
     const nextIndex = (currentIndex + 1) % themes.length;
     const nextTheme = themes[nextIndex];
     this.setTheme(nextTheme);
   },
 
-  setTheme(theme) {
-    if (!this.config[theme]) return;
+  setTheme(theme: string): void {
+    if (!this.config[theme as keyof ThemeConfig]) return;
 
     this.currentTheme = theme;
     localStorage.setItem('theme', theme);
@@ -98,13 +145,13 @@ const ThemeManager = {
     }));
   },
 
-  updateAllToggleButtons() {
-    document.querySelectorAll('#theme-toggle').forEach(btn => this.updateToggleButton(btn));
+  updateAllToggleButtons(): void {
+    document.querySelectorAll('#theme-toggle').forEach(btn => this.updateToggleButton(btn as HTMLElement));
   },
 
-  updateToggleButton(button) {
+  updateToggleButton(button: HTMLElement): void {
     if (!button) return;
-    const config = this.config[this.currentTheme];
+    const config = this.config[this.currentTheme as keyof ThemeConfig];
     const icon = button.querySelector('i');
 
     if (icon) {
@@ -115,11 +162,11 @@ const ThemeManager = {
     button.setAttribute('aria-label', config.label);
   },
 
-  watchSystemTheme() {
+  watchSystemTheme(): void {
     if (!window.matchMedia) return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    const handleChange = (e) => {
+    const handleChange = () => {
       if (this.currentTheme === 'system') {
         this.applyTheme('system');
       }
@@ -134,11 +181,11 @@ const ThemeManager = {
 // ==========================================================================
 
 const EffectsManager = {
-  canvas: null,
-  ctx: null,
-  particles: [],
-  animationId: null,
-  currentMode: null,
+  canvas: null as HTMLCanvasElement | null,
+  ctx: null as CanvasRenderingContext2D | null,
+  particles: [] as Particle[],
+  animationId: null as number | null,
+  currentMode: null as string | null,
   isRunning: false,
   lastTime: 0,
   frameCount: 0,
@@ -146,8 +193,12 @@ const EffectsManager = {
   targetFPS: 60,
   frameInterval: 1000 / 60,
   performanceMultiplier: 1,
-  offscreenCanvas: null,
-  offscreenCtx: null,
+  offscreenCanvas: null as HTMLCanvasElement | null,
+  offscreenCtx: null as CanvasRenderingContext2D | null,
+  shootingStars: [] as ShootingStar[],
+  lastShootingStarTime: 0,
+  _w: 0,
+  _h: 0,
 
   config: {
     candy: {
@@ -164,7 +215,7 @@ const EffectsManager = {
         { minSize: 2.5, maxSize: 4, colors: ['#FFFFFF', '#E8F0FF', '#D0E0FF'], weight: 1 },
         { minSize: 1.5, maxSize: 3, colors: ['#FFF8F0', '#FFF0D0', '#FFE8C0'], weight: 3 },
         { minSize: 0.8, maxSize: 1.8, colors: ['#FFD8B0', '#FFC090', '#FFA870'], weight: 4 }
-      ]
+      ] as SpectralType[]
     },
     firefly: {
       count: 35,
@@ -175,7 +226,7 @@ const EffectsManager = {
     }
   },
 
-  init() {
+  init(): void {
     if (this.isRunning) return;
     this.detectPerformance();
     this.createCanvas();
@@ -185,9 +236,9 @@ const EffectsManager = {
     this.isRunning = true;
   },
 
-  detectPerformance() {
+  detectPerformance(): void {
     const isLowEnd = navigator.hardwareConcurrency <= 2 || 
-                     navigator.deviceMemory <= 2 ||
+                     (navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined && (navigator as Navigator & { deviceMemory?: number }).deviceMemory! <= 2 ||
                      /Mobi|Android/i.test(navigator.userAgent);
     this.performanceMultiplier = isLowEnd ? 0.5 : 1;
     
@@ -204,7 +255,7 @@ const EffectsManager = {
     }
   },
 
-  createCanvas() {
+  createCanvas(): void {
     if (this.canvas) return;
     this.canvas = document.createElement('canvas');
     this.canvas.id = 'effects-canvas';
@@ -224,16 +275,18 @@ const EffectsManager = {
     } else {
       document.body.insertBefore(this.canvas, document.body.firstChild);
     }
-    this.ctx = this.canvas.getContext('2d', { alpha: true });
+    const ctx = this.canvas.getContext('2d', { alpha: true });
+    if (ctx) this.ctx = ctx;
     this.resize();
   },
 
-  createOffscreenCanvas() {
+  createOffscreenCanvas(): void {
     this.offscreenCanvas = document.createElement('canvas');
-    this.offscreenCtx = this.offscreenCanvas.getContext('2d', { alpha: true });
+    const ctx = this.offscreenCanvas.getContext('2d', { alpha: true });
+    if (ctx) this.offscreenCtx = ctx;
   },
 
-  resize() {
+  resize(): void {
     if (!this.canvas) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = window.innerWidth;
@@ -242,7 +295,9 @@ const EffectsManager = {
     this.canvas.height = h * dpr;
     this.canvas.style.width = w + 'px';
     this.canvas.style.height = h + 'px';
-    this.ctx.scale(dpr, dpr);
+    this._w = w;
+    this._h = h;
+    if (this.ctx) this.ctx.scale(dpr, dpr);
     
     if (this.offscreenCanvas) {
       this.offscreenCanvas.width = this.canvas.width;
@@ -250,8 +305,8 @@ const EffectsManager = {
     }
   },
 
-  bindEvents() {
-    let resizeTimeout;
+  bindEvents(): void {
+    let resizeTimeout: number;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => this.resize(), 100);
@@ -264,7 +319,7 @@ const EffectsManager = {
     });
   },
 
-  detectMode() {
+  detectMode(): void {
     const theme = document.documentElement.getAttribute('data-theme');
     const isDark = theme === 'dark';
 
@@ -275,7 +330,7 @@ const EffectsManager = {
     }
   },
 
-  switchMode(mode) {
+  switchMode(mode: string): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
@@ -293,10 +348,10 @@ const EffectsManager = {
     }
 
     this.lastTime = performance.now();
-    this.animate();
+    this.animate(this.lastTime);
   },
 
-  initDayEffects() {
+  initDayEffects(): void {
     const config = this.config.candy;
     for (let i = 0; i < config.ribbonCount; i++) this.particles.push(this.createRibbon(config));
     for (let i = 0; i < config.candyCount; i++) this.particles.push(this.createCandy(config));
@@ -304,7 +359,7 @@ const EffectsManager = {
     for (let i = 0; i < config.starCount; i++) this.particles.push(this.createDayStar(config));
   },
 
-  createRibbon(config) {
+  createRibbon(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     return {
       type: 'ribbon',
@@ -322,7 +377,7 @@ const EffectsManager = {
     };
   },
 
-  createCandy(config) {
+  createCandy(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     return {
       type: 'candy',
@@ -341,7 +396,7 @@ const EffectsManager = {
     };
   },
 
-  createHeart(config) {
+  createHeart(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     const colors = ['#FF6B6B', '#F783AC', '#FFA94D', '#FF8787', '#9775FA', '#4DABF7'];
     return {
@@ -359,7 +414,7 @@ const EffectsManager = {
     };
   },
 
-  createDayStar(config) {
+  createDayStar(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     const colors = ['#FFD43B', '#FFA94D', '#FF6B6B', '#69DB7C', '#4DABF7', '#F783AC'];
     return {
@@ -378,14 +433,14 @@ const EffectsManager = {
     };
   },
 
-  initNightEffects() {
+  initNightEffects(): void {
     const starConfig = this.config.star;
     for (let i = 0; i < starConfig.count; i++) this.particles.push(this.createStar(starConfig));
     const fireflyConfig = this.config.firefly;
     for (let i = 0; i < fireflyConfig.count; i++) this.particles.push(this.createFirefly(fireflyConfig));
   },
 
-  createStar(config) {
+  createStar(config: typeof EffectsManager.config.star) {
     const totalWeight = config.spectralTypes.reduce((s, t) => s + t.weight, 0);
     let roll = Math.random() * totalWeight;
     let type = config.spectralTypes[0];
@@ -408,7 +463,7 @@ const EffectsManager = {
     };
   },
 
-  createFirefly(config) {
+  createFirefly(config: typeof EffectsManager.config.firefly) {
     const angle = Math.random() * Math.PI * 2;
     const speed = 0.3 + Math.random() * 0.8;
     return {
@@ -426,18 +481,19 @@ const EffectsManager = {
     };
   },
 
-  drawRibbon(p) {
+  drawRibbon(p: Particle): void {
+    if (!this.ctx) return;
     this.ctx.save();
-    this.ctx.translate(p.x, p.y);
-    this.ctx.rotate(p.rotation);
-    const depthScale = 0.4 + p.depth * 0.6;
-    this.ctx.globalAlpha = 0.6 + p.depth * 0.4;
+    this.ctx.translate(p.x as number, p.y as number);
+    this.ctx.rotate(p.rotation as number);
+    const depthScale = 0.4 + (p.depth as number) * 0.6;
+    this.ctx.globalAlpha = 0.6 + (p.depth as number) * 0.4;
     this.ctx.scale(depthScale, depthScale);
-    const wave = Math.sin(p.wobble) * 4;
-    const halfW = p.width / 2;
-    const halfH = p.height / 2;
+    const wave = Math.sin(p.wobble as number) * 4;
+    const halfW = (p.width as number) / 2;
+    const halfH = (p.height as number) / 2;
     this.ctx.beginPath();
-    this.ctx.fillStyle = p.color;
+    this.ctx.fillStyle = p.color as string;
     this.ctx.moveTo(-halfW + wave, -halfH);
     this.ctx.bezierCurveTo(halfW * 0.5, -halfH * 0.5 + wave, halfW, halfH * 0.5 - wave, halfW + wave * 0.5, halfH);
     this.ctx.lineTo(-halfW + wave * 0.5, halfH);
@@ -449,75 +505,78 @@ const EffectsManager = {
     this.ctx.restore();
   },
 
-  drawCandy(p) {
+  drawCandy(p: Particle): void {
+    if (!this.ctx) return;
     this.ctx.save();
-    this.ctx.translate(p.x, p.y);
-    this.ctx.rotate(p.rotation);
-    const depthScale = 0.5 + p.depth * 0.5;
-    this.ctx.globalAlpha = 0.7 + p.depth * 0.3;
+    this.ctx.translate(p.x as number, p.y as number);
+    this.ctx.rotate(p.rotation as number);
+    const depthScale = 0.5 + (p.depth as number) * 0.5;
+    this.ctx.globalAlpha = 0.7 + (p.depth as number) * 0.3;
     this.ctx.scale(depthScale, depthScale);
+    const size = p.size as number;
     if (p.candyType === 0) {
       this.ctx.beginPath();
-      this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color;
+      this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string;
       this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor;
+      this.ctx.strokeStyle = p.stripeColor as string;
       this.ctx.lineWidth = 2;
       this.ctx.beginPath();
-      this.ctx.arc(0, 0, p.size * 0.7, 0, Math.PI);
+      this.ctx.arc(0, 0, size * 0.7, 0, Math.PI);
       this.ctx.stroke();
       this.ctx.beginPath();
-      this.ctx.arc(-p.size * 0.3, -p.size * 0.3, p.size * 0.25, 0, Math.PI * 2);
+      this.ctx.arc(-size * 0.3, -size * 0.3, size * 0.25, 0, Math.PI * 2);
       this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
       this.ctx.fill();
     } else if (p.candyType === 1) {
       this.ctx.fillStyle = '#E8D898';
-      this.ctx.fillRect(-1.5, p.size, 3, p.size * 1.5);
+      this.ctx.fillRect(-1.5, size, 3, size * 1.5);
       this.ctx.beginPath();
-      this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color;
+      this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string;
       this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor;
+      this.ctx.strokeStyle = p.stripeColor as string;
       this.ctx.lineWidth = 2;
       for (let i = 0; i < 3; i++) {
         this.ctx.beginPath();
-        this.ctx.arc(0, 0, p.size * (0.4 + i * 0.2), 0, Math.PI * 1.5);
+        this.ctx.arc(0, 0, size * (0.4 + i * 0.2), 0, Math.PI * 1.5);
         this.ctx.stroke();
       }
     } else {
       this.ctx.beginPath();
-      this.ctx.ellipse(0, 0, p.size * 1.5, p.size * 0.6, 0, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color;
+      this.ctx.ellipse(0, 0, size * 1.5, size * 0.6, 0, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string;
       this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor;
+      this.ctx.strokeStyle = p.stripeColor as string;
       this.ctx.lineWidth = 2;
       this.ctx.beginPath();
-      this.ctx.moveTo(-p.size * 1.2, 0);
-      this.ctx.quadraticCurveTo(-p.size * 0.5, -p.size * 0.5, 0, 0);
-      this.ctx.quadraticCurveTo(p.size * 0.5, p.size * 0.5, p.size * 1.2, 0);
+      this.ctx.moveTo(-size * 1.2, 0);
+      this.ctx.quadraticCurveTo(-size * 0.5, -size * 0.5, 0, 0);
+      this.ctx.quadraticCurveTo(size * 0.5, size * 0.5, size * 1.2, 0);
       this.ctx.stroke();
       this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       this.ctx.beginPath();
-      this.ctx.ellipse(-p.size * 0.5, -p.size * 0.2, p.size * 0.4, p.size * 0.2, -0.3, 0, Math.PI * 2);
+      this.ctx.ellipse(-size * 0.5, -size * 0.2, size * 0.4, size * 0.2, -0.3, 0, Math.PI * 2);
       this.ctx.fill();
     }
     this.ctx.restore();
   },
 
-  drawHeart(p) {
+  drawHeart(p: Particle): void {
+    if (!this.ctx) return;
     this.ctx.save();
-    this.ctx.translate(p.x, p.y);
-    this.ctx.rotate(p.rotation);
-    const depthScale = 0.5 + p.depth * 0.5;
-    const pulseScale = 1 + Math.sin(p.pulse) * 0.1;
-    this.ctx.globalAlpha = 0.6 + p.depth * 0.4;
+    this.ctx.translate(p.x as number, p.y as number);
+    this.ctx.rotate(p.rotation as number);
+    const depthScale = 0.5 + (p.depth as number) * 0.5;
+    const pulseScale = 1 + Math.sin(p.pulse as number) * 0.1;
+    this.ctx.globalAlpha = 0.6 + (p.depth as number) * 0.4;
     this.ctx.scale(depthScale * pulseScale, depthScale * pulseScale);
-    const size = p.size;
+    const size = p.size as number;
     this.ctx.beginPath();
     this.ctx.moveTo(0, size * 0.3);
     this.ctx.bezierCurveTo(-size, -size * 0.3, -size, -size, 0, -size * 0.5);
     this.ctx.bezierCurveTo(size, -size, size, -size * 0.3, 0, size * 0.3);
-    this.ctx.fillStyle = p.color;
+    this.ctx.fillStyle = p.color as string;
     this.ctx.fill();
     this.ctx.beginPath();
     this.ctx.ellipse(-size * 0.3, -size * 0.4, size * 0.2, size * 0.15, -0.5, 0, Math.PI * 2);
@@ -526,16 +585,17 @@ const EffectsManager = {
     this.ctx.restore();
   },
 
-  drawDayStar(p) {
+  drawDayStar(p: Particle): void {
+    if (!this.ctx) return;
     this.ctx.save();
-    this.ctx.translate(p.x, p.y);
-    this.ctx.rotate(p.rotation);
-    const depthScale = 0.5 + p.depth * 0.5;
-    this.ctx.globalAlpha = 0.6 + p.depth * 0.4;
+    this.ctx.translate(p.x as number, p.y as number);
+    this.ctx.rotate(p.rotation as number);
+    const depthScale = 0.5 + (p.depth as number) * 0.5;
+    this.ctx.globalAlpha = 0.6 + (p.depth as number) * 0.4;
     this.ctx.scale(depthScale, depthScale);
-    const spikes = p.points;
-    const outerRadius = p.size;
-    const innerRadius = p.size * 0.5;
+    const spikes = p.points as number;
+    const outerRadius = p.size as number;
+    const innerRadius = (p.size as number) * 0.5;
     this.ctx.beginPath();
     for (let i = 0; i < spikes * 2; i++) {
       const radius = i % 2 === 0 ? outerRadius : innerRadius;
@@ -546,27 +606,28 @@ const EffectsManager = {
       else this.ctx.lineTo(x, y);
     }
     this.ctx.closePath();
-    this.ctx.fillStyle = p.color;
+    this.ctx.fillStyle = p.color as string;
     this.ctx.fill();
     this.ctx.beginPath();
-    this.ctx.arc(-p.size * 0.2, -p.size * 0.2, p.size * 0.2, 0, Math.PI * 2);
+    this.ctx.arc(-(p.size as number) * 0.2, -(p.size as number) * 0.2, (p.size as number) * 0.2, 0, Math.PI * 2);
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     this.ctx.fill();
     this.ctx.restore();
   },
 
-  drawStar(p) {
-    const twinkleValue = Math.sin(p.twinkle);
+  drawStar(p: Particle): void {
+    if (!this.ctx) return;
+    const twinkleValue = Math.sin(p.twinkle as number);
     const alpha = 0.15 + (twinkleValue * 0.5 + 0.5) * 0.85;
     const sizeMultiplier = 0.6 + (twinkleValue * 0.5 + 0.5) * 0.6;
-    const currentSize = p.size * sizeMultiplier;
+    const currentSize = (p.size as number) * sizeMultiplier;
     this.ctx.save();
     this.ctx.globalAlpha = alpha;
     const glowSize = currentSize * (3 + twinkleValue * 2);
     const gradient = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowSize);
-    gradient.addColorStop(0, p.color);
-    gradient.addColorStop(0.2, p.color + 'C0');
-    gradient.addColorStop(0.5, p.color + '50');
+    gradient.addColorStop(0, p.color as string);
+    gradient.addColorStop(0.2, (p.color as string) + 'C0');
+    gradient.addColorStop(0.5, (p.color as string) + '50');
     gradient.addColorStop(1, 'transparent');
     this.ctx.fillStyle = gradient;
     this.ctx.beginPath();
@@ -577,8 +638,8 @@ const EffectsManager = {
     this.ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
     this.ctx.fill();
     if (p.hasRays) {
-      const rayLen = p.rayLength * currentSize * (0.7 + twinkleValue * 0.5);
-      this.ctx.strokeStyle = p.color;
+      const rayLen = (p.rayLength as number) * currentSize * (0.7 + twinkleValue * 0.5);
+      this.ctx.strokeStyle = p.color as string;
       this.ctx.lineWidth = 0.8;
       this.ctx.globalAlpha = alpha * 0.7;
       this.ctx.beginPath();
@@ -591,13 +652,14 @@ const EffectsManager = {
     this.ctx.restore();
   },
 
-  drawFirefly(p) {
-    const glow = 0.3 + Math.sin(p.phase) * 0.5 + 0.2;
+  drawFirefly(p: Particle): void {
+    if (!this.ctx) return;
+    const glow = 0.3 + Math.sin(p.phase as number) * 0.5 + 0.2;
     this.ctx.save();
-    const glowRadius = p.size * 2.5;
+    const glowRadius = (p.size as number) * 2.5;
     const gradient = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-    gradient.addColorStop(0, p.color);
-    gradient.addColorStop(0.3, p.color + 'B0');
+    gradient.addColorStop(0, p.color as string);
+    gradient.addColorStop(0.3, (p.color as string) + 'B0');
     gradient.addColorStop(1, 'transparent');
     this.ctx.globalAlpha = glow * 0.7;
     this.ctx.fillStyle = gradient;
@@ -607,52 +669,49 @@ const EffectsManager = {
     this.ctx.globalAlpha = glow;
     this.ctx.fillStyle = '#B0FFB0';
     this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
+    this.ctx.arc(p.x, p.y, (p.size as number) * 0.5, 0, Math.PI * 2);
     this.ctx.fill();
     this.ctx.restore();
   },
 
-  updateDayParticle(p) {
-    const depthSpeed = 0.4 + p.depth * 0.6;
-    p.y += p.speed * depthSpeed;
-    p.wobble += p.wobbleSpeed;
-    p.x += Math.sin(p.wobble) * 0.8;
-    if (p.rotation !== undefined) p.rotation += p.rotationSpeed || 0;
-    if (p.pulse !== undefined) p.pulse += 0.05;
-    if (p.y > this._h + 50) {
+  updateDayParticle(p: Particle): void {
+    const depthSpeed = 0.4 + (p.depth as number) * 0.6;
+    p.y = (p.y as number) + (p.speed as number) * depthSpeed;
+    p.wobble = (p.wobble as number) + (p.wobbleSpeed as number);
+    p.x = (p.x as number) + Math.sin(p.wobble as number) * 0.8;
+    if (p.rotation !== undefined) p.rotation = (p.rotation as number) + (p.rotationSpeed as number || 0);
+    if (p.pulse !== undefined) p.pulse = (p.pulse as number) + 0.05;
+    if ((p.y as number) > this._h + 50) {
       p.y = -50;
       p.x = Math.random() * this._w;
     }
   },
 
-  updateNightParticle(p) {
+  updateNightParticle(p: Particle): void {
     if (p.type === 'star') {
-      p.twinkle += p.twinkleSpeed;
+      p.twinkle = (p.twinkle as number) + (p.twinkleSpeed as number);
     } else if (p.type === 'firefly') {
-      p.phase += p.phaseSpeed;
-      p.wanderAngle += (Math.random() - 0.5) * 0.15;
-      p.vx += Math.cos(p.wanderAngle) * 0.03;
-      p.vy += Math.sin(p.wanderAngle) * 0.03;
+      p.phase = (p.phase as number) + (p.phaseSpeed as number);
+      p.wanderAngle = (p.wanderAngle as number) + (Math.random() - 0.5) * 0.15;
+      p.vx = (p.vx as number) + Math.cos(p.wanderAngle as number) * 0.03;
+      p.vy = (p.vy as number) + Math.sin(p.wanderAngle as number) * 0.03;
       const maxSpeed = 1.2;
-      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      const speed = Math.sqrt((p.vx as number) * (p.vx as number) + (p.vy as number) * (p.vy as number));
       if (speed > maxSpeed) {
-        p.vx = (p.vx / speed) * maxSpeed;
-        p.vy = (p.vy / speed) * maxSpeed;
+        p.vx = ((p.vx as number) / speed) * maxSpeed;
+        p.vy = ((p.vy as number) / speed) * maxSpeed;
       }
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < -p.glowSize) p.x = this._w + p.glowSize;
-      if (p.x > this._w + p.glowSize) p.x = -p.glowSize;
-      if (p.y < -p.glowSize) p.y = this._h + p.glowSize;
-      if (p.y > this._h + p.glowSize) p.y = -p.glowSize;
+      p.x = (p.x as number) + (p.vx as number);
+      p.y = (p.y as number) + (p.vy as number);
+      const glowSize = p.glowSize as number;
+      if ((p.x as number) < -glowSize) p.x = this._w + glowSize;
+      if ((p.x as number) > this._w + glowSize) p.x = -glowSize;
+      if ((p.y as number) < -glowSize) p.y = this._h + glowSize;
+      if ((p.y as number) > this._h + glowSize) p.y = -glowSize;
     }
   },
 
-  // 流星效果
-  shootingStars: [],
-  lastShootingStarTime: 0,
-
-  createShootingStar() {
+  createShootingStar(): ShootingStar {
     const startX = Math.random() * this._w;
     const startY = Math.random() * this._h * 0.5;
     const angle = Math.PI / 3 + (Math.random() - 0.5) * 0.8;
@@ -669,7 +728,7 @@ const EffectsManager = {
     };
   },
 
-  updateShootingStars() {
+  updateShootingStars(): void {
     if (this.currentMode !== 'night') return;
     
     const now = Date.now();
@@ -699,7 +758,8 @@ const EffectsManager = {
     }
   },
 
-  drawShootingStars() {
+  drawShootingStars(): void {
+    if (!this.ctx) return;
     for (const star of this.shootingStars) {
       this.ctx.save();
       this.ctx.globalAlpha = star.life;
@@ -724,7 +784,6 @@ const EffectsManager = {
       );
       this.ctx.stroke();
       
-      // 星头光晕
       const headGradient = this.ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, 6);
       headGradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
       headGradient.addColorStop(0.3, 'rgba(230, 240, 255, 0.6)');
@@ -734,7 +793,6 @@ const EffectsManager = {
       this.ctx.arc(star.x, star.y, 6, 0, Math.PI * 2);
       this.ctx.fill();
       
-      // 中间亮核
       this.ctx.fillStyle = '#FFFFFF';
       this.ctx.beginPath();
       this.ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2);
@@ -744,7 +802,7 @@ const EffectsManager = {
     }
   },
 
-  animate(currentTime) {
+  animate(currentTime: number): void {
     if (!this.ctx || !this.canvas) return;
     
     const deltaTime = currentTime - this.lastTime;
@@ -769,14 +827,13 @@ const EffectsManager = {
       }
     }
     
-    // 绘制流星
     this.updateShootingStars();
     this.drawShootingStars();
     
     this.animationId = requestAnimationFrame((t) => this.animate(t));
   },
 
-  destroy() {
+  destroy(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
@@ -800,32 +857,30 @@ const EffectsManager = {
 // ==========================================================================
 
 const AnimationManager = {
-  init() {
+  init(): void {
     this.initAOS();
     this.initScrollProgress();
     this.initSkillBars();
     this.initTypedJS();
-    
-    // Safety mechanism: ensure all data-aos elements become visible after timeout
     this.ensureVisibility();
   },
 
-  ensureVisibility() {
+  ensureVisibility(): void {
     setTimeout(() => {
       const hiddenElements = document.querySelectorAll('[data-aos]:not(.aos-animate)');
       if (hiddenElements.length > 0) {
         hiddenElements.forEach(el => {
           if (getComputedStyle(el).opacity === '0') {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
-            el.style.transition = 'none';
+            (el as HTMLElement).style.opacity = '1';
+            (el as HTMLElement).style.transform = 'none';
+            (el as HTMLElement).style.transition = 'none';
           }
         });
       }
     }, 2000);
   },
 
-  initAOS() {
+  initAOS(): void {
     if (typeof AOS !== 'undefined') {
       AOS.init({
         duration: 400,
@@ -836,7 +891,6 @@ const AnimationManager = {
         disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
       });
     } else {
-      // AOS not loaded yet, retry after a short delay
       setTimeout(() => {
         if (typeof AOS !== 'undefined') {
           AOS.init({
@@ -848,14 +902,13 @@ const AnimationManager = {
             disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
           });
         } else {
-          // AOS still not available, use custom scroll animations
           this.initScrollAnimations();
         }
       }, 500);
     }
   },
 
-  initScrollProgress() {
+  initScrollProgress(): void {
     const progressBar = document.createElement('div');
     progressBar.className = 'scroll-progress';
     document.body.appendChild(progressBar);
@@ -874,13 +927,13 @@ const AnimationManager = {
     }, { passive: true });
   },
 
-  initSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress[data-level]');
+  initSkillBars(): void {
+    const skillBars = document.querySelectorAll<HTMLElement>('.skill-progress[data-level]');
     if (skillBars.length === 0) return;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const bar = entry.target;
+          const bar = entry.target as HTMLElement;
           const level = bar.getAttribute('data-level');
           bar.style.willChange = 'width';
           bar.style.width = `${level}%`;
@@ -900,13 +953,12 @@ const AnimationManager = {
     });
   },
 
-  initTypedJS() {
+  initTypedJS(): void {
     const typedElements = document.querySelectorAll('.typed-text');
     if (typedElements.length === 0) return;
     if (typeof Typed !== 'undefined') {
       this.initTypedElements(typedElements);
     } else {
-      // Typed.js not loaded yet, retry after a short delay
       setTimeout(() => {
         if (typeof Typed !== 'undefined') {
           this.initTypedElements(typedElements);
@@ -917,10 +969,11 @@ const AnimationManager = {
     }
   },
 
-  initTypedElements(elements) {
+  initTypedElements(elements: NodeListOf<Element>): void {
     elements.forEach(el => {
       try {
-        const data = JSON.parse(el.getAttribute('data-typed') || '[]');
+        const dataAttr = el.getAttribute('data-typed');
+        const data = dataAttr ? JSON.parse(dataAttr) : [];
         new Typed(el, {
           strings: data,
           typeSpeed: 60,
@@ -937,11 +990,10 @@ const AnimationManager = {
     });
   },
 
-  initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('[data-aos]');
+  initScrollAnimations(): void {
+    const animatedElements = document.querySelectorAll<HTMLElement>('[data-aos]');
     if (animatedElements.length === 0) return;
     
-    // Set initial styles for all animated elements
     animatedElements.forEach(el => {
       el.style.opacity = '0';
       el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -961,7 +1013,7 @@ const AnimationManager = {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const el = entry.target;
+          const el = entry.target as HTMLElement;
           const delay = parseInt(el.getAttribute('data-aos-delay') || '0');
           setTimeout(() => {
             el.style.opacity = '1';
@@ -985,7 +1037,7 @@ const AnimationManager = {
 // ==========================================================================
 
 const InteractionManager = {
-  init() {
+  init(): void {
     this.initMobileMenu();
     this.initSmoothScroll();
     this.initLazyLoad();
@@ -996,46 +1048,50 @@ const InteractionManager = {
     this.initCardHover();
   },
 
-  initMobileMenu() {
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const menuClose = document.querySelector('.mobile-menu-close');
-    const menu = document.querySelector('.mobile-menu');
-    const overlay = document.querySelector('.mobile-menu-overlay');
+  initMobileMenu(): void {
+    const menuToggle = document.querySelector('.mobile-menu-toggle') as HTMLElement;
+    const menuClose = document.querySelector('.mobile-menu-close') as HTMLElement;
+    const menu = document.querySelector('.mobile-menu') as HTMLElement;
+    const overlay = document.querySelector('.mobile-menu-overlay') as HTMLElement;
     if (!menuToggle || !menu) return;
-    const setMenuFocusable = (focusable) => {
+    const setMenuFocusable = (focusable: boolean): void => {
       const elements = menu.querySelectorAll('a, button, [tabindex]');
       elements.forEach(el => {
         el.setAttribute('tabindex', focusable ? '0' : '-1');
       });
     };
-    const openMenu = () => {
+    const openMenu = (): void => {
       menu.classList.add('active');
       menu.setAttribute('aria-hidden', 'false');
-      overlay?.classList.add('active');
-      overlay?.setAttribute('aria-hidden', 'false');
+      if (overlay) {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
       setMenuFocusable(true);
       document.body.style.overflow = 'hidden';
     };
-    const closeMenu = () => {
+    const closeMenu = (): void => {
       menu.classList.remove('active');
       menu.setAttribute('aria-hidden', 'true');
-      overlay?.classList.remove('active');
-      overlay?.setAttribute('aria-hidden', 'true');
+      if (overlay) {
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
       setMenuFocusable(false);
       document.body.style.overflow = '';
     };
     setMenuFocusable(false);
     menuToggle.addEventListener('click', openMenu);
-    menuClose?.addEventListener('click', closeMenu);
-    overlay?.addEventListener('click', closeMenu);
+    if (menuClose) menuClose.addEventListener('click', closeMenu);
+    if (overlay) overlay.addEventListener('click', closeMenu);
     menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && menu.classList.contains('active')) closeMenu();
     });
   },
 
-  initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  initSmoothScroll(): void {
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
@@ -1051,14 +1107,14 @@ const InteractionManager = {
     });
   },
 
-  initLazyLoad() {
-    const images = document.querySelectorAll('img[data-src]');
+  initLazyLoad(): void {
+    const images = document.querySelectorAll<HTMLImageElement>('img[data-src]');
     if (!images.length) return;
     const imageObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const img = entry.target;
-          img.src = img.dataset.src;
+          const img = entry.target as HTMLImageElement;
+          img.src = img.dataset.src || '';
           img.removeAttribute('data-src');
           imageObserver.unobserve(img);
         }
@@ -1067,7 +1123,7 @@ const InteractionManager = {
     images.forEach(img => imageObserver.observe(img));
   },
 
-  initTouchInteractions() {
+  initTouchInteractions(): void {
     if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
     document.body.classList.add('touch-device');
     const touchElements = document.querySelectorAll('.btn, .card, .post-card, .skill-item');
@@ -1077,7 +1133,7 @@ const InteractionManager = {
     });
   },
 
-  initKeyboardNavigation() {
+  initKeyboardNavigation(): void {
     const skipLink = document.createElement('a');
     skipLink.href = '#main';
     skipLink.className = 'skip-link';
@@ -1085,8 +1141,8 @@ const InteractionManager = {
     document.body.insertBefore(skipLink, document.body.firstChild);
   },
 
-  initHeaderScroll() {
-    const header = document.querySelector('.site-header');
+  initHeaderScroll(): void {
+    const header = document.querySelector('.site-header') as HTMLElement;
     if (!header) return;
     let ticking = false;
     window.addEventListener('scroll', () => {
@@ -1102,31 +1158,31 @@ const InteractionManager = {
     }, { passive: true });
   },
 
-  initSearch() {
-    const searchToggle = document.querySelector('.search-toggle');
-    const searchModal = document.getElementById('search-modal');
-    const searchOverlay = document.getElementById('search-modal-overlay');
-    const searchClose = document.getElementById('search-modal-close');
-    const searchInput = searchModal?.querySelector('input[type="search"]');
+  initSearch(): void {
+    const searchToggle = document.querySelector('.search-toggle') as HTMLElement;
+    const searchModal = document.getElementById('search-modal') as HTMLElement;
+    const searchOverlay = document.getElementById('search-modal-overlay') as HTMLElement;
+    const searchClose = document.getElementById('search-modal-close') as HTMLElement;
+    const searchInput = searchModal?.querySelector('input[type="search"]') as HTMLInputElement;
     if (!searchToggle || !searchModal) return;
-    const openSearch = () => {
+    const openSearch = (): void => {
       searchModal.classList.add('active');
-      searchOverlay?.classList.add('active');
+      if (searchOverlay) searchOverlay.classList.add('active');
       searchModal.removeAttribute('aria-hidden');
-      searchOverlay?.removeAttribute('aria-hidden');
-      searchInput?.focus();
+      if (searchOverlay) searchOverlay.removeAttribute('aria-hidden');
+      if (searchInput) searchInput.focus();
       document.body.style.overflow = 'hidden';
     };
-    const closeSearch = () => {
+    const closeSearch = (): void => {
       searchModal.classList.remove('active');
-      searchOverlay?.classList.remove('active');
+      if (searchOverlay) searchOverlay.classList.remove('active');
       searchModal.setAttribute('aria-hidden', 'true');
-      searchOverlay?.setAttribute('aria-hidden', 'true');
+      if (searchOverlay) searchOverlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
     };
     searchToggle.addEventListener('click', openSearch);
-    searchClose?.addEventListener('click', closeSearch);
-    searchOverlay?.addEventListener('click', closeSearch);
+    if (searchClose) searchClose.addEventListener('click', closeSearch);
+    if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && searchModal.classList.contains('active')) closeSearch();
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -1140,10 +1196,10 @@ const InteractionManager = {
     });
   },
 
-  initCardHover() {
+  initCardHover(): void {
     const cards = document.querySelectorAll('.card, .post-card, .skill-item, .link-card');
     cards.forEach(card => {
-      let rafId = null;
+      let rafId: number | null = null;
       card.addEventListener('mousemove', (e) => {
         if (!card.classList.contains('enable-3d')) return;
         if (rafId) cancelAnimationFrame(rafId);
@@ -1155,12 +1211,12 @@ const InteractionManager = {
           const centerY = rect.height / 2;
           const rotateY = ((x - centerX) / centerX) * 5;
           const rotateX = ((centerY - y) / centerY) * 5;
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          (card as HTMLElement).style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
         });
       });
       card.addEventListener('mouseleave', () => {
         if (rafId) cancelAnimationFrame(rafId);
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        (card as HTMLElement).style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
       });
     });
   }
@@ -1171,14 +1227,14 @@ const InteractionManager = {
 // ==========================================================================
 
 const EnhancementManager = {
-  init() {
+  init(): void {
     this.enhanceCodeBlocks();
     this.enhanceTables();
     this.enhanceBlockquotes();
     this.addHeadingAnchors();
   },
 
-  enhanceCodeBlocks() {
+  enhanceCodeBlocks(): void {
     const codeBlocks = document.querySelectorAll('.highlight');
     codeBlocks.forEach((highlight) => {
       const pre = highlight.querySelector('pre');
@@ -1192,13 +1248,15 @@ const EnhancementManager = {
         if (langMatch) language = langMatch[1];
       }
       highlight.setAttribute('data-lang', language);
+      
       const copyBtn = document.createElement('button');
       copyBtn.className = 'code-copy-btn';
       copyBtn.setAttribute('aria-label', '复制代码');
       copyBtn.innerHTML = '<i class="fas fa-copy"></i><span>复制</span>';
       highlight.appendChild(copyBtn);
+      
       copyBtn.addEventListener('click', async () => {
-        const codeText = code.textContent;
+        const codeText = code.textContent || '';
         try {
           await navigator.clipboard.writeText(codeText);
           copyBtn.innerHTML = '<i class="fas fa-check"></i><span>已复制</span>';
@@ -1207,7 +1265,7 @@ const EnhancementManager = {
             copyBtn.innerHTML = '<i class="fas fa-copy"></i><span>复制</span>';
             copyBtn.classList.remove('copied');
           }, 2000);
-        } catch (err) {
+        } catch {
           const textarea = document.createElement('textarea');
           textarea.value = codeText;
           textarea.style.position = 'fixed';
@@ -1227,23 +1285,23 @@ const EnhancementManager = {
     });
   },
 
-  enhanceTables() {
+  enhanceTables(): void {
     const tables = document.querySelectorAll('.article-text table');
     tables.forEach(table => {
-      if (table.parentNode.classList.contains('table-wrapper')) return;
+      if (table.parentElement?.classList.contains('table-wrapper')) return;
       const wrapper = document.createElement('div');
       wrapper.className = 'table-wrapper';
       wrapper.style.overflowX = 'auto';
       wrapper.style.margin = '1.5rem 0';
-      table.parentNode.insertBefore(wrapper, table);
+      table.parentNode?.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     });
   },
 
-  enhanceBlockquotes() {
+  enhanceBlockquotes(): void {
     const blockquotes = document.querySelectorAll('.article-text blockquote');
     blockquotes.forEach(quote => {
-      const text = quote.textContent.trim();
+      const text = quote.textContent?.trim() || '';
       if (text.startsWith('💡')) quote.classList.add('callout', 'callout-info');
       else if (text.startsWith('⚠️')) quote.classList.add('callout', 'callout-warning');
       else if (text.startsWith('📝')) quote.classList.add('callout', 'callout-note');
@@ -1251,15 +1309,14 @@ const EnhancementManager = {
     });
   },
 
-  addHeadingAnchors() {
+  addHeadingAnchors(): void {
     const headings = document.querySelectorAll('.article-text h2, .article-text h3');
     headings.forEach(heading => {
       if (!heading.id) {
-        const id = heading.textContent
-          .toLowerCase()
+        const id = heading.textContent?.toLowerCase()
           .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
-          .replace(/^-+|-+$/g, '');
-        heading.id = id || `heading-${Math.random().toString(36).substr(2, 9)}`;
+          .replace(/^-+|-+$/g, '') || `heading-${Math.random().toString(36).substr(2, 9)}`;
+        heading.id = id;
       }
     });
   }
@@ -1270,26 +1327,30 @@ const EnhancementManager = {
 // ==========================================================================
 
 const UtilsManager = {
-  init() {
+  init(): void {
     this.initScrollButtons();
     this.initImageLightbox();
     this.initTOCHighlight();
     this.initClickEffect();
   },
 
-  initScrollButtons() {
+  initScrollButtons(): void {
     const buttons = document.getElementById('scroll-buttons');
     if (!buttons) return;
-    const topBtn = buttons.querySelector('.scroll-to-top');
-    const bottomBtn = buttons.querySelector('.scroll-to-bottom');
-    topBtn?.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    bottomBtn?.addEventListener('click', () => {
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-    });
+    const topBtn = buttons.querySelector('.scroll-to-top') as HTMLElement;
+    const bottomBtn = buttons.querySelector('.scroll-to-bottom') as HTMLElement;
+    if (topBtn) {
+      topBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+    if (bottomBtn) {
+      bottomBtn.addEventListener('click', () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      });
+    }
     let ticking = false;
-    const updateButtons = () => {
+    const updateButtons = (): void => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const threshold = 300;
@@ -1319,19 +1380,19 @@ const UtilsManager = {
     updateButtons();
   },
 
-  initImageLightbox() {
+  initImageLightbox(): void {
     const lightbox = document.getElementById('img-lightbox');
-    const lightboxImg = document.getElementById('img-lightbox-img');
-    const closeBtn = lightbox?.querySelector('.img-lightbox-close');
+    const lightboxImg = document.getElementById('img-lightbox-img') as HTMLImageElement;
+    const closeBtn = lightbox?.querySelector('.img-lightbox-close') as HTMLElement;
     if (!lightbox || !lightboxImg) return;
-    const closeLightbox = () => {
+    const closeLightbox = (): void => {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
     };
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
-    closeBtn?.addEventListener('click', closeLightbox);
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeLightbox();
     });
@@ -1346,10 +1407,10 @@ const UtilsManager = {
     });
   },
 
-  initTOCHighlight() {
-    const tocLinks = document.querySelectorAll('.toc-body a');
+  initTOCHighlight(): void {
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-body a');
     if (tocLinks.length === 0) return;
-    const headings = [];
+    const headings: { element: HTMLElement; link: HTMLAnchorElement }[] = [];
     tocLinks.forEach(link => {
       const href = link.getAttribute('href');
       if (href && href.startsWith('#')) {
@@ -1359,7 +1420,7 @@ const UtilsManager = {
       }
     });
     let ticking = false;
-    const updateActiveTOC = () => {
+    const updateActiveTOC = (): void => {
       let current = headings[0];
       const scrollTop = window.scrollY + 100;
       headings.forEach(item => {
@@ -1378,7 +1439,7 @@ const UtilsManager = {
     updateActiveTOC();
   },
 
-  initClickEffect() {
+  initClickEffect(): void {
     if (!document.querySelector('#click-effect-style')) {
       const style = document.createElement('style');
       style.id = 'click-effect-style';
@@ -1419,33 +1480,22 @@ const UtilsManager = {
 // 主初始化函数
 // ==========================================================================
 
-function initIllusionTheme() {
-  // Prevent multiple initializations
+function initIllusionTheme(): void {
   if (window.IllusionThemeInitialized) return;
   window.IllusionThemeInitialized = true;
 
-  // 1. 初始化主题管理系统
   ThemeManager.init();
-  
-  // 2. 初始化通用交互功能 (不依赖外部库)
   UtilsManager.init();
-  
-  // 3. 初始化增强功能 (不依赖外部库)
   EnhancementManager.init();
-
-  // 4. 初始化动画和特效 (依赖外部库，需要确保它们已加载)
   AnimationManager.init();
   
-  // 只有在用户没有开启减少动画偏好时才初始化特效
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     EffectsManager.init();
   }
   
   InteractionManager.init();
 
-  // 5. 确保某些延迟加载功能在 DOMContentLoaded 后运行
   document.addEventListener('DOMContentLoaded', () => {
-    // 技能进度条需要等待DOM渲染
     setTimeout(() => {
       AnimationManager.initSkillBars();
     }, 500);
@@ -1455,8 +1505,9 @@ function initIllusionTheme() {
 }
 
 // ==========================================================================
-// 启动逻辑：立即初始化核心功能，动画/特效等待外部库就绪
+// 启动逻辑
 // ==========================================================================
+
 initIllusionTheme();
 
 // 导出接口
@@ -1470,3 +1521,6 @@ window.IllusionTheme = {
 };
 
 console.log('幻梦主题 v2.2.0 已初始化');
+
+// 导出以供外部使用
+export {};
