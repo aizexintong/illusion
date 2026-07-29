@@ -1,0 +1,78 @@
+{{ define "main" }}
+
+<div class="section-content" role="main">
+  <header class="section-header">
+    <h1 class="section-title">
+      {{ if eq .Data.Singular "tags" }}
+        <i class="fas fa-tags section-title-icon"></i>{{ hugo.Data.theme.tags.page.title | default (i18n "tagsheadertitle") }}
+      {{ else if eq .Data.Singular "categories" }}
+        <i class="fas fa-folder section-title-icon"></i>{{ i18n "categoriesheadertitle" }}
+      {{ else }}
+        <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
+      {{ end }}
+    </h1>
+    {{ if .Content }}
+      <div class="section-description">{{ .Content }}</div>
+    {{ else }}
+      <p class="section-subtitle">{{ hugo.Data.theme.tags.page.subtitle | default "" }}</p>
+    {{ end }}
+    <div class="tag-header-meta">
+      <span class="tag-article-count">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        {{ $taxonomy := .Data.Plural }}
+        {{ if eq $taxonomy "tags" }}
+          {{ $totalTags := len .Data.Terms.Alphabetical }}
+          {{ i18n "tagscount" (dict "Count" $totalTags) }}
+        {{ else if eq $taxonomy "categories" }}
+          {{ $totalCats := len .Data.Terms.Alphabetical }}
+          {{ i18n "categoriescount" (dict "Count" $totalCats) }}
+        {{ else }}
+          {{ i18n "taxonomycount" (dict "Count" (len .Data.Terms.Alphabetical)) }}
+        {{ end }}
+      </span>
+    </div>
+  </header>
+
+  <div class="container">
+    {{ if .Data.Terms }}
+      {{ $perPage := hugo.Data.theme.tags.page.perPage | default 25 }}
+      
+      {{/* 使用 .Data.Terms.Alphabetical 获取去重后的 term 列表 */}}
+      {{ $terms := .Data.Terms.Alphabetical }}
+      
+      {{/* 按文章数量降序排序 */}}
+      {{ $sortedTerms := sort $terms "Count" "desc" }}
+      
+      {{ $totalTerms := len $sortedTerms }}
+
+      <div class="tags-grid" data-aos="fade-up" id="tags-grid" data-per-page="{{ $perPage }}" data-total="{{ $totalTerms }}">
+        {{ range $sortedTerms }}
+          <div class="tags-card-wrapper">
+            <a href="{{ .Page.RelPermalink }}" class="tags-card">
+              <span class="tags-card-name">{{ .Page.Title }}</span>
+              <span class="tags-card-count">{{ .Count }} 篇文章</span>
+            </a>
+          </div>
+        {{ end }}
+      </div>
+
+      <nav class="pagination" id="tags-pagination" aria-label="{{ i18n "paginationnav" }}" style="display:none;">
+        <a href="#" class="page-link prev" id="page-prev" aria-label="{{ i18n "pageprev" }}">
+          <i class="fas fa-chevron-left"></i>
+          {{ i18n "pageprev" }}
+        </a>
+        <div class="page-numbers" id="page-numbers"></div>
+        <a href="#" class="page-link next" id="page-next" aria-label="{{ i18n "pagenext" }}">
+          {{ i18n "pagenext" }}
+          <i class="fas fa-chevron-right"></i>
+        </a>
+      </nav>
+      
+    {{ else }}
+      <div class="no-terms-message" data-aos="fade-up">
+        <p>{{ i18n "taxonomyempty" }}</p>
+      </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

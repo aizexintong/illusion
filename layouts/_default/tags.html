@@ -1,0 +1,47 @@
+{{ define "main" }}
+
+<div class="section-content" role="main">
+  <header class="section-header">
+    <h1 class="section-title">
+      <i class="fas fa-tags section-title-icon"></i>{{ hugo.Data.theme.tags.page.title | default (i18n "tagsheadertitle") }}
+    </h1>
+    <p class="section-subtitle">{{ hugo.Data.theme.tags.page.subtitle | default "" }}</p>
+    <div class="tag-header-meta">
+      <span class="tag-article-count" id="total-tags-count">
+        <i class="fas fa-tags" aria-hidden="true"></i>
+        {{ $totalTags := len site.Taxonomies.tags }}
+        {{ i18n "tagscount" (dict "Count" $totalTags) }}
+      </span>
+    </div>
+  </header>
+
+  <div class="container">
+    {{ $perPage := hugo.Data.theme.tags.page.perPage | default 25 }}
+    
+    {{ $allTags := slice }}
+    {{ range site.Taxonomies.tags }}
+      {{ $allTags = $allTags | append . }}
+    {{ end }}
+    {{ $sortedTags := sort $allTags ".Pages" "desc" }}
+    
+    {{ $totalTerms := len $sortedTags }}
+    
+    {{/* 手动分页：计算当前页的数据 */}}
+    {{ $page := .Paginator.PageNumber | default 1 }}
+    {{ $offset := mul (sub $page 1) $perPage }}
+    
+    <div class="tags-grid" data-aos="fade-up" id="tags-grid">
+      {{ range first $perPage (after $offset $sortedTags) }}
+        {{ $termPage := .Page }}
+        {{ $count := len .Pages }}
+        <a href="{{ $termPage.RelPermalink }}" class="tags-card">
+          <span class="tags-card-name">{{ $termPage.Title }}</span>
+          <span class="tags-card-count">{{ $count }} 篇文章</span>
+        </a>
+      {{ end }}
+    </div>
+
+    {{ template "_internal/pagination.html" . }}
+  </div>
+</div>
+{{ end }}

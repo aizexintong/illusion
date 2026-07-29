@@ -24,7 +24,13 @@
       <span class="tag-article-count">
         <i class="fas fa-tag" aria-hidden="true"></i>
         {{ if eq .Kind "taxonomy" }}
-          {{ with .Data.Terms }}{{ i18n "taxonomycount" (dict "Count" (len .)) }}{{ end }}
+          {{ if eq .Data.Singular "tags" }}
+            {{ with .Data.Terms }}{{ i18n "tagscount" (dict "Count" (len .)) }}{{ end }}
+          {{ else if eq .Data.Singular "categories" }}
+            {{ with .Data.Terms }}{{ i18n "categoriescount" (dict "Count" (len .)) }}{{ end }}
+          {{ else }}
+            {{ with .Data.Terms }}{{ i18n "taxonomycount" (dict "Count" (len .)) }}{{ end }}
+          {{ end }}
         {{ else }}
           {{ with .Pages }}{{ i18n "termcount" (dict "Count" (len .)) }}{{ end }}
         {{ end }}

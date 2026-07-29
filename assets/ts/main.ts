@@ -1934,6 +1934,145 @@ const NavClickEffect = {
 };
 
 // ==========================================================================
+// 标签页分页管理器
+// ==========================================================================
+
+const TagsPagination = {
+  currentPage: 1,
+  perPage: 25,
+  totalPages: 1,
+  wrappers: [] as HTMLElement[],
+
+  init(): void {
+    const grid = document.getElementById('tags-grid');
+    const pagination = document.getElementById('tags-pagination');
+    if (!grid || !pagination) return;
+
+    this.perPage = parseInt(grid.dataset.perPage || '25');
+    const total = parseInt(grid.dataset.total || '0');
+    this.totalPages = Math.ceil(total / this.perPage);
+
+    if (this.totalPages <= 1) return;
+
+    pagination.style.display = 'flex';
+    this.wrappers = Array.from(grid.querySelectorAll('.tags-card-wrapper')) as HTMLElement[];
+
+    const prevBtn = document.getElementById('page-prev') as HTMLElement;
+    const nextBtn = document.getElementById('page-next') as HTMLElement;
+
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (this.currentPage > 1) this.showPage(this.currentPage - 1);
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (this.currentPage < this.totalPages) this.showPage(this.currentPage + 1);
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(urlParams.get('page') || '1');
+    this.showPage(Math.min(Math.max(initialPage, 1), this.totalPages));
+  },
+
+  showPage(page: number): void {
+    this.currentPage = page;
+
+    this.wrappers.forEach((wrapper, index) => {
+      const itemPage = Math.floor(index / this.perPage) + 1;
+      wrapper.style.display = itemPage === page ? '' : 'none';
+    });
+
+    this.renderPageNumbers();
+    this.updateNavButtons();
+
+    if (page === 1) {
+      history.replaceState(null, '', window.location.pathname);
+    } else {
+      history.replaceState(null, '', '?page=' + page);
+    }
+
+    const grid = document.getElementById('tags-grid');
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  },
+
+  renderPageNumbers(): void {
+    const pageNumbers = document.getElementById('page-numbers');
+    if (!pageNumbers) return;
+    pageNumbers.innerHTML = '';
+
+    const startPage = Math.max(1, this.currentPage - 3);
+    const endPage = Math.min(this.totalPages, this.currentPage + 3);
+
+    if (startPage > 1) {
+      this.addPageLink(pageNumbers, 1);
+      if (startPage > 2) {
+        const dots = document.createElement('span');
+        dots.className = 'page-link dots';
+        dots.textContent = '…';
+        pageNumbers.appendChild(dots);
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      this.addPageLink(pageNumbers, i);
+    }
+
+    if (endPage < this.totalPages) {
+      if (endPage < this.totalPages - 1) {
+        const dots = document.createElement('span');
+        dots.className = 'page-link dots';
+        dots.textContent = '…';
+        pageNumbers.appendChild(dots);
+      }
+      this.addPageLink(pageNumbers, this.totalPages);
+    }
+  },
+
+  addPageLink(container: HTMLElement, pageNum: number): void {
+    const link = document.createElement('a');
+    link.href = '#';
+    link.className = 'page-link';
+    if (pageNum === this.currentPage) {
+      link.classList.add('current');
+    }
+    link.textContent = String(pageNum);
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showPage(pageNum);
+    });
+    container.appendChild(link);
+  },
+
+  updateNavButtons(): void {
+    const prevBtn = document.getElementById('page-prev') as HTMLElement;
+    const nextBtn = document.getElementById('page-next') as HTMLElement;
+
+    if (prevBtn) {
+      if (this.currentPage <= 1) {
+        prevBtn.style.pointerEvents = 'none';
+        prevBtn.style.opacity = '0.4';
+      } else {
+        prevBtn.style.pointerEvents = 'auto';
+        prevBtn.style.opacity = '1';
+      }
+    }
+
+    if (nextBtn) {
+      if (this.currentPage >= this.totalPages) {
+        nextBtn.style.pointerEvents = 'none';
+        nextBtn.style.opacity = '0.4';
+      } else {
+        nextBtn.style.pointerEvents = 'auto';
+        nextBtn.style.opacity = '1';
+      }
+    }
+  }
+};
+
+// ==========================================================================
 // 主初始化函数
 // ==========================================================================
 
@@ -1957,6 +2096,7 @@ function initIllusionTheme(): void {
   CalendarWidget.init();
   ArchivesNavigator.init();
   NavClickEffect.init();
+  TagsPagination.init();  // ← 新增这一行
 
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
@@ -1986,7 +2126,8 @@ window.IllusionTheme = {
   SearchEngine,
   CalendarWidget,
   ArchivesNavigator,
-  NavClickEffect
+  NavClickEffect,
+  TagsPagination
 };
 
 console.log('幻梦主题 v2.2.0 已初始化');

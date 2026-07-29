@@ -298,6 +298,14 @@ tagstitle:
   other: "标签"
 taxonomycount:
   other: "共 {{ .Count }} 个标签/分类/条目"
+tagsheadertitle:
+  other: "标签"
+tagscount:
+  other: "共 {{ .Count }} 个标签"
+categoriesheadertitle:
+  other: "分类"
+categoriescount:
+  other: "共 {{ .Count }} 个分类"
 taxonomyempty:
   other: "暂无标签/分类/条目"
 termcount:
