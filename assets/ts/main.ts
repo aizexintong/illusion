@@ -1477,6 +1477,463 @@ const UtilsManager = {
 };
 
 // ==========================================================================
+// Font Awesome 回退检测
+// ==========================================================================
+
+const FontFallback = {
+  init(): void {
+    setTimeout(() => {
+      const testIcon = document.createElement('i');
+      testIcon.className = 'fas fa-square';
+      testIcon.style.cssText = 'position:fixed;left:-99px;top:-99px;font-size:16px;';
+      document.body.appendChild(testIcon);
+      if (testIcon.offsetWidth < 5) {
+        const linkFallback = document.querySelector<HTMLLinkElement>('#fa-fallback-css');
+        const faUrl = linkFallback?.dataset?.href || '';
+        if (faUrl) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = faUrl;
+          document.head.appendChild(link);
+        }
+      }
+      document.body.removeChild(testIcon);
+    }, 1000);
+  }
+};
+
+// ==========================================================================
+// 页脚管理器 - 版权年份/站点运行时长
+// ==========================================================================
+
+const FooterManager = {
+  siteTime: '',
+  siteUrl: '',
+  author: '',
+  uptimeColors: ['#E06050', '#E09040', '#E0A070', '#50C878', '#60A8D0', '#D08090'],
+  _timer: null as ReturnType<typeof setInterval> | null,
+
+  init(): void {
+    if (!document.getElementById('footer-copyright')) return;
+    const cfg = (window as any).siteConfig;
+    if (!cfg) return;
+    this.siteTime = cfg.siteTime || '';
+    this.siteUrl = cfg.baseURL || '';
+    this.author = cfg.author || '';
+    this.updateFooter();
+    this._timer = setInterval(() => this.updateFooter(), 1000);
+  },
+
+  updateFooter(): void {
+    const now = new Date();
+    const siteStart = new Date(this.siteTime);
+    const currentYear = now.getFullYear();
+    const startYear = siteStart.getFullYear();
+
+    const yearStr = currentYear === startYear ? '\u00A9 ' + currentYear : '\u00A9 ' + startYear + ' - ' + currentYear;
+
+    const copyrightEl = document.getElementById('footer-copyright');
+    if (copyrightEl) {
+      copyrightEl.innerHTML = yearStr + ' ' + this.author + '\u00B7\u7F51\u7AD9\u7248\u6743\u7531 <a href="' + this.siteUrl + '" style="color: var(--c-primary-400);">' + this.author + '</a> \u6240\u6709';
+    }
+
+    const poweredEl = document.getElementById('footer-powered');
+    if (poweredEl) {
+      poweredEl.innerHTML = '\u7531 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> \u5F3A\u529B\u9A71\u52A8 \u00B7 \u4E3B\u9898\uFF1A<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">\u5E7B\u68A6 Illusion</a> \u00B7 \u4F5C\u8005\uFF1A<a href="https://github.com/aizexintong" target="_blank" rel="noopener">' + this.author + '</a>';
+    }
+
+    const displayEl = document.getElementById('uptime-display');
+    if (!displayEl) return;
+
+    const diff = now.getTime() - siteStart.getTime();
+    const totalSeconds = Math.floor(diff / 1000);
+    const seconds = totalSeconds % 60;
+    const minutes = Math.floor(totalSeconds / 60) % 60;
+    const hours = Math.floor(totalSeconds / 3600) % 24;
+
+    let years = now.getFullYear() - siteStart.getFullYear();
+    let months = now.getMonth() - siteStart.getMonth();
+    let days = now.getDate() - siteStart.getDate();
+
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    const nums = [this.pad4(years), this.pad2(months), this.pad2(days), this.pad2(hours), this.pad2(minutes), this.pad2(seconds)];
+    const seps = [
+      '<span style="color:var(--c-text-subtle);margin:0 1px;">-</span>',
+      '<span style="color:var(--c-text-subtle);margin:0 1px;">-</span>',
+      '<span style="color:#D4B040;margin:0 1px;font-weight:var(--fw-bold);">T</span>',
+      '<span style="color:var(--c-text-subtle);margin:0 1px;">:</span>',
+      '<span style="color:var(--c-text-subtle);margin:0 1px;">:</span>'
+    ];
+
+    let html = '\u5DF2\u8FD0\u884C ';
+    for (let i = 0; i < nums.length; i++) {
+      if (i > 0) html += seps[i - 1];
+      html += '<span style="color:' + this.uptimeColors[i] + ';font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">' + nums[i] + '</span>';
+    }
+    displayEl.innerHTML = html;
+  },
+
+  pad2(n: number): string { return n < 10 ? '0' + n : String(n); },
+  pad4(n: number): string { return String(n).padStart(4, '0'); }
+};
+
+// ==========================================================================
+// 搜索引擎管理器
+// ==========================================================================
+
+const SearchEngine = {
+  searchIndex: [] as any[],
+
+  init(): void {
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+    const searchResults = document.getElementById('search-results');
+    if (!searchForm || !searchInput || !searchResults) return;
+
+    const indexUrl = searchForm.dataset.indexUrl || 'index.json';
+
+    fetch(indexUrl)
+      .then(response => {
+        if (!response.ok) throw new Error('HTTP error: ' + response.status);
+        return response.json();
+      })
+      .then(data => {
+        this.searchIndex = data;
+      })
+      .catch(() => {
+        const i18nError = searchForm.dataset.i18nSearcherror || '搜索索引加载失败';
+        const i18nHint = searchForm.dataset.i18nSearcherrorhint || '';
+        searchResults.innerHTML = '<div class="search-error"><p><i class="fas fa-exclamation-triangle"></i> ' + i18nError + '</p>' + (i18nHint ? '<p class="search-error-hint">' + i18nHint + '</p>' : '') + '</div>';
+      });
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.performSearch(searchInput, searchResults, searchForm);
+    });
+
+    searchInput.addEventListener('input', () => {
+      if (searchInput.value.length >= 2) {
+        this.performSearch(searchInput, searchResults, searchForm);
+      } else {
+        searchResults.innerHTML = '';
+      }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+      }
+    });
+  },
+
+  performSearch(input: HTMLInputElement, results: HTMLElement, form: HTMLElement): void {
+    const query = input.value;
+    if (!query.trim() || this.searchIndex.length === 0) {
+      results.innerHTML = '';
+      return;
+    }
+
+    const normalizedQuery = query.toLowerCase().trim();
+    const filtered = this.searchIndex.filter((item: any) => {
+      const title = (item.title || '').toLowerCase();
+      const content = (item.content || '').toLowerCase();
+      const summary = (item.summary || '').toLowerCase();
+      return title.includes(normalizedQuery) || content.includes(normalizedQuery) || summary.includes(normalizedQuery);
+    });
+
+    if (filtered.length === 0) {
+      const i18nNoResults = form.dataset.i18nSearchnoresults || '未找到';
+      const i18nTitle = form.dataset.i18nSearchtitle || '搜索结果';
+      results.innerHTML = '<div class="search-no-results"><p>' + i18nNoResults + ' "<strong>' + query + '</strong>" ' + i18nTitle + '</p></div>';
+      return;
+    }
+
+    const i18nResults = form.dataset.i18nSearchresults || '个结果';
+    let html = '<div class="search-results-header"><p>' + filtered.length + ' ' + i18nResults + '</p></div><ul class="search-results-list">';
+
+    filtered.forEach((result: any) => {
+      const title = this.highlightText(result.title, query);
+      const excerpt = this.getExcerpt(result.content || result.summary, query);
+      const tags = result.tags ? '<span class="search-result-tags">' + result.tags.join(', ') + '</span>' : '';
+      html += '<li class="search-result-item"><a href="' + result.permalink + '" class="search-result-link"><h3 class="search-result-title">' + title + '</h3><div class="search-result-excerpt">' + excerpt + '</div><div class="search-result-meta"><span class="search-result-date">' + this.formatDate(result.date) + '</span>' + tags + '</div></a></li>';
+    });
+
+    html += '</ul>';
+    results.innerHTML = html;
+  },
+
+  highlightText(text: string, query: string): string {
+    if (!text) return '';
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp('(' + escaped + ')', 'gi');
+    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+  },
+
+  getExcerpt(content: string, query: string, length: number = 120): string {
+    if (!content) return '';
+    const normalized = content.toLowerCase();
+    const idx = normalized.indexOf(query.toLowerCase());
+    if (idx === -1) return content.substring(0, length) + '...';
+    const start = Math.max(0, idx - 40);
+    const end = Math.min(content.length, idx + 80);
+    let excerpt = content.substring(start, end);
+    if (start > 0) excerpt = '...' + excerpt;
+    if (end < content.length) excerpt = excerpt + '...';
+    return this.highlightText(excerpt, query);
+  },
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+};
+
+// ==========================================================================
+// 日历组件
+// ==========================================================================
+
+const CalendarWidget = {
+  init(): void {
+    if (!document.getElementById('calendar-days')) return;
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.render());
+    } else {
+      this.render();
+    }
+  },
+
+  render(): void {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+
+    const monthNames = Array.from({ length: 12 }, (_, i) =>
+      new Intl.DateTimeFormat('zh-CN', { month: 'long' }).format(new Date(2024, i, 1))
+    );
+    const weekDays = Array.from({ length: 7 }, (_, i) =>
+      new Intl.DateTimeFormat('zh-CN', { weekday: 'short' }).format(new Date(2024, 0, i + 1))
+    );
+
+    const monthEl = document.getElementById('calendar-month');
+    const yearEl = document.getElementById('calendar-year');
+    if (monthEl) monthEl.textContent = monthNames[month];
+    if (yearEl) yearEl.textContent = year + '\u5E74';
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const daysContainer = document.getElementById('calendar-days');
+    if (!daysContainer) return;
+    daysContainer.innerHTML = '';
+
+    for (let i = 0; i < firstDay; i++) {
+      const emptyDay = document.createElement('span');
+      emptyDay.className = 'calendar-day empty';
+      daysContainer.appendChild(emptyDay);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayEl = document.createElement('span');
+      dayEl.className = 'calendar-day' + (day === today ? ' today' : '');
+      dayEl.textContent = String(day);
+      daysContainer.appendChild(dayEl);
+    }
+
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) {
+      dateEl.textContent = year + '\u5E74' + (month + 1) + '\u6708' + today + '\u65E5 ' + weekDays[now.getDay()];
+    }
+  }
+};
+
+// ==========================================================================
+// 归档导航器 - 年份/月份切换
+// ==========================================================================
+
+const ArchivesNavigator = {
+  years: [] as number[],
+  currentYearIndex: 0,
+
+  init(): void {
+    if (!document.getElementById('current-year-display')) return;
+    this.parseYears();
+    if (this.years.length === 0) {
+      const display = document.getElementById('current-year-display');
+      if (display) display.textContent = '\u65E0\u6570\u636E';
+      const prevBtn = document.getElementById('year-prev') as HTMLButtonElement | null;
+      const nextBtn = document.getElementById('year-next') as HTMLButtonElement | null;
+      if (prevBtn) prevBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = true;
+      return;
+    }
+
+    this.bindEvents();
+    this.currentYearIndex = 0;
+    this.updateYearDisplay();
+  },
+
+  parseYears(): void {
+    const yearSections = document.querySelectorAll('.archive-year');
+    yearSections.forEach(section => {
+      const y = section.getAttribute('data-year');
+      if (y) this.years.push(Number(y));
+    });
+    this.years.sort((a, b) => b - a);
+  },
+
+  buildMonthCounts(year: string): Record<string, number> {
+    const counts: Record<string, number> = {};
+    for (let m = 1; m <= 12; m++) {
+      counts[String(m).padStart(2, '0')] = 0;
+    }
+    const yearSections = document.querySelectorAll('.archive-year');
+    yearSections.forEach(section => {
+      if (section.getAttribute('data-year') === year) {
+        section.querySelectorAll('.archive-month').forEach(month => {
+          const id = month.id;
+          if (id && id.startsWith('month-')) {
+            const monthNum = id.replace('month-', '');
+            counts[monthNum] = month.querySelectorAll('.archive-item').length;
+          }
+        });
+      }
+    });
+    return counts;
+  },
+
+  updateYearDisplay(): void {
+    if (this.years.length === 0) return;
+    if (this.currentYearIndex < 0) this.currentYearIndex = 0;
+    if (this.currentYearIndex >= this.years.length) this.currentYearIndex = this.years.length - 1;
+
+    const year = this.years[this.currentYearIndex];
+    const yearStr = String(year);
+
+    const yearDisplay = document.getElementById('current-year-display');
+    if (yearDisplay) yearDisplay.textContent = yearStr;
+
+    const monthCounts = this.buildMonthCounts(yearStr);
+
+    document.querySelectorAll('.month-item').forEach(item => {
+      const month = item.getAttribute('data-month');
+      const countSpan = item.querySelector('.month-count');
+      if (countSpan && month) {
+        countSpan.textContent = String(monthCounts[month] || 0);
+      }
+      item.setAttribute('data-year', yearStr);
+      item.classList.add('active');
+    });
+
+    document.querySelectorAll('.archive-year').forEach(section => {
+      const sectionYear = section.getAttribute('data-year');
+      if (sectionYear === yearStr) {
+        (section as HTMLElement).style.display = 'block';
+        if (section.getAttribute('data-aos') && !section.classList.contains('aos-animate')) {
+          section.classList.add('aos-animate');
+        }
+      } else {
+        (section as HTMLElement).style.display = 'none';
+      }
+    });
+
+    const prevBtn = document.getElementById('year-prev') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('year-next') as HTMLButtonElement | null;
+    if (prevBtn) prevBtn.disabled = this.currentYearIndex <= 0;
+    if (nextBtn) nextBtn.disabled = this.currentYearIndex >= this.years.length - 1;
+  },
+
+  bindEvents(): void {
+    const prevBtn = document.getElementById('year-prev');
+    const nextBtn = document.getElementById('year-next');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (this.currentYearIndex > 0) {
+          this.currentYearIndex--;
+          this.updateYearDisplay();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (this.currentYearIndex < this.years.length - 1) {
+          this.currentYearIndex++;
+          this.updateYearDisplay();
+        }
+      });
+    }
+
+    document.querySelectorAll('.month-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const month = item.getAttribute('data-month');
+        const year = item.getAttribute('data-year');
+        if (!year) return;
+
+        const yearIndex = this.years.indexOf(Number(year));
+        if (yearIndex !== -1 && yearIndex !== this.currentYearIndex) {
+          this.currentYearIndex = yearIndex;
+          this.updateYearDisplay();
+        }
+
+        if (month) {
+          const target = document.getElementById('month-' + month);
+          if (target) {
+            setTimeout(() => {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+          }
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA' || (e.target as HTMLElement).tagName === 'SELECT') return;
+      const prevBtnEl = document.getElementById('year-prev') as HTMLButtonElement | null;
+      const nextBtnEl = document.getElementById('year-next') as HTMLButtonElement | null;
+      if (e.key === 'ArrowLeft' && prevBtnEl && !prevBtnEl.disabled) { prevBtnEl.click(); e.preventDefault(); }
+      if (e.key === 'ArrowRight' && nextBtnEl && !nextBtnEl.disabled) { nextBtnEl.click(); e.preventDefault(); }
+    });
+  }
+};
+
+// ==========================================================================
+// 导航链接点击特效
+// ==========================================================================
+
+const NavClickEffect = {
+  init(): void {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const navLink = target.closest('.nav-link');
+      if (!navLink) return;
+      this.createClickStar(e);
+    });
+  },
+
+  createClickStar(e: MouseEvent): void {
+    const star = document.createElement('span');
+    const x = e.clientX;
+    const y = e.clientY;
+    star.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y + 'px;pointer-events:none;z-index:9999;font-size:14px;transform:translate(-50%,-50%);animation:starPop 0.6s ease-out forwards;';
+    star.textContent = '\u2728';
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 600);
+  }
+};
+
+// ==========================================================================
 // 主初始化函数
 // ==========================================================================
 
@@ -1484,6 +1941,7 @@ function initIllusionTheme(): void {
   if (window.IllusionThemeInitialized) return;
   window.IllusionThemeInitialized = true;
 
+  FontFallback.init();
   ThemeManager.init();
   UtilsManager.init();
   EnhancementManager.init();
@@ -1494,6 +1952,11 @@ function initIllusionTheme(): void {
   }
   
   InteractionManager.init();
+  FooterManager.init();
+  SearchEngine.init();
+  CalendarWidget.init();
+  ArchivesNavigator.init();
+  NavClickEffect.init();
 
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
@@ -1517,7 +1980,13 @@ window.IllusionTheme = {
   AnimationManager,
   InteractionManager,
   EnhancementManager,
-  UtilsManager
+  UtilsManager,
+  FontFallback,
+  FooterManager,
+  SearchEngine,
+  CalendarWidget,
+  ArchivesNavigator,
+  NavClickEffect
 };
 
 console.log('幻梦主题 v2.2.0 已初始化');

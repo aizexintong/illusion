@@ -1,19 +1,7 @@
-{{/* skills.html - 技能页面
-     数据优先级: 根目录 data/skills.yaml > 主题 data/skills.yaml
-     未配置时自动使用主题默认值或 hugo.toml params.skills */}}
 {{ define "main" }}
-{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
-<div class="floating-decorations" aria-hidden="true">
-  <div class="float-shape float-shape-1"></div>
-  <div class="float-shape float-shape-2"></div>
-  <div class="float-shape float-shape-3"></div>
-  <div class="float-shape float-shape-4"></div>
-  <div class="float-shape float-shape-5"></div>
-</div>
 
 <div class="section-content">
   <div class="container">
-    {{/* 数据来自 data/theme.yaml 中的 skills 字段 */}}
     {{ $skillsData := hugo.Data.theme.skills }}
     {{ $overview := $skillsData.overview }}
 
@@ -27,16 +15,14 @@
         <h2 class="section-title">{{ $overview.title }}</h2>
         <p class="section-subtitle">{{ $overview.subtitle }}</p>
         <div class="skills-categories">
-          {{ with $overview.categories }}
-            {{ range . }}
-            <div class="category-item" data-aos="zoom-in">
-              <div class="category-icon"><i class="{{ .icon }}"></i></div>
-              <h3>{{ .title }}</h3>
-              <p>{{ .description }}</p>
-              <div class="category-progress"><div class="progress-bar" style="width: {{ .progress }}%"></div></div>
-            </div>
-            {{ end }}
-          {{ end }}
+          {{ with $overview.categories }}{{ range . }}
+          <div class="category-item" data-aos="zoom-in">
+            <div class="category-icon"><i class="{{ .icon }}"></i></div>
+            <h3>{{ .title }}</h3>
+            <p>{{ .description }}</p>
+            <div class="category-progress"><div class="progress-bar" style="width: {{ .progress }}%"></div></div>
+          </div>
+          {{ end }}{{ end }}
         </div>
       </div>
     </section>
@@ -47,18 +33,10 @@
       <div class="skills-detailed-grid">
         {{ range $skillsData.skills }}
         <div class="skill-detail-item card" data-aos="fade-up">
-          <div class="skill-header">
-            <h3 class="skill-name">{{ .name }}</h3>
-            <span class="skill-level">{{ .level }}%</span>
-          </div>
+          <div class="skill-header"><h3 class="skill-name">{{ .name }}</h3><span class="skill-level">{{ .level }}%</span></div>
           <div class="skill-bar"><div class="skill-progress" data-level="{{ .level }}"></div></div>
           {{ with .description }}<div class="skill-description">{{ . }}</div>{{ end }}
-          {{ with .projects }}{{ if gt (len .) 0 }}
-          <div class="skill-projects">
-            <h4>{{ i18n "skillsprojects" }}</h4>
-            <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
-          </div>
-          {{ end }}{{ end }}
+          {{ with .projects }}{{ if gt (len .) 0 }}<div class="skill-projects"><h4>{{ i18n "skillsprojects" }}</h4><ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul></div>{{ end }}{{ end }}
         </div>
         {{ end }}
       </div>
@@ -68,17 +46,12 @@
       <div class="development-timeline card">
         <h2 class="section-title">{{ i18n "skillstimeline" }}</h2>
         <div class="timeline">
-          {{ with $skillsData.timeline }}
-            {{ range . }}
-            <div class="timeline-item" data-aos="fade-up">
-              <div class="timeline-date">{{ .year }}</div>
-              <div class="timeline-content">
-                <h3>{{ .title }}</h3>
-                <p>{{ .description }}</p>
-              </div>
-            </div>
-            {{ end }}
-          {{ end }}
+          {{ with $skillsData.timeline }}{{ range . }}
+          <div class="timeline-item" data-aos="fade-up">
+            <div class="timeline-date">{{ .year }}</div>
+            <div class="timeline-content"><h3>{{ .title }}</h3><p>{{ .description }}</p></div>
+          </div>
+          {{ end }}{{ end }}
         </div>
       </div>
     </section>

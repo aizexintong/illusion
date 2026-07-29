@@ -20,7 +20,7 @@ Renders a menu for the given menu ID.
         {{- $icon = . }}
       {{- end }}
       <li role="none">
-        <a class="nav-link" role="menuitem" onclick="createClickStar(event)"
+        <a class="nav-link" role="menuitem"
           {{- range $k, $v := $attrs }}
             {{- with $v }}
               {{- printf " %s=%q" $k $v | safeHTMLAttr }}

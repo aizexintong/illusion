@@ -1913,6 +1913,195 @@ p {
 }
 
 /* ==========================================================================
+   11.1 首页关于板块
+   ========================================================================== */
+
+.about-section {
+  padding: var(--sp-16) 0;
+}
+
+.about-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-10);
+  align-items: center;
+  text-align: center;
+  padding: var(--sp-10) var(--sp-8);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--c-border-main);
+
+  .about-content {
+    flex: 1;
+    width: 100%;
+  }
+}
+
+.about-description {
+  color: var(--c-text-muted);
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--sp-8);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-5);
+  margin-top: var(--sp-8);
+
+  .stat-item {
+    text-align: center;
+    padding: var(--sp-6) var(--sp-4);
+    background: var(--grad-soft);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--c-border-main);
+    transition: all var(--t-base);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-medium);
+    }
+  }
+
+  .stat-icon {
+    font-size: var(--fs-base);
+    margin-bottom: var(--sp-4);
+  }
+
+  .stat-number {
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: var(--sp-2);
+  }
+
+  .stat-label {
+    font-size: var(--fs-sm);
+    color: var(--c-text-muted);
+    font-weight: var(--fw-medium);
+  }
+}
+
+.about-cta {
+  margin-top: var(--sp-8);
+}
+
+.about-image-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.about-image {
+  text-align: center;
+
+  img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: var(--r-full);
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+    border: 4px solid var(--c-surface-main);
+  }
+}
+
+.about-image-decoration {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 10px;
+  left: 10px;
+  border: 2px solid var(--c-primary-300);
+  border-radius: var(--r-full);
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* ==========================================================================
+   11.2 首页技能板块
+   ========================================================================== */
+
+.skills-section {
+  padding: var(--sp-16) 0;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-5);
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: var(--sp-6);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--c-border-main);
+  transition: all var(--t-base) var(--ease-slow);
+  box-shadow: var(--shadow-card);
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+.skill-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-soft);
+  border-radius: var(--r-lg);
+  font-size: var(--fs-2xl);
+  color: var(--c-primary-400);
+  flex-shrink: 0;
+}
+
+.skill-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.skill-name {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+}
+
+.skill-percent {
+  color: var(--c-primary-700);
+  font-weight: var(--fw-semibold);
+}
+
+.skill-bar {
+  height: 8px;
+  background: var(--c-border-light);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.skill-progress {
+  height: 100%;
+  background: var(--grad-primary);
+  border-radius: var(--r-full);
+  width: 0;
+  transition: width 1s var(--ease-slow);
+}
+
+/* ==========================================================================
    12. 关于页面
    ========================================================================== */
 
@@ -4823,7 +5012,7 @@ p {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
 }
 
@@ -6481,4 +6670,81 @@ p {
     width: 32px;
     height: 32px;
   }
+}
+
+/* 导航链接点击星星特效 */
+@keyframes starPop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(360deg) translateY(-30px);
+  }
+}
+
+/* ==========================================================================
+   技能短代码
+   ========================================================================== */
+
+.skills-shortcode {
+  margin: var(--sp-8) 0;
+
+  h3 {
+    margin-bottom: var(--sp-6);
+    color: var(--c-text-main);
+    font-size: var(--fs-md);
+  }
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.skill-shortcode-item {
+  background: var(--c-primary-50);
+  padding: var(--sp-4);
+  border-radius: var(--r-lg);
+}
+
+.skill-shortcode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-2);
+}
+
+.skill-shortcode-name {
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-main);
+}
+
+.skill-shortcode-level {
+  background: var(--grad-primary);
+  color: white;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-full);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.skill-shortcode-bar {
+  height: 8px;
+  background: var(--c-primary-100);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.skill-shortcode-progress {
+  height: 100%;
+  background: var(--grad-primary);
+  border-radius: var(--r-full);
+  transition: width 1.5s ease-in-out;
 }

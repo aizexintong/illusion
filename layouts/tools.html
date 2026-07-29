@@ -1,16 +1,6 @@
-{{- /* 工具页面 (Tools Page) 数据来源: data/theme.yaml 中的 tools 字段 */ -}}
 {{ define "main" }}
-{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
-<div class="floating-decorations" aria-hidden="true">
-  <div class="float-shape float-shape-1"></div>
-  <div class="float-shape float-shape-2"></div>
-  <div class="float-shape float-shape-3"></div>
-  <div class="float-shape float-shape-4"></div>
-  <div class="float-shape float-shape-5"></div>
-</div>
 
 {{- $toolsData := hugo.Data.theme.tools -}}
-{{- $pageInfo := $toolsData.page -}}
 {{- $categories := $toolsData.categories -}}
 
 <div class="section-content">
@@ -25,29 +15,14 @@
       <div class="tools-category" data-aos="fade-up">
         <div class="category-header">
           <div class="category-icon"><i class="{{ .icon }}"></i></div>
-          <div class="category-info">
-            <h2 class="category-title">{{ .name }}</h2>
-            <p class="category-description">{{ .description }}</p>
-          </div>
+          <div class="category-info"><h2 class="category-title">{{ .name }}</h2><p class="category-description">{{ .description }}</p></div>
         </div>
-
         <div class="tools-grid">
           {{- range .tools -}}
           <a href="{{ .url }}" class="tool-card" target="_blank" rel="noopener nofollow" data-aos="zoom-in">
-            <div class="tool-icon">
-              {{- if hasPrefix .icon "http" -}}
-              <img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">
-              {{- else -}}
-              <i class="{{ .icon }}"></i>
-              {{- end -}}
-            </div>
-            <div class="tool-content">
-              <h3 class="tool-name">{{ .name }}</h3>
-              <p class="tool-description">{{ .description }}</p>
-            </div>
-            <div class="tool-arrow">
-              <i class="fas fa-external-link-alt"></i>
-            </div>
+            <div class="tool-icon">{{- if hasPrefix .icon "http" -}}<img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">{{- else -}}<i class="{{ .icon }}"></i>{{- end -}}</div>
+            <div class="tool-content"><h3 class="tool-name">{{ .name }}</h3><p class="tool-description">{{ .description }}</p></div>
+            <div class="tool-arrow"><i class="fas fa-external-link-alt"></i></div>
           </a>
           {{- end -}}
         </div>

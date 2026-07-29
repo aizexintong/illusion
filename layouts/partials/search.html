@@ -4,7 +4,15 @@
 <div class="search-component" role="search" aria-label='{{ i18n "searchtitle" }}'>
 
   {{- if eq .Site.Params.searchProvider "local" -}}
-  <form class="search-form" id="search-form" role="search">
+  <form class="search-form" id="search-form" role="search"
+        data-i18n-searchtitle='{{ i18n "searchtitle" }}'
+        data-i18n-searchplaceholder='{{ i18n "searchplaceholder" }}'
+        data-i18n-searchclose='{{ i18n "searchclose" }}'
+        data-i18n-searchnoresults='{{ i18n "searchnoresults" }}'
+        data-i18n-searchresults='{{ i18n "searchresults" }}'
+        data-i18n-searcherror='{{ i18n "searcherror" }}'
+        data-i18n-searcherrorhint='{{ i18n "searcherrorhint" }}'
+        data-index-url='{{ "index.json" | relURL }}'>
     <div class="search-input-group">
       <input
         type="search"
@@ -24,163 +32,6 @@
     </div>
     <div class="search-results" id="search-results" aria-live="polite" aria-atomic="true"></div>
   </form>
-
-  <script>
-    var i18n = {
-      searchtitle: '{{ i18n "searchtitle" }}',
-      searchplaceholder: '{{ i18n "searchplaceholder" }}',
-      searchclose: '{{ i18n "searchclose" }}',
-      searchnoresults: '{{ i18n "searchnoresults" }}',
-      searchresults: '{{ i18n "searchresults" }}',
-      searcherror: '{{ i18n "searcherror" }}',
-      searcherrorhint: '{{ i18n "searcherrorhint" }}',
-      searchdisabled: '{{ i18n "searchdisabled" }}'
-    };
-    (function() {
-      document.addEventListener('DOMContentLoaded', function() {
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const searchResults = document.getElementById('search-results');
-
-        if (!searchForm || !searchInput || !searchResults) return;
-
-        let searchIndex = [];
-
-        // 加载搜索索引
-        fetch('{{ "index.json" | relURL }}')
-          .then(response => {
-            if (!response.ok) throw new Error('HTTP error: ' + response.status);
-            return response.json();
-          })
-          .then(data => {
-            searchIndex = data;
-            if (searchResults.innerHTML.includes('search-error')) {
-              searchResults.innerHTML = '';
-            }
-          })
-          .catch(error => {
-            console.warn('Search index load failed:', error);
-            searchResults.innerHTML = `
-              <div class="search-error">
-                <p><i class="fas fa-exclamation-triangle"></i> ${i18n.searcherror}</p>
-                <p class="search-error-hint">${i18n.searcherrorhint}</p>
-              </div>
-            `;
-          });
-
-        // 执行搜索
-        function performSearch(query) {
-          if (!query.trim() || searchIndex.length === 0) {
-            searchResults.innerHTML = '';
-            return;
-          }
-
-          const normalizedQuery = query.toLowerCase().trim();
-          const results = searchIndex.filter(item => {
-            const title = item.title?.toLowerCase() || '';
-            const content = item.content?.toLowerCase() || '';
-            const summary = item.summary?.toLowerCase() || '';
-            return title.includes(normalizedQuery) ||
-                   content.includes(normalizedQuery) ||
-                   summary.includes(normalizedQuery);
-          });
-
-          displayResults(results, query);
-        }
-
-        // 显示结果
-        function displayResults(results, query) {
-          if (results.length === 0) {
-            searchResults.innerHTML = `
-              <div class="search-no-results">
-                <p>${i18n.searchnoresults} "<strong>${query}</strong>" ${i18n.searchtitle}</p>
-              </div>
-            `;
-            return;
-          }
-
-          let html = `
-            <div class="search-results-header">
-              <p>${results.length} ${i18n.searchresults}</p>
-            </div>
-            <ul class="search-results-list">
-          `;
-
-          results.forEach(result => {
-            const title = highlightText(result.title, query);
-            const excerpt = getExcerpt(result.content || result.summary, query);
-
-            html += `
-              <li class="search-result-item">
-                <a href="${result.permalink}" class="search-result-link">
-                  <h3 class="search-result-title">${title}</h3>
-                  <div class="search-result-excerpt">${excerpt}</div>
-                  <div class="search-result-meta">
-                    <span class="search-result-date">${formatDate(result.date)}</span>
-                    ${result.tags ? `<span class="search-result-tags">${result.tags.join(', ')}</span>` : ''}
-                  </div>
-                </a>
-              </li>
-            `;
-          });
-
-          html += '</ul>';
-          searchResults.innerHTML = html;
-        }
-
-        // 高亮文本
-        function highlightText(text, query) {
-          if (!text) return '';
-          const regex = new RegExp(`(${query})`, 'gi');
-          return text.replace(regex, '<mark class="search-highlight">$1</mark>');
-        }
-
-        // 获取摘要
-        function getExcerpt(content, query, length = 120) {
-          if (!content) return '';
-          const normalizedContent = content.toLowerCase();
-          const queryIndex = normalizedContent.indexOf(query.toLowerCase());
-          if (queryIndex === -1) {
-            return content.substring(0, length) + '...';
-          }
-          const start = Math.max(0, queryIndex - 40);
-          const end = Math.min(content.length, queryIndex + 80);
-          let excerpt = content.substring(start, end);
-          if (start > 0) excerpt = '...' + excerpt;
-          if (end < content.length) excerpt = excerpt + '...';
-          return highlightText(excerpt, query);
-        }
-
-        // 格式化日期
-        function formatDate(dateString) {
-          if (!dateString) return '';
-          const date = new Date(dateString);
-          return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
-        // 事件监听
-        searchForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          performSearch(searchInput.value);
-        });
-
-        searchInput.addEventListener('input', function() {
-          if (this.value.length >= 2) {
-            performSearch(this.value);
-          } else {
-            searchResults.innerHTML = '';
-          }
-        });
-
-        searchInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            this.value = '';
-            searchResults.innerHTML = '';
-          }
-        });
-      });
-    })();
-  </script>
 
   {{- else if eq .Site.Params.searchProvider "algolia" -}}
   <div class="algolia-search">

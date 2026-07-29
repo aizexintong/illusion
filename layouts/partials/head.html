@@ -15,24 +15,12 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous"></noscript>
+<link id="fa-fallback-css" data-href='{{ "lib/fontawesome/css/all.min.css" | relURL }}' rel="alternate stylesheet" disabled>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous"></noscript>
 
-<script>
-(function(){
-  setTimeout(function(){
-    var t=document.createElement('i');
-    t.className='fas fa-square';
-    t.style.cssText='position:fixed;left:-99px;top:-99px;font-size:16px;';
-    document.body.appendChild(t);
-    if(t.offsetWidth<5){var l=document.createElement('link');l.rel='stylesheet';l.href='{{ "lib/fontawesome/css/all.min.css" | relURL }}';document.head.appendChild(l);}
-    document.body.removeChild(t);
-  },1000);
-})();
-</script>
-
-<!-- Open Graph -->
+{{ partial "head/css.html" . }}
 {{- $assets := hugo.Data.theme.assets -}}
 {{- $avatar := $assets.avatar.url | default "https://t.alcy.cc/tx" -}}
 {{- $ogImage := $avatar -}}
@@ -54,7 +42,6 @@
 
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ "index.xml" | relURL }}">
 
-{{ partial "head/css.html" . }}
 {{ partial "head/js.html" . }}
 
 {{ if .Site.Params.enableSchema }}

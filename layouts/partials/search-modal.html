@@ -13,48 +13,4 @@
     {{ partial "search.html" . }}
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchToggle = document.getElementById('search-toggle');
-    const searchModal = document.getElementById('search-modal');
-    const searchModalOverlay = document.getElementById('search-modal-overlay');
-    const searchModalClose = document.getElementById('search-modal-close');
-
-    if (!searchToggle || !searchModal) return;
-
-    function openSearchModal() {
-      searchModal.classList.add('active');
-      searchModalOverlay.classList.add('active');
-      searchModal.removeAttribute('aria-hidden');
-      searchModalOverlay.removeAttribute('aria-hidden');
-      document.body.style.overflow = 'hidden';
-      const searchInput = document.getElementById('search-input');
-      if (searchInput) setTimeout(() => searchInput.focus(), 100);
-    }
-
-    function closeSearchModal() {
-      searchModal.classList.remove('active');
-      searchModalOverlay.classList.remove('active');
-      searchModal.setAttribute('aria-hidden', 'true');
-      searchModalOverlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-
-    searchToggle.addEventListener('click', openSearchModal);
-    searchModalClose.addEventListener('click', closeSearchModal);
-    searchModalOverlay.addEventListener('click', closeSearchModal);
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && searchModal.classList.contains('active')) {
-        closeSearchModal();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        if (searchModal.classList.contains('active')) closeSearchModal();
-        else openSearchModal();
-      }
-    });
-  });
-</script>
 {{- end -}}

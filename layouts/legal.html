@@ -1,7 +1,3 @@
-{{/* legal.html - 法律页面模板
-     支持隐私政策、使用条款页面
-     内容来自 content/privacy.md 和 content/terms.md 的 markdown 正文 */}}
-
 {{ define "main" }}
 <div class="section-content">
   <div class="container">
@@ -9,12 +5,9 @@
       <h1 class="page-title">{{ .Title }}</h1>
       <p class="page-description">{{ .Description }}</p>
     </section>
-
     <div class="legal-content" data-aos="fade-up">
       <div class="legal-card card">
-        <div class="markdown-content">
-          {{ .Content }}
-        </div>
+        <div class="markdown-content">{{ .Content }}</div>
       </div>
     </div>
   </div>

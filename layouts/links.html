@@ -1,19 +1,7 @@
-{{/* links.html - 友链页面
-     数据优先级: 根目录 data/friends.yaml > 主题 data/friends.yaml
-     未配置时自动使用主题默认值 */}}
 {{ define "main" }}
-{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
-<div class="floating-decorations" aria-hidden="true">
-  <div class="float-shape float-shape-1"></div>
-  <div class="float-shape float-shape-2"></div>
-  <div class="float-shape float-shape-3"></div>
-  <div class="float-shape float-shape-4"></div>
-  <div class="float-shape float-shape-5"></div>
-</div>
 
 <div class="section-content">
   <div class="container">
-    {{/* 数据来自 data/theme.yaml 中的 friends 字段 */}}
     {{ $friendsData := hugo.Data.theme.friends }}
     {{ $pageInfo := $friendsData.page }}
     {{ $applyInfo := $friendsData.apply }}
@@ -26,21 +14,19 @@
     <section class="friends-links" data-aos="fade-up">
       <div class="links-container">
         <div class="links-grid">
-          {{ with $friendsData.friends }}
-            {{ range . }}
-            <div class="link-card">
-              <div class="link-avatar"><img src="{{ .avatar }}" alt="{{ .name }}" loading="lazy"></div>
-              <div class="link-info">
-                <h3 class="link-name">{{ .name }}</h3>
-                <p class="link-desc">{{ .description }}</p>
-                <div class="link-meta">
-                  <span class="link-category">{{ .category }}</span>
-                  <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> {{ i18n "linksvisit" }}</a>
-                </div>
+          {{ with $friendsData.friends }}{{ range . }}
+          <div class="link-card">
+            <div class="link-avatar"><img src="{{ .avatar }}" alt="{{ .name }}" loading="lazy"></div>
+            <div class="link-info">
+              <h3 class="link-name">{{ .name }}</h3>
+              <p class="link-desc">{{ .description }}</p>
+              <div class="link-meta">
+                <span class="link-category">{{ .category }}</span>
+                <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> {{ i18n "linksvisit" }}</a>
               </div>
             </div>
-            {{ end }}
-          {{ end }}
+          </div>
+          {{ end }}{{ end }}
         </div>
       </div>
     </section>
@@ -51,31 +37,19 @@
         <div class="apply-content">
           <div class="apply-info">
             <h3>{{ i18n "linksconditions" }}</h3>
-            <ul class="apply-conditions">
-              {{ with $applyInfo.conditions }}
-                {{ range . }}
-                <li><i class="fas fa-check-circle"></i> {{ . }}</li>
-                {{ end }}
-              {{ end }}
-            </ul>
-            {{ with $applyInfo.siteInfo }}
-            <h3>{{ i18n "linksinfo" }}</h3>
+            <ul class="apply-conditions">{{ with $applyInfo.conditions }}{{ range . }}<li><i class="fas fa-check-circle"></i> {{ . }}</li>{{ end }}{{ end }}</ul>
+            {{ with $applyInfo.siteInfo }}<h3>{{ i18n "linksinfo" }}</h3>
             <div class="site-info">
               <div class="info-item"><span class="info-label">{{ i18n "linksname" }}</span><span class="info-value">{{ .name }}</span></div>
               <div class="info-item"><span class="info-label">{{ i18n "linksurl" }}</span><span class="info-value">{{ .url }}</span></div>
               <div class="info-item"><span class="info-label">{{ i18n "linksdesc" }}</span><span class="info-value">{{ .description }}</span></div>
-            </div>
-            {{ end }}
+            </div>{{ end }}
           </div>
           <div class="apply-contact">
             <h3>{{ $applyInfo.contactTitle }}</h3>
             <p>{{ $applyInfo.contactDescription }}</p>
             <div class="apply-contact-methods">
-              {{ with $applyInfo.contactMethods }}
-                {{ range . }}
-                <a href="{{ .link }}" class="contact-btn" {{ if hasPrefix .link "http" }}target="_blank" rel="noopener"{{ end }}><i class="{{ .icon }}"></i> {{ .label }}</a>
-                {{ end }}
-              {{ end }}
+              {{ with $applyInfo.contactMethods }}{{ range . }}<a href="{{ .link }}" class="contact-btn" {{ if hasPrefix .link "http" }}target="_blank" rel="noopener"{{ end }}><i class="{{ .icon }}"></i> {{ .label }}</a>{{ end }}{{ end }}
             </div>
           </div>
         </div>

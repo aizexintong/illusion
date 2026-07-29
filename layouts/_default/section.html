@@ -170,45 +170,4 @@
         </aside>
       </div>
     </div>
-  </div>
-
-  <!-- 日历脚本 -->
-  <script>
-    function initCalendar() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      const today = now.getDate();
-      
-      const monthNames = [{{ i18n "month01" }}, {{ i18n "month02" }}, {{ i18n "month03" }}, {{ i18n "month04" }}, {{ i18n "month05" }}, {{ i18n "month06" }}, {{ i18n "month07" }}, {{ i18n "month08" }}, {{ i18n "month09" }}, {{ i18n "month10" }}, {{ i18n "month11" }}, {{ i18n "month12" }}];
-      
-      document.getElementById('calendar-month').textContent = monthNames[month];
-      document.getElementById('calendar-year').textContent = year + '{{ i18n "calendaryear" }}';
-      
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
-      const daysContainer = document.getElementById('calendar-days');
-      daysContainer.innerHTML = '';
-      
-      for (let i = 0; i < firstDay; i++) {
-        const emptyDay = document.createElement('span');
-        emptyDay.className = 'calendar-day empty';
-        daysContainer.appendChild(emptyDay);
-      }
-      
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dayElement = document.createElement('span');
-        dayElement.className = 'calendar-day' + (day === today ? ' today' : '');
-        dayElement.textContent = day;
-        daysContainer.appendChild(dayElement);
-      }
-      
-      const dateStr = year + '{{ i18n "calendaryear" }}' + (month + 1) + '{{ i18n "calendardatemonth" }}' + today + '{{ i18n "calendardateday" }}';
-      const weekDays = [{{ i18n "calendarweekday0" }}, {{ i18n "calendarweekday1" }}, {{ i18n "calendarweekday2" }}, {{ i18n "calendarweekday3" }}, {{ i18n "calendarweekday4" }}, {{ i18n "calendarweekday5" }}, {{ i18n "calendarweekday6" }}];
-      document.getElementById('current-date').textContent = dateStr + ' ' + weekDays[now.getDay()];
-    }
-    
-    document.addEventListener('DOMContentLoaded', initCalendar);
-  </script>
-{{ end }}
+  </div>{{ end }}
