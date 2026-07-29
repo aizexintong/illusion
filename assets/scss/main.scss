@@ -494,11 +494,13 @@ p {
 }
 
 .text-ellipsis-2 {
-  -webkit-line-clamp: 2
+  -webkit-line-clamp: 2;
+  line-clamp: 2
 }
 
 .text-ellipsis-3 {
-  -webkit-line-clamp: 3
+  -webkit-line-clamp: 3;
+  line-clamp: 3
 }
 
 .gradient-text {
@@ -1573,6 +1575,7 @@ p {
     color: var(--t);
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 
@@ -1632,6 +1635,7 @@ p {
   line-height: 1.7;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 1.25rem
@@ -2394,6 +2398,7 @@ p {
   margin-bottom: var(--s3);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden
 }
@@ -2725,6 +2730,7 @@ p {
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden
 }
@@ -3075,6 +3081,7 @@ p {
   transition: color var(--tf) var(--ef);
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-all;
@@ -3251,6 +3258,7 @@ p {
       color: var(--t);
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       transition: color var(--tf);
@@ -3483,6 +3491,7 @@ p {
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden
 }
@@ -3960,7 +3969,8 @@ p {
     color: var(--t);
     font-weight: var(--w5);
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.4
@@ -3985,7 +3995,8 @@ p {
   padding: var(--s2) var(--s3);
 
   .nav-card-title {
-    -webkit-line-clamp: 1
+    -webkit-line-clamp: 1;
+    line-clamp: 1
   }
 
   &-img {
@@ -4163,6 +4174,7 @@ p {
   margin-bottom: var(--s2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden
 }
@@ -5378,6 +5390,7 @@ p {
   .stat-number {
     background: var(--cgp);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent
   }
 
@@ -5636,6 +5649,7 @@ p {
   .stat-number {
     background: var(--cgp);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent
   }
 
