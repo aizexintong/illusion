@@ -1,5 +1,5 @@
 {{ define "main" }}
-{{/* 装饰浮动元素 - 增加梦幻氛围 */}}
+{{/* 装饰浮动元素 */}}
 <div class="floating-decorations" aria-hidden="true">
   <div class="float-shape float-shape-1"></div>
   <div class="float-shape float-shape-2"></div>
@@ -23,8 +23,9 @@
     {{ end }}
     {{ $sortedYears := sort $years "" "desc" }}
 
+    <!-- 布局：主内容 + 侧边栏 -->
     <div class="archives-layout">
-      <!-- 主内容区 - 文章列表 -->
+      <!-- 主内容 -->
       <div class="archives-main">
         <div class="archives-summary">
           <span class="archives-count">
@@ -33,27 +34,18 @@
           </span>
         </div>
 
-        {{ range ($posts.GroupByDate "2006") }}
-        <div class="archive-year" data-aos="fade-up" id="year-{{ .Key }}">
-          <h2 class="archive-year-title">
-            <i class="fas fa-calendar-alt"></i>
-            {{ .Key }}
-            <span class="archive-year-count">{{ i18n "archivesyearcount" (dict "Count" (len .Pages)) }}</span>
-          </h2>
-          
-          <div class="archive-months">
+        {{ if gt (len $sortedYears) 0 }}
+          {{ range ($posts.GroupByDate "2006") }}
+          <div class="archive-year" data-aos="fade-up" id="year-{{ .Key }}" data-year="{{ .Key }}">
+            <h2 class="archive-year-title">
+              <i class="fas fa-calendar-alt"></i>
+              {{ .Key }}
+              <span class="archive-year-count">{{ i18n "archivesyearcount" (dict "Count" (len .Pages)) }}</span>
+            </h2>
+
             {{ range (.Pages.GroupByDate "01") }}
-             <div class="archive-month" id="month-{{ .Key }}">
-              {{ $monthNum := .Key }}
-              {{ $monthKeys := dict 
-                "01" "一月" "02" "二月" "03" "三月" "04" "四月" 
-                "05" "五月" "06" "六月" "07" "七月" "08" "八月" 
-                "09" "九月" "10" "十月" "11" "十一月" "12" "十二月"
-              }}
-              {{ $monthName := index $monthKeys $monthNum | default $monthNum }}
-              
-              <h3 class="archive-month-title">{{ $monthName }} <span class="archive-month-count">({{ len .Pages }})</span></h3>
-              
+            <div class="archive-month" id="month-{{ .Key }}">
+              <h3 class="archive-month-title">{{ .Key }} <span class="archive-month-count">({{ len .Pages }})</span></h3>
               <ul class="archive-list">
                 {{ range .Pages }}
                 <li class="archive-item">
@@ -70,19 +62,21 @@
             </div>
             {{ end }}
           </div>
-        </div>
+          {{ end }}
+        {{ else }}
+          <div class="no-terms-message" data-aos="fade-up">
+            <p>{{ i18n "taxonomyempty" }}</p>
+          </div>
         {{ end }}
       </div>
-
-      <!-- 右侧边栏 - 年份/月份导航 -->
+      <!-- 侧边栏 - 垂直居中 -->
       <aside class="archives-sidebar">
-        <div class="sidebar-card">
+        <div class="sidebar-card archives-nav-card">
           <div class="sidebar-title">
             <i class="fas fa-calendar-alt"></i>
             归档导航
           </div>
-          
-          <!-- 年份选择器 -->
+
           <div class="year-navigation">
             <button class="year-nav-btn" id="year-prev" aria-label="上一年">
               <i class="fas fa-chevron-left"></i>
@@ -95,26 +89,23 @@
             </button>
           </div>
 
-          <!-- 月份列表 -->
-          <div class="month-list" id="month-list">
+          <div class="month-list" id="month-list" role="list">
             {{ $currentYear := index $sortedYears 0 | default "2024" }}
-            {{ $monthNames := slice "一月" "二月" "三月" "四月" "五月" "六月" "七月" "八月" "九月" "十月" "十一月" "十二月" }}
-            {{ range $i, $name := $monthNames }}
-            {{ $monthNum := printf "%02d" (add $i 1) }}
+            {{ range $i := seq 1 12 }}
+            {{ $monthNum := printf "%02d" $i }}
             {{ $count := 0 }}
             {{ range where $posts "Date.Year" (int $currentYear) }}
               {{ if eq (printf "%02d" .Date.Month) $monthNum }}
                 {{ $count = add $count 1 }}
               {{ end }}
             {{ end }}
-            <div class="month-item" data-month="{{ $monthNum }}" data-year="{{ $currentYear }}">
-              <span class="month-name">{{ $name }}</span>
+            <span class="month-item" data-month="{{ $monthNum }}" data-year="{{ $currentYear }}" role="listitem">
+              {{ $monthNum }}
               <span class="month-count">{{ $count }}</span>
-            </div>
+            </span>
             {{ end }}
           </div>
 
-          <!-- 统计信息 -->
           <div class="archive-stats">
             <div class="stat-row">
               <span>总文章</span>
@@ -131,128 +122,549 @@
   </div>
 </div>
 
+<style>
+/* ============================================================
+   归档布局
+   ============================================================ */
+
+/* ---------- 主布局 ---------- */
+.archives-layout {
+  display: flex;
+  flex-direction: row;
+  gap: var(--sp-8);
+  align-items: flex-start;
+}
+
+.archives-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- 侧边栏 - 垂直居中 ---------- */
+.archives-sidebar {
+  width: 420px;
+  position: sticky;
+  top: var(--sp-8);
+}
+
+/* 如果导航卡片高度超过视口，限制高度并滚动 */
+.archives-nav-card {
+  padding: var(--sp-5);
+  background: var(--c-surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--c-border-main);
+  box-shadow: var(--shadow-medium);
+  transition: transform var(--t-base) var(--ease-fluid),
+    box-shadow var(--t-base) var(--ease-fluid);
+  max-height: calc(100vh - var(--sp-8) * 2);
+  overflow-y: auto;
+}
+
+/* 当卡片内容超出时，滚动条美化 */
+.archives-nav-card::-webkit-scrollbar {
+  width: 4px;
+}
+.archives-nav-card::-webkit-scrollbar-track {
+  background: var(--c-border-light);
+  border-radius: var(--r-full);
+}
+.archives-nav-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--c-primary-300), var(--c-secondary-300));
+  border-radius: var(--r-full);
+}
+
+.archives-nav-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--grad-primary);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-fluid);
+  z-index: 10;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+
+.archives-nav-card:hover::before {
+  opacity: 1;
+}
+
+.archives-nav-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- 侧边栏标题 ---------- */
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  margin-bottom: 1.25rem;
+  color: var(--c-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sidebar-title i {
+  color: var(--c-primary-400);
+  font-size: 0.875em;
+}
+
+/* ---------- 年份导航 ---------- */
+.year-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--c-bg-subtle);
+  border-radius: var(--r-lg);
+}
+
+.year-nav-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  background: var(--c-surface-glass);
+  border: 1px solid var(--c-border-main);
+  color: var(--c-text-muted);
+  font-size: var(--fs-sm);
+  transition: all var(--t-fast);
+  cursor: pointer;
+}
+
+.year-nav-btn:hover:not(:disabled) {
+  background: var(--grad-primary);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+.year-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.current-year-display {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  color: var(--c-text-main);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ---------- 月份列表 ---------- */
+.month-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-5);
+}
+
+.month-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-md);
+  background: var(--c-bg-subtle);
+  border: 1px solid var(--c-border-light);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  font-size: var(--fs-sm);
+  color: var(--c-text-muted);
+}
+
+.month-item:hover {
+  background: var(--c-primary-100);
+  border-color: var(--c-primary-300);
+  color: var(--c-text-main);
+  transform: translateX(2px);
+}
+
+/* Active - 与 .archive-category 配色一致：浅色背景 + 深色文字 */
+.month-item.active {
+  background: var(--c-primary-100);
+  color: var(--c-primary-500);
+  border-color: var(--c-primary-400);
+  font-weight: var(--fw-semibold);
+}
+
+.month-item.active .month-count {
+  background: var(--c-primary-400);
+  color: #ffffff;
+}
+
+.month-item .month-count {
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-xs);
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-sm);
+  background: var(--c-border-light);
+  min-width: 20px;
+  text-align: center;
+  color: var(--c-text-subtle);
+}
+
+/* ---------- 暗色模式 ---------- */
+[data-theme="dark"] .month-item.active {
+  background: var(--c-primary-200);
+  color: var(--c-primary-400);
+  border-color: var(--c-primary-500);
+}
+
+[data-theme="dark"] .month-item.active .month-count {
+  background: var(--c-primary-500);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .month-item:hover {
+  background: var(--c-primary-200);
+  border-color: var(--c-primary-400);
+  color: var(--c-text-main);
+}
+
+/* ---------- 统计信息 ---------- */
+.archive-stats {
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--c-border-main);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--sp-1) 0;
+  font-size: var(--fs-sm);
+  color: var(--c-text-muted);
+}
+
+.stat-row span:last-child {
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-main);
+}
+
+/* ---------- 年份标题 ---------- */
+.archive-year-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-xl);
+  color: var(--c-text-main);
+  padding-bottom: var(--sp-3);
+  border-bottom: 2px solid var(--c-border-main);
+  margin-bottom: var(--sp-6);
+}
+
+.archive-year-title i {
+  color: var(--c-primary-400);
+}
+
+.archive-year-count {
+  font-size: var(--fs-sm);
+  color: var(--c-text-subtle);
+  font-weight: var(--fw-normal);
+  margin-left: auto;
+}
+
+/* ---------- 月份标题 ---------- */
+.archive-month-title {
+  font-size: var(--fs-base);
+  color: var(--c-text-subtle);
+  margin-bottom: var(--sp-3);
+  padding-left: var(--sp-4);
+  font-weight: var(--fw-medium);
+}
+
+.archive-month-count {
+  font-size: var(--fs-xs);
+  color: var(--c-text-subtle);
+  font-weight: var(--fw-normal);
+}
+
+/* ---------- 文章列表 ---------- */
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.archive-item {
+  margin-bottom: var(--sp-2);
+}
+
+.archive-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--c-surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--r-lg);
+  text-decoration: none;
+  transition: all var(--t-fast);
+  border: 1px solid transparent;
+}
+
+.archive-link:hover {
+  background: var(--c-primary-100);
+  border-color: var(--c-primary-300);
+  transform: translateX(4px);
+}
+
+.archive-link:hover .archive-title {
+  color: var(--c-primary-400);
+}
+
+.archive-date {
+  font-size: var(--fs-sm);
+  color: var(--c-text-subtle);
+  font-family: var(--ff-mono);
+  flex-shrink: 0;
+}
+
+.archive-title {
+  flex: 1;
+  color: var(--c-text-main);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--t-fast);
+}
+
+.archive-category {
+  font-size: var(--fs-xs);
+  background: var(--c-primary-100);
+  color: var(--c-primary-500);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-full);
+  flex-shrink: 0;
+}
+
+.archives-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: var(--c-primary-100);
+  color: var(--c-primary-500);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--r-full);
+  font-weight: var(--fw-medium);
+}
+
+/* ---------- 空状态 ---------- */
+.no-terms-message {
+  text-align: center;
+  padding: var(--sp-12) var(--sp-6);
+  color: var(--c-text-muted);
+  background: var(--c-surface-glass);
+  backdrop-filter: blur(16px);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--c-border-main);
+}
+
+/* ---------- 暗色模式额外适配 ---------- */
+[data-theme="dark"] .archive-link {
+  background: rgba(26, 27, 58, 0.5);
+}
+
+[data-theme="dark"] .archive-link:hover {
+  background: rgba(26, 27, 58, 0.7);
+  border-color: var(--c-primary-500);
+}
+
+[data-theme="dark"] .archive-link:hover .archive-title {
+  color: var(--c-primary-500);
+}
+
+[data-theme="dark"] .archives-nav-card {
+  background: var(--c-surface-glass);
+  border-color: var(--c-border-main);
+}
+
+[data-theme="dark"] .archives-count {
+  background: var(--c-primary-200);
+  color: var(--c-primary-400);
+}
+
+[data-theme="dark"] .stat-row span:last-child {
+  color: var(--c-text-main);
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+
+@media (max-width: 991px) {
+  .archives-layout {
+    flex-direction: column;
+  }
+
+  .archives-sidebar {
+    width: 100%;
+    position: static;
+    transform: none;
+    top: auto;
+  }
+
+  .archives-nav-card {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 575px) {
+  .archive-link {
+    flex-wrap: wrap;
+  }
+
+  .archive-category {
+    width: 100%;
+    margin-top: var(--sp-1);
+  }
+
+  .month-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .archives-sidebar {
+    max-width: 100%;
+  }
+
+  .year-nav-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+</style>
+
 <script>
 (function() {
-  // 年份导航功能
-  var years = {{ $sortedYears | jsonify }};
-  var currentYearIndex = 0; // 默认显示最新年份
-  
+  var yearsData = {{ $sortedYears | jsonify }};
+  var years = typeof yearsData === 'string' ? JSON.parse(yearsData) : yearsData;
+  var currentYearIndex = 0;
+
   var yearDisplay = document.getElementById('current-year-display');
   var prevBtn = document.getElementById('year-prev');
   var nextBtn = document.getElementById('year-next');
   var monthItems = document.querySelectorAll('.month-item');
   var yearSections = document.querySelectorAll('.archive-year');
 
-  function updateYearDisplay() {
-    if (years.length === 0) return;
-    
-    var year = years[currentYearIndex];
-    if (!year) return;
-    
-    yearDisplay.textContent = year;
-    
-    // 更新月份列表 - 显示对应年份的月份数据
-    // 获取该年所有文章
-    var allPosts = document.querySelectorAll('.archive-year');
-    var targetYearSection = null;
-    var monthCounts = {};
-    
-    allPosts.forEach(function(section) {
-      if (section.id === 'year-' + year) {
-        targetYearSection = section;
-        // 统计各月文章数
-        var months = section.querySelectorAll('.archive-month');
-        months.forEach(function(month) {
-          var id = month.id;
-          if (id && id.startsWith('month-')) {
-            var monthNum = id.replace('month-', '');
-            var items = month.querySelectorAll('.archive-item');
-            monthCounts[monthNum] = items.length;
-          }
-        });
+  if (!years || years.length === 0) {
+    if (yearDisplay) yearDisplay.textContent = '无数据';
+    if (prevBtn) { prevBtn.disabled = true; }
+    if (nextBtn) { nextBtn.disabled = true; }
+    return;
+  }
+
+  function buildMonthCounts(year) {
+    var counts = {};
+    for (var m = 1; m <= 12; m++) {
+      counts[String(m).padStart(2, '0')] = 0;
+    }
+    var targetSection = null;
+    yearSections.forEach(function(section) {
+      if (section.getAttribute('data-year') === String(year)) {
+        targetSection = section;
       }
     });
-    
-    // 更新月份显示
+    if (targetSection) {
+      targetSection.querySelectorAll('.archive-month').forEach(function(month) {
+        var id = month.id;
+        if (id && id.startsWith('month-')) {
+          var monthNum = id.replace('month-', '');
+          counts[monthNum] = month.querySelectorAll('.archive-item').length;
+        }
+      });
+    }
+    return counts;
+  }
+
+  function updateYearDisplay() {
+    if (!years || years.length === 0) return;
+    if (currentYearIndex < 0) currentYearIndex = 0;
+    if (currentYearIndex >= years.length) currentYearIndex = years.length - 1;
+
+    var year = years[currentYearIndex];
+    if (!year) return;
+
+    var yearStr = String(year);
+    yearDisplay.textContent = yearStr;
+
+    var monthCounts = buildMonthCounts(yearStr);
+
     monthItems.forEach(function(item) {
-      var month = item.dataset.month;
+      var month = item.getAttribute('data-month');
       var countSpan = item.querySelector('.month-count');
-      
-      // 显示/隐藏月份
-      if (targetYearSection) {
-        item.style.display = 'flex';
-      } else {
-        item.style.display = 'none';
-      }
-      
-      // 更新计数
+      var itemYear = item.getAttribute('data-year');
+
       if (countSpan) {
         countSpan.textContent = monthCounts[month] || 0;
       }
-      
-      // 高亮当前年份
-      if (item.dataset.year === year) {
+
+      if (itemYear === yearStr) {
         item.classList.add('active');
       } else {
         item.classList.remove('active');
       }
-      item.dataset.year = year;
+      item.setAttribute('data-year', yearStr);
     });
-    
-    // 显示/隐藏年份区块
+
     yearSections.forEach(function(section) {
-      if (section.id === 'year-' + year) {
+      if (section.getAttribute('data-year') === yearStr) {
         section.style.display = 'block';
+        if (section.getAttribute('data-aos') && !section.classList.contains('aos-animate')) {
+          section.classList.add('aos-animate');
+        }
       } else {
         section.style.display = 'none';
       }
     });
-    
-    // 更新按钮状态
+
     if (prevBtn) {
       prevBtn.disabled = currentYearIndex <= 0;
-      prevBtn.style.opacity = currentYearIndex <= 0 ? '0.3' : '1';
     }
     if (nextBtn) {
       nextBtn.disabled = currentYearIndex >= years.length - 1;
-      nextBtn.style.opacity = currentYearIndex >= years.length - 1 ? '0.3' : '1';
     }
   }
 
   if (prevBtn) {
     prevBtn.addEventListener('click', function() {
-      if (currentYearIndex > 0) {
-        currentYearIndex--;
-        updateYearDisplay();
-      }
+      if (currentYearIndex > 0) { currentYearIndex--; updateYearDisplay(); }
     });
   }
 
   if (nextBtn) {
     nextBtn.addEventListener('click', function() {
-      if (currentYearIndex < years.length - 1) {
-        currentYearIndex++;
-        updateYearDisplay();
-      }
+      if (currentYearIndex < years.length - 1) { currentYearIndex++; updateYearDisplay(); }
     });
   }
 
-  // 点击月份跳转
   monthItems.forEach(function(item) {
     item.addEventListener('click', function() {
-      var month = this.dataset.month;
-      var year = this.dataset.year;
-      
-      // 切换到对应年份
-      var yearIndex = years.indexOf(year);
-      if (yearIndex !== -1) {
+      var month = this.getAttribute('data-month');
+      var year = this.getAttribute('data-year');
+      if (!year) return;
+
+      var yearIndex = years.indexOf(Number(year));
+      if (yearIndex !== -1 && yearIndex !== currentYearIndex) {
         currentYearIndex = yearIndex;
         updateYearDisplay();
       }
-      
-      // 滚动到对应月份
-      var targetId = 'month-' + month;
-      var targetElement = document.getElementById(targetId);
+
+      var targetElement = document.getElementById('month-' + month);
       if (targetElement) {
         setTimeout(function() {
           targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -261,9 +673,14 @@
     });
   });
 
-  // 初始化显示
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'ArrowLeft' && prevBtn && !prevBtn.disabled) { prevBtn.click(); e.preventDefault(); }
+    if (e.key === 'ArrowRight' && nextBtn && !nextBtn.disabled) { nextBtn.click(); e.preventDefault(); }
+  });
+
   if (years.length > 0) {
-    currentYearIndex = 0; // 最新年份
+    currentYearIndex = 0;
     updateYearDisplay();
   }
 })();

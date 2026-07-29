@@ -266,7 +266,7 @@ const EffectsManager = {
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: -2;
+      z-index: 0;
       will-change: transform;
     `;
     const overlay = document.querySelector('.bg-overlay-layer');
