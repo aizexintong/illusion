@@ -2,8 +2,8 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-section">
-        <h2 id="about-me" class="title-anime">{{ i18n "footerabout" }}</h2>
-        <p>{{ i18n "footeraboutdesc" (dict "Author" .Site.Params.author) }}</p>
+        <h2 id="about-me" class="title-anime">{{ i18n "footer_about" }}</h2>
+        <p>{{ i18n "footer_about_desc" (dict "Author" .Site.Params.author) }}</p>
         <div class="contact-info">
           <p><i class="fas fa-envelope" aria-hidden="true"></i> {{ .Site.Params.email }}</p>
           <p><i class="fas fa-globe" aria-hidden="true"></i> {{ .Site.Params.domain }}</p>
@@ -11,7 +11,7 @@
       </div>
 
       <div class="footer-section">
-        <h2 id="quick-links" class="title-anime">{{ i18n "footerquicklinks" }}</h2>
+        <h2 id="quick-links" class="title-anime">{{ i18n "footer_quick_links" }}</h2>
         <ul class="footer-links quick-links-grid" role="list" aria-labelledby="quick-links">
           {{ range site.Menus.main }}
           <li role="listitem">
@@ -25,7 +25,7 @@
       </div>
 
       <div class="footer-section">
-        <h2 id="tech-stack" class="title-anime">{{ i18n "footertechstack" }}</h2>
+        <h2 id="tech-stack" class="title-anime">{{ i18n "footer_tech_stack" }}</h2>
         <div class="tech-tags" role="list" aria-labelledby="tech-stack">
           {{- with hugo.Data.theme.skills.skills -}}
             {{- range first 6 . -}}
@@ -36,7 +36,7 @@
       </div>
 
       <div class="footer-section">
-        <h2 id="follow-me" class="title-anime">{{ i18n "footerfollow" }}</h2>
+        <h2 id="follow-me" class="title-anime">{{ i18n "footer_follow_me" }}</h2>
         <div class="social-links" role="list" aria-labelledby="follow-me">
           {{- range hugo.Data.theme.social.links -}}
             {{- if and .show .url -}}
@@ -46,7 +46,7 @@
             {{- end -}}
           {{- end -}}
         </div>
-        <p class="footer-note">{{ i18n "footermotto" }}</p>
+        <p class="footer-note">{{ i18n "footer_motto" }}</p>
       </div>
     </div>
 
@@ -58,19 +58,19 @@
             {{ .Name }}
           </a>
         {{ end }}
-        <a href="{{ "sitemap.xml" | relURL }}" class="footer-link" aria-label="{{ i18n "footersitemap" }}">
-          <i class="fas fa-sitemap"></i> {{ i18n "footersitemap" }}
+        <a href="{{ "sitemap.xml" | relURL }}" class="footer-link" aria-label="{{ i18n "footer_sitemap" }}">
+          <i class="fas fa-sitemap"></i> {{ i18n "footer_sitemap" }}
         </a>
-        <a href="{{ "index.xml" | relURL }}" class="footer-link" aria-label="RSS 订阅">
-          <i class="fas fa-rss"></i> RSS
+        <a href="{{ "index.xml" | relURL }}" class="footer-link" aria-label="{{ i18n "footer_rss" }}">
+          <i class="fas fa-rss"></i> {{ i18n "footer_rss" }}
         </a>
       </div>
 
       <p id="footer-copyright"></p>
 
-      <p class="site-uptime" id="site-uptime" aria-label="建站运行时长">
+      <p class="site-uptime" id="site-uptime" aria-label="{{ i18n "footer_uptime_label" }}">
         <i class="fas fa-clock" aria-hidden="true"></i>
-        <span id="uptime-display">加载中...</span>
+        <span id="uptime-display">{{ i18n "footer_uptime_loading" }}</span>
       </p>
 
       <p class="powered-by" id="footer-powered"></p>

@@ -1,16 +1,13 @@
 {{ define "main" }}
+{{- /* 具体分类/标签下的文章列表模板 */ -}}
 
 <div class="section-content" role="main">
   <header class="section-header">
     <h1 class="section-title">
-      {{ if eq .Kind "taxonomy" }}
-        {{ if eq .Data.Singular "tags" }}
-          <i class="fas fa-tags section-title-icon"></i>{{ i18n "tagstitle" }}
-        {{ else if eq .Data.Singular "categories" }}
-          <i class="fas fa-folder section-title-icon"></i>{{ i18n "categoriestitle" }}
-        {{ else }}
-          <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
-        {{ end }}
+      {{ if eq .Data.Singular "tags" }}
+        <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
+      {{ else if eq .Data.Singular "categories" }}
+        <i class="fas fa-folder section-title-icon"></i>{{ .Title }}
       {{ else }}
         <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
       {{ end }}
@@ -22,209 +19,101 @@
     {{ end }}
     <div class="tag-header-meta">
       <span class="tag-article-count">
-        <i class="fas fa-tag" aria-hidden="true"></i>
-        {{ if eq .Kind "taxonomy" }}
-          {{ if eq .Data.Singular "tags" }}
-            {{ with .Data.Terms }}{{ i18n "tagscount" (dict "Count" (len .)) }}{{ end }}
-          {{ else if eq .Data.Singular "categories" }}
-            {{ with .Data.Terms }}{{ i18n "categoriescount" (dict "Count" (len .)) }}{{ end }}
-          {{ else }}
-            {{ with .Data.Terms }}{{ i18n "taxonomycount" (dict "Count" (len .)) }}{{ end }}
-          {{ end }}
-        {{ else }}
-          {{ with .Pages }}{{ i18n "termcount" (dict "Count" (len .)) }}{{ end }}
-        {{ end }}
+        <i class="fas fa-file-alt" aria-hidden="true"></i>
+        {{ with .Pages }}{{ i18n "term_count" (dict "Count" (len .)) }}{{ end }}
       </span>
     </div>
   </header>
 
   <div class="container">
-    {{ if eq .Kind "taxonomy" }}
-      {{ if and .Data.Terms (gt (len .Data.Terms) 0) }}
-        {{ $allTags := sort .Data.Terms ".Count" "desc" }}
-        {{ $perPage := 50 }}
-        {{ $totalTags := len $allTags }}
-        {{ $totalPages := math.Ceil (div $totalTags $perPage) }}
-        
-        {{ $currentPage := 1 }}
-        {{ with .Paginator }}
-          {{ if ne .PageNumber 0 }}
-            {{ $currentPage = .PageNumber }}
-          {{ end }}
-        {{ end }}
-        
-        {{/* 安全计算起始和结束索引 */}}
-        {{ $startIndex := mul (sub $currentPage 1) $perPage }}
-        {{ $endIndex := add $startIndex $perPage }}
-        {{ if gt $endIndex $totalTags }}
-          {{ $endIndex = $totalTags }}
-        {{ end }}
-        
-        {{/* 确保起始索引有效 */}}
-        {{ if lt $startIndex 0 }}
-          {{ $startIndex = 0 }}
-        {{ end }}
-        
-        {{/* 计算切片长度 */}}
-        {{ $sliceLen := sub $endIndex $startIndex }}
-        {{ if lt $sliceLen 0 }}
-          {{ $sliceLen = 0 }}
-        {{ end }}
-        
-        {{/* 安全获取当前页标签 */}}
-        {{ $pageTags := slice }}
-        {{ if and (gt $sliceLen 0) (le $startIndex $totalTags) }}
-          {{ $tempTags := after $startIndex $allTags }}
-          {{ if gt (len $tempTags) 0 }}
-            {{ $pageTags = first $sliceLen $tempTags }}
-          {{ end }}
-        {{ end }}
-
-        <div class="tags-grid" data-aos="fade-up">
-          {{ range $pageTags }}
-          <a href="{{ .Page.RelPermalink }}" class="tags-card">
-            <span class="tags-card-name">{{ .Page.Title }}</span>
-            <span class="tags-card-count">{{ .Count }} 篇文章</span>
-          </a>
-          {{ end }}
-        </div>
-
-        {{ if gt $totalPages 1 }}
-        <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
-          {{ if gt $currentPage 1 }}
-          <a href="?page={{ sub $currentPage 1 }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}">
-            <i class="fas fa-chevron-left"></i>
-            {{ i18n "pageprev" }}
-          </a>
-          {{ end }}
-          
-          <div class="page-numbers">
-            {{ $startPage := math.Max 1 (sub $currentPage 3) }}
-            {{ $endPage := math.Min $totalPages (add $currentPage 3) }}
-            
-            {{ if gt $startPage 1 }}
-              <a href="?page=1" class="page-link">1</a>
-              {{ if gt $startPage 2 }}
-                <span class="page-link dots">…</span>
-              {{ end }}
-            {{ end }}
-            
-            {{ range seq $startPage $endPage }}
-              {{ if eq . $currentPage }}
-                <span class="page-link current" aria-current="page">{{ . }}</span>
-              {{ else }}
-                <a href="?page={{ . }}" class="page-link">{{ . }}</a>
-              {{ end }}
-            {{ end }}
-            
-            {{ if lt $endPage $totalPages }}
-              {{ if lt (add $endPage 1) $totalPages }}
-                <span class="page-link dots">…</span>
-              {{ end }}
-              <a href="?page={{ $totalPages }}" class="page-link">{{ $totalPages }}</a>
+    {{ if gt (len .Pages) 0 }}
+    {{ $paginator := .Paginate .Pages 16 }}
+    <div class="term-posts-grid" role="list">
+      {{ range $index, $page := $paginator.Pages }}
+      <article class="post-card" role="listitem">
+        {{ if .Params.image }}
+          <div class="post-image">
+            <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy" width="400" height="200"/>
+            <div class="post-image-overlay"></div>
+            {{ if .Params.categories }}
+              <span class="post-category" aria-label="{{ i18n "post_category" }}">
+                {{ index .Params.categories 0 }}
+              </span>
             {{ end }}
           </div>
-
-          {{ if lt $currentPage $totalPages }}
-          <a href="?page={{ add $currentPage 1 }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">
-            {{ i18n "pagenext" }}
-            <i class="fas fa-chevron-right"></i>
-          </a>
-          {{ end }}
-        </nav>
         {{ end }}
-      {{ else }}
-      <div class="no-terms-message" data-aos="fade-up">
-        <p>{{ i18n "taxonomyempty" }}</p>
-      </div>
-      {{ end }}
-    {{ else }}
-      {{ if gt (len .Pages) 0 }}
-      {{ $paginator := .Paginate .Pages 16 }}
-      <div class="term-posts-grid" role="list">
-        {{ range $index, $page := $paginator.Pages }}
-        <article class="post-card" role="listitem">
-          {{ if .Params.image }}
-            <div class="post-image">
-              <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy" width="400" height="200"/>
-              <div class="post-image-overlay"></div>
-              {{ if .Params.categories }}
-                <span class="post-category" aria-label="{{ i18n "postcategorylabel" }}">
-                  {{ index .Params.categories 0 }}
-                </span>
-              {{ end }}
-            </div>
-          {{ end }}
-          <div class="post-content">
-            <h3 class="post-title" title="{{ .Title }}">
-              <a href="{{ .RelPermalink }}" aria-label="{{ i18n "postreadarticle" }}: {{ .Title }}">
-                {{ .Title }}
-              </a>
-            </h3>
-            <div class="post-meta" aria-label="{{ i18n "postmetainfo" }}">
-              {{ if .Date }}
-                <span class="post-date">
-                  <i class="fas fa-calendar" aria-hidden="true"></i>
-                  {{ .Date.Format "2006-01-02" }}
-                </span>
-              {{ end }}
-              {{ if .ReadingTime }}
-                <span class="post-reading-time">
-                  <i class="fas fa-clock" aria-hidden="true"></i>
-                  {{ .ReadingTime }}{{ i18n "postreadtime" }}
-                </span>
-              {{ end }}
-            </div>
-            {{ if .Params.tags }}
-            <div class="post-tags-container" title="{{ delimit .Params.tags ", " }}">
-              <div class="post-tags">
-                {{ range first 3 .Params.tags }}
-                  <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="post-tag">#{{ . }}</a>
-                {{ end }}
-              </div>
-            </div>
-            {{ end }}
-            <div class="post-excerpt">
-              {{ with .Description }}{{ . | plainify | truncate 80 }}{{ else }}{{ .Summary | plainify | truncate 80 }}{{ end }}
-            </div>
-            <a href="{{ .RelPermalink }}" class="read-more">
-              {{ i18n "homereadmore" }}
-              <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        <div class="post-content">
+          <h3 class="post-title" title="{{ .Title }}">
+            <a href="{{ .RelPermalink }}" aria-label="{{ i18n "post_read_article" }}: {{ .Title }}">
+              {{ .Title }}
             </a>
-          </div>
-        </article>
-        {{ end }}
-      </div>
-      {{ if gt $paginator.TotalPages 1 }}
-      <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
-        {{ if $paginator.HasPrev }}
-          <a href="{{ $paginator.Prev.URL }}" class="page-link prev">
-            <i class="fas fa-chevron-left"></i>
-            {{ i18n "pageprev" }}
-          </a>
-        {{ end }}
-        <div class="page-numbers">
-          {{ range $paginator.Pagers }}
-            {{ if eq . $paginator }}
-              <span class="page-link current">{{ .PageNumber }}</span>
-            {{ else }}
-              <a href="{{ .URL }}" class="page-link">{{ .PageNumber }}</a>
+          </h3>
+          <div class="post-meta" aria-label="{{ i18n "post_meta_info" }}">
+            {{ if .Date }}
+              <span class="post-date">
+                <i class="fas fa-calendar" aria-hidden="true"></i>
+                {{ .Date.Format "2006-01-02" }}
+              </span>
             {{ end }}
+            {{ if .ReadingTime }}
+              <span class="post-reading-time">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                {{ .ReadingTime }}{{ i18n "post_read_time" }}
+              </span>
+            {{ end }}
+          </div>
+          {{ if .Params.tags }}
+          <div class="post-tags-container" title="{{ delimit .Params.tags ", " }}">
+            <div class="post-tags">
+              {{ range first 3 .Params.tags }}
+                <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="post-tag">#{{ . }}</a>
+              {{ end }}
+              {{ if gt (len .Params.tags) 3 }}
+                <span class="post-tag-more">{{ i18n "tags_more" (dict "Count" (sub (len .Params.tags) 3)) }}</span>
+              {{ end }}
+            </div>
+          </div>
           {{ end }}
-        </div>
-        {{ if $paginator.HasNext }}
-          <a href="{{ $paginator.Next.URL }}" class="page-link next">
-            {{ i18n "pagenext" }}
-            <i class="fas fa-chevron-right"></i>
+          <div class="post-excerpt">
+            {{ with .Description }}{{ . | plainify | truncate 80 }}{{ else }}{{ .Summary | plainify | truncate 80 }}{{ end }}
+          </div>
+          <a href="{{ .RelPermalink }}" class="read-more">
+            {{ i18n "btn_read_more" }}
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+    {{ if gt $paginator.TotalPages 1 }}
+    <nav class="pagination" aria-label="{{ i18n "page_nav" }}">
+      {{ if $paginator.HasPrev }}
+        <a href="{{ $paginator.Prev.URL }}" class="page-link prev">
+          <i class="fas fa-chevron-left"></i>
+          {{ i18n "page_prev" }}
+        </a>
+      {{ end }}
+      <div class="page-numbers">
+        {{ range $paginator.Pagers }}
+          {{ if eq . $paginator }}
+            <span class="page-link current">{{ .PageNumber }}</span>
+          {{ else }}
+            <a href="{{ .URL }}" class="page-link">{{ .PageNumber }}</a>
+          {{ end }}
         {{ end }}
-      </nav>
-      {{ end }}
-      {{ else }}
-      <div class="no-terms-message" data-aos="fade-up">
-        <p>{{ i18n "termempty" }}</p>
       </div>
+      {{ if $paginator.HasNext }}
+        <a href="{{ $paginator.Next.URL }}" class="page-link next">
+          {{ i18n "page_next" }}
+          <i class="fas fa-chevron-right"></i>
+        </a>
       {{ end }}
+    </nav>
+    {{ end }}
+    {{ else }}
+    <div class="no-terms-message" data-aos="fade-up">
+      <p>{{ i18n "term_empty" }}</p>
+    </div>
     {{ end }}
   </div>
 </div>

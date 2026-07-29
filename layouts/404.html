@@ -10,16 +10,16 @@
         <i class="{{ $page.icon | default "fas fa-ghost" }}"></i>
       </div>
       <h1 class="page-title">{{ $page.title | default "404" }}</h1>
-      <p class="page-description">{{ $page.description | default (i18n "notfoundtitle") }}</p>
-      <p class="error-message">{{ $page.message | default (i18n "notfounddesc") }}</p>
+      <p class="page-description">{{ $page.description | default (i18n "not_found_title") }}</p>
+      <p class="error-message">{{ $page.message | default (i18n "not_found_desc") }}</p>
       <div class="error-actions">
         <a href="{{ $buttons.home.url | default "/" | relURL }}" class="btn btn-primary">
           <i class="{{ $buttons.home.icon | default "fas fa-home" }}"></i>
-          {{ $buttons.home.text | default (i18n "btnbackhome") }}
+          {{ $buttons.home.text | default (i18n "btn_back_home") }}
         </a>
         <a href="{{ $buttons.posts.url | default "/posts/" | relURL }}" class="btn btn-secondary">
           <i class="{{ $buttons.posts.icon | default "fas fa-file-alt" }}"></i>
-          {{ $buttons.posts.text | default (i18n "btnbrowse") }}
+          {{ $buttons.posts.text | default (i18n "btn_browse") }}
         </a>
       </div>
     </section>

@@ -4,13 +4,12 @@
  */ -}}
 
 {{- if .Site.Params.enableComments -}}
-  <section class="comments-section" aria-label='{{ i18n "commentsection" }}'>
+  <section class="comments-section" aria-label='{{ i18n "comments_section" }}'>
     <div class="container">
-      <h2 class="section-title">{{ i18n "comments" }}</h2>
+      <h2 class="section-title">{{ i18n "comments_title" }}</h2>
       <div class="comments-container">
         
         {{- if eq .Site.Params.commentsProvider "disqus" -}}
-          {{- /* Disqus 评论系统 */ -}}
           {{- if .Site.Params.disqusShortname -}}
             <div id="disqus_thread"></div>
             <script>
@@ -27,16 +26,15 @@
               })();
             </script>
             <noscript>
-              请启用JavaScript以查看<a href="https://disqus.com/?ref_noscript">Disqus评论</a>。
+              {{ i18n "comments_enable_js" }}
             </noscript>
           {{- else -}}
             <div class="comments-warning" role="alert">
-              <p>Disqus配置未完成，请在站点配置中设置disqusShortname。</p>
+              <p>{{ i18n "comments_disqus_warn" }}</p>
             </div>
           {{- end -}}
           
         {{- else if eq .Site.Params.commentsProvider "utterances" -}}
-          {{- /* Utterances 评论系统 (GitHub Issues) */ -}}
           {{- if .Site.Params.utterancesRepo -}}
             <script src="https://utteranc.es/client.js"
                     repo="{{ .Site.Params.utterancesRepo }}"
@@ -47,12 +45,11 @@
             </script>
           {{- else -}}
             <div class="comments-warning" role="alert">
-              <p>Utterances配置未完成，请在站点配置中设置utterancesRepo。</p>
+              <p>{{ i18n "comments_utterances_warn" }}</p>
             </div>
           {{- end -}}
           
         {{- else if eq .Site.Params.commentsProvider "giscus" -}}
-          {{- /* Giscus 评论系统 (GitHub Discussions) */ -}}
           {{- if .Site.Params.giscusRepo -}}
             <script src="https://giscus.app/client.js"
                     data-repo="{{ .Site.Params.giscusRepo }}"
@@ -71,14 +68,13 @@
             </script>
           {{- else -}}
             <div class="comments-warning" role="alert">
-              <p>Giscus配置未完成，请在站点配置中设置giscusRepo。</p>
+              <p>{{ i18n "comments_giscus_warn" }}</p>
             </div>
           {{- end -}}
           
         {{- else -}}
-          {{- /* 默认: 无评论系统 */ -}}
           <div class="comments-disabled" role="status">
-            <p>评论功能已关闭。</p>
+            <p>{{ i18n "comments_disabled" }}</p>
           </div>
         {{- end -}}
         

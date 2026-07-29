@@ -3,12 +3,12 @@
 <div class="section-content">
   <div class="container">
     {{ $friendsData := hugo.Data.theme.friends }}
-    {{ $pageInfo := $friendsData.page }}
+    {{ $pageInfo := $friendsData.page | default dict }}
     {{ $applyInfo := $friendsData.apply }}
 
     <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ $pageInfo.title }}</h1>
-      <p class="page-description">{{ $pageInfo.subtitle }}</p>
+      <h1 class="page-title">{{ $pageInfo.title | default (i18n "links_title") }}</h1>
+      <p class="page-description">{{ $pageInfo.subtitle | default (i18n "links_subtitle") }}</p>
     </section>
 
     <section class="friends-links" data-aos="fade-up">
@@ -22,7 +22,7 @@
               <p class="link-desc">{{ .description }}</p>
               <div class="link-meta">
                 <span class="link-category">{{ .category }}</span>
-                <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> {{ i18n "linksvisit" }}</a>
+                <a href="{{ .url }}" class="link-url" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> {{ i18n "links_visit" }}</a>
               </div>
             </div>
           </div>
@@ -33,21 +33,21 @@
 
     <section class="apply-links" data-aos="fade-up">
       <div class="apply-card card">
-        <h2 class="section-title">{{ $applyInfo.title }}</h2>
+        <h2 class="section-title">{{ $applyInfo.title | default (i18n "links_apply_title") }}</h2>
         <div class="apply-content">
           <div class="apply-info">
-            <h3>{{ i18n "linksconditions" }}</h3>
+            <h3>{{ i18n "links_conditions" }}</h3>
             <ul class="apply-conditions">{{ with $applyInfo.conditions }}{{ range . }}<li><i class="fas fa-check-circle"></i> {{ . }}</li>{{ end }}{{ end }}</ul>
-            {{ with $applyInfo.siteInfo }}<h3>{{ i18n "linksinfo" }}</h3>
+            {{ with $applyInfo.siteInfo }}<h3>{{ i18n "links_site_info" }}</h3>
             <div class="site-info">
-              <div class="info-item"><span class="info-label">{{ i18n "linksname" }}</span><span class="info-value">{{ .name }}</span></div>
-              <div class="info-item"><span class="info-label">{{ i18n "linksurl" }}</span><span class="info-value">{{ .url }}</span></div>
-              <div class="info-item"><span class="info-label">{{ i18n "linksdesc" }}</span><span class="info-value">{{ .description }}</span></div>
+              <div class="info-item"><span class="info-label">{{ i18n "links_site_name" }}</span><span class="info-value">{{ .name }}</span></div>
+              <div class="info-item"><span class="info-label">{{ i18n "links_site_url" }}</span><span class="info-value">{{ .url }}</span></div>
+              <div class="info-item"><span class="info-label">{{ i18n "links_site_desc" }}</span><span class="info-value">{{ .description }}</span></div>
             </div>{{ end }}
           </div>
           <div class="apply-contact">
-            <h3>{{ $applyInfo.contactTitle }}</h3>
-            <p>{{ $applyInfo.contactDescription }}</p>
+            <h3>{{ $applyInfo.contactTitle | default (i18n "links_contact_title") }}</h3>
+            <p>{{ $applyInfo.contactDescription | default (i18n "links_contact_desc") }}</p>
             <div class="apply-contact-methods">
               {{ with $applyInfo.contactMethods }}{{ range . }}<a href="{{ .link }}" class="contact-btn" {{ if hasPrefix .link "http" }}target="_blank" rel="noopener"{{ end }}><i class="{{ .icon }}"></i> {{ .label }}</a>{{ end }}{{ end }}
             </div>

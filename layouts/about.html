@@ -1,5 +1,3 @@
-{{/* about.html - 关于页面
-      数据来源: data/theme.yaml 中的 about 字段 */}}
 {{ define "main" }}
 
 <div class="section-content">
@@ -41,8 +39,8 @@
               <div class="stat-content">
                 <div class="stat-number">
                   {{ if eq .number "auto" }}
-                    {{ if eq .label (i18n "aboutarticles") }}{{ len (where site.RegularPages "Type" "posts") }}
-                    {{ else if eq .label (i18n "aboutskills") }}{{ len (default slice (hugo.Data.theme.skills).skills) }}
+                    {{ if eq .label (i18n "about_articles") }}{{ len (where site.RegularPages "Type" "posts") }}
+                    {{ else if eq .label (i18n "about_skills") }}{{ len (default slice (hugo.Data.theme.skills).skills) }}
                     {{ else }}{{ .number }}{{ end }}
                   {{ else }}{{ .number }}{{ end }}
                 </div>
@@ -56,7 +54,7 @@
     </section>
 
     <section class="about-philosophy" data-aos="fade-up">
-      <h2 class="section-title">{{ $philosophy.title | default (i18n "aboutphilosophy") }}</h2>
+      <h2 class="section-title">{{ $philosophy.title | default (i18n "about_philosophy") }}</h2>
       <div class="philosophy-grid">
         {{ with $philosophy.items }}
           {{ range . }}
@@ -80,8 +78,8 @@
 
     <section class="about-contact" data-aos="fade-up">
       <div class="contact-card card">
-        <h2 class="section-title">{{ $contact.title | default (i18n "aboutcontact") }}</h2>
-        <p class="section-subtitle">{{ $contact.subtitle | default (i18n "aboutcontactdesc") }}</p>
+        <h2 class="section-title">{{ $contact.title | default (i18n "about_contact") }}</h2>
+        <p class="section-subtitle">{{ $contact.subtitle | default (i18n "about_contact_desc") }}</p>
         <div class="contact-methods">
           {{ with $contact.methods }}
             {{ range . }}
@@ -92,7 +90,7 @@
             {{ end }}
           {{ end }}
         </div>
-        <div class="contact-note"><p>{{ $contact.note | default (i18n "aboutcontactnote") }}</p></div>
+        <div class="contact-note"><p>{{ $contact.note | default (i18n "about_contact_note") }}</p></div>
       </div>
     </section>
   </div>

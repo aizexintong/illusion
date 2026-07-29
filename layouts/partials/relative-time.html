@@ -1,17 +1,17 @@
 {{- $date := . -}}
 {{- $secs := (now.Sub $date).Seconds -}}
 {{- if lt $secs 60 -}}
-  {{ i18n "reljustnow" }}
+  {{ i18n "rel_just_now" }}
 {{- else if lt $secs 3600 -}}
-  {{ printf "%.0f" (div $secs 60) }}{{ i18n "relminutesago" }}
+  {{ printf "%.0f" (div $secs 60) }}{{ i18n "rel_minutes_ago" }}
 {{- else if lt $secs 86400 -}}
-  {{ printf "%.0f" (div $secs 3600) }}{{ i18n "relhoursago" }}
+  {{ printf "%.0f" (div $secs 3600) }}{{ i18n "rel_hours_ago" }}
 {{- else if lt $secs 604800 -}}
-  {{ printf "%.0f" (div $secs 86400) }}{{ i18n "reldaysago" }}
+  {{ printf "%.0f" (div $secs 86400) }}{{ i18n "rel_days_ago" }}
 {{- else if lt $secs 2592000 -}}
-  {{ printf "%.0f" (div $secs 604800) }}{{ i18n "relweeksago" }}
+  {{ printf "%.0f" (div $secs 604800) }}{{ i18n "rel_weeks_ago" }}
 {{- else if lt $secs 31536000 -}}
-  {{ printf "%.0f" (div $secs 2592000) }}{{ i18n "relmonthsago" }}
+  {{ printf "%.0f" (div $secs 2592000) }}{{ i18n "rel_months_ago" }}
 {{- else -}}
-  {{ printf "%.0f" (div $secs 31536000) }}{{ i18n "relyearsago" }}
+  {{ printf "%.0f" (div $secs 31536000) }}{{ i18n "rel_years_ago" }}
 {{- end -}}

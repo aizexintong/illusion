@@ -1,12 +1,20 @@
 {{ define "main" }}
+{{- /* 统一文章列表模板 - 合并原 list.html 和 section.html 的功能 */ -}}
+{{- $isPostsSection := and (eq .Kind "section") (eq .Section "posts") -}}
 
 <div class="section-content" role="main">
   <header class="section-header">
     <h1 class="section-title">
-      <i class="fas fa-file-alt section-title-icon"></i>{{ .Title }}
+      {{ if $isPostsSection }}
+        <i class="fas fa-feather-alt section-title-icon"></i>{{ i18n "nav_posts" }}
+      {{ else }}
+        <i class="fas fa-file-alt section-title-icon"></i>{{ .Title }}
+      {{ end }}
     </h1>
     {{ if .Description }}
     <p class="section-subtitle">{{ .Description }}</p>
+    {{ else if $isPostsSection }}
+    <p class="section-subtitle">{{ i18n "home_posts_subtitle" }}</p>
     {{ end }}
     {{ if .Content }}
     <div class="section-description">{{ .Content }}</div>
@@ -15,64 +23,110 @@
 
   <div class="container">
     {{ $paginator := .Paginate .Pages 10 }}
-    <div class="posts-list" role="list">
-      {{ range $index, $element := $paginator.Pages }}
-      <article class="post-item{{ if and .Params.image (eq (mod $index 2) 1) }} reverse{{ end }}" role="listitem">
-        {{ if .Params.image }}
-        <div class="post-item-image">
-          <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy" width="400" height="200" />
-          <div class="post-image-overlay"></div>
-          {{ if .Params.categories }}
-          <span class="post-category" aria-label="{{ i18n "postcategorylabel" }}">{{ index .Params.categories 0 }}</span>
-          {{ end }}
-        </div>
-        {{ end }}
-        <div class="post-item-content">
-          <h3 class="post-title" title="{{ .Title }}">
-            <a href="{{ .RelPermalink }}" aria-label="{{ i18n "postreadarticle" }}: {{ .Title }}">{{ .Title }}</a>
-          </h3>
-          <div class="post-meta" aria-label="{{ i18n "postmetainfo" }}">
-            {{ if .Date }}<span class="post-date"><i class="fas fa-calendar-alt" aria-hidden="true"></i>{{ .Date.Format "2006-01-02" }}</span>{{ end }}
-            {{- $isModified := and .Date .Lastmod (ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
-            {{- $modDays := 0 -}}
-            {{- if $isModified -}}{{- $modDays = int (div (sub now.Unix .Lastmod.Unix) 86400) -}}{{ end }}
-            {{ if and .ReadingTime }}<span class="post-reading-time"><i class="fas fa-clock" aria-hidden="true"></i>{{ .ReadingTime }}{{ i18n "postreadtime" }}</span>{{ end }}
-            {{ if and $isModified (le $modDays 7) }}<span class="post-badge post-badge-updated" title="{{ .Lastmod.Format "2006-01-02" }}"><i class="fas fa-pencil-alt"></i> 已更新</span>{{ end }}
-          </div>
-          {{ if .Params.tags }}
-          <div class="post-tags-container" title="{{ delimit .Params.tags ", " }}">
-            <div class="post-tags">
-              {{ range first 3 .Params.tags }}<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="post-tag">#{{ . }}</a>{{ end }}
-              {{ if gt (len .Params.tags) 3 }}<span class="post-tag-more">+{{ sub (len .Params.tags) 3 }}</span>{{ end }}
+    <div class="posts-layout">
+      <div class="posts-main">
+        <div class="posts-list" role="list">
+          {{ range $index, $element := $paginator.Pages }}
+          <article class="post-item{{ if and .Params.image (eq (mod $index 2) 1) }} reverse{{ end }}" role="listitem">
+            {{ if .Params.image }}
+            <div class="post-item-image">
+              <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy" width="400" height="200" />
+              <div class="post-image-overlay"></div>
+              {{ if .Params.categories }}
+              <span class="post-category" aria-label="{{ i18n "post_category" }}">{{ index .Params.categories 0 }}</span>
+              {{ end }}
             </div>
-          </div>
+            {{ end }}
+            <div class="post-item-content">
+              <h3 class="post-title" title="{{ .Title }}">
+                <a href="{{ .RelPermalink }}" aria-label="{{ i18n "post_read_article" }}: {{ .Title }}">{{ .Title }}</a>
+              </h3>
+              <div class="post-meta" aria-label="{{ i18n "post_meta_info" }}">
+                {{ if .Date }}<span class="post-date"><i class="fas fa-calendar-alt" aria-hidden="true"></i>{{ .Date.Format "2006-01-02" }}</span>{{ end }}
+                {{- $isModified := and .Date .Lastmod (ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
+                {{- $modDays := 0 -}}
+                {{- if $isModified -}}{{- $modDays = int (div (sub now.Unix .Lastmod.Unix) 86400) -}}{{ end }}
+                {{ if and $isModified (le $modDays 7) }}<span class="post-badge post-badge-updated" title="{{ .Lastmod.Format "2006-01-02" }}"><i class="fas fa-pencil-alt"></i> {{ i18n "post_badge_updated" }}</span>{{ end }}
+                {{ if and .ReadingTime }}<span class="post-reading-time"><i class="fas fa-clock" aria-hidden="true"></i>{{ .ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
+              </div>
+              {{ if .Params.tags }}
+              <div class="post-tags-container" title="{{ delimit .Params.tags ", " }}">
+                <div class="post-tags">
+                  {{ range first 3 .Params.tags }}<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="post-tag">#{{ . }}</a>{{ end }}
+                  {{ if gt (len .Params.tags) 3 }}<span class="post-tag-more">{{ i18n "tags_more" (dict "Count" (sub (len .Params.tags) 3)) }}</span>{{ end }}
+                </div>
+              </div>
+              {{ end }}
+              <div class="post-excerpt">{{ with .Description }}{{ . | plainify | truncate 120 }}{{ else }}{{ .Summary | plainify | truncate 120 }}{{ end }}</div>
+              <a href="{{ .RelPermalink }}" class="read-more" aria-label="{{ i18n "post_continue" }}: {{ .Title }}">
+                <span>{{ i18n "btn_read_more" }}</span>
+                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
           {{ end }}
-          <div class="post-excerpt">{{ with .Description }}{{ . | plainify | truncate 120 }}{{ else }}{{ .Summary | plainify | truncate 120 }}{{ end }}</div>
-          <a href="{{ .RelPermalink }}" class="read-more" aria-label="{{ i18n "postcontinue" }}: {{ .Title }}">
-            <span>{{ i18n "homereadmore" }}</span>
-            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>
         </div>
-      </article>
-      {{ end }}
-    </div>
 
-    {{ if gt $paginator.TotalPages 1 }}
-    <nav class="pagination" aria-label="{{ i18n "paginationnav" }}">
-      {{ if $paginator.HasPrev }}
-      <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="{{ i18n "pageprev" }}"><i class="fas fa-chevron-left"></i>{{ i18n "pageprev" }}</a>
-      {{ end }}
-      <div class="page-numbers">
-        {{ range $paginator.Pagers }}
-          {{ if eq . $paginator }}<span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
-          {{ else }}<a href="{{ .URL }}" class="page-link" aria-label="{{ .PageNumber }}{{ i18n "page" }}">{{ .PageNumber }}</a>{{ end }}
+        {{ if gt $paginator.TotalPages 1 }}
+        <nav class="pagination" aria-label="{{ i18n "page_nav" }}">
+          {{ if $paginator.HasPrev }}
+          <a href="{{ $paginator.Prev.URL }}" class="page-link prev" aria-label="{{ i18n "page_prev" }}"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
+          {{ end }}
+          <div class="page-numbers">
+            {{ range $paginator.Pagers }}
+              {{ if eq . $paginator }}<span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
+              {{ else }}<a href="{{ .URL }}" class="page-link" aria-label="Page {{ .PageNumber }}">{{ .PageNumber }}</a>{{ end }}
+            {{ end }}
+          </div>
+          {{ if $paginator.HasNext }}
+          <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="{{ i18n "page_next" }}">{{ i18n "page_next" }}<i class="fas fa-chevron-right"></i></a>
+          {{ end }}
+        </nav>
         {{ end }}
       </div>
-      {{ if $paginator.HasNext }}
-      <a href="{{ $paginator.Next.URL }}" class="page-link next" aria-label="{{ i18n "pagenext" }}">{{ i18n "pagenext" }}<i class="fas fa-chevron-right"></i></a>
-      {{ end }}
-    </nav>
-    {{ end }}
+
+      {{- /* 侧栏：仅在 posts 章节页显示 */ -}}
+      {{- if $isPostsSection -}}
+      <aside class="posts-sidebar">
+        <div class="sidebar-card calendar-card sidebar-widget">
+          <div class="calendar-header">
+            <span class="calendar-month" id="calendar-month"></span>
+            <span class="calendar-year" id="calendar-year"></span>
+          </div>
+          <div class="calendar-body">
+            <div class="calendar-weekdays">
+              {{ range split (i18n "calendar_weekdays") "," }}<span>{{ . }}</span>{{ end }}
+            </div>
+            <div class="calendar-days" id="calendar-days"></div>
+          </div>
+          <div class="calendar-date"><span id="current-date"></span></div>
+        </div>
+
+        <div class="sidebar-card sidebar-widget">
+          <h3 class="sidebar-title"><i class="fas fa-fire"></i> {{ i18n "home_posts" }}</h3>
+          <ul class="recent-posts-list">
+            {{ range first 5 (where site.RegularPages "Type" "posts") }}
+            <li class="recent-post-item">
+              <a href="{{ .RelPermalink }}" class="recent-post-link" title="{{ .Title }}">
+                <span class="recent-post-title">{{ .Title }}</span>
+                <span class="recent-post-date">{{ .Date.Format "01-02" }}</span>
+              </a>
+            </li>
+            {{ end }}
+          </ul>
+        </div>
+
+        <div class="sidebar-card sidebar-widget">
+          <h3 class="sidebar-title"><i class="fas fa-cloud"></i> {{ i18n "tag_cloud_title" }}</h3>
+          <div class="tag-cloud">
+            {{ range first 10 (sort site.Taxonomies.tags "Count" "desc") }}
+            <a href="{{ .Page.RelPermalink }}" class="cloud-tag" data-weight="{{ .Count }}">{{ .Page.Title }}</a>
+            {{ end }}
+          </div>
+        </div>
+      </aside>
+      {{- end -}}
+    </div>
   </div>
 </div>
 {{ end }}

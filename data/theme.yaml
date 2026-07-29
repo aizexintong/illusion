@@ -1,8 +1,8 @@
 # ============================================================================
 # 主题统一配置文件 theme.yaml
-# 所有页面数据集中管理，按功能模块分区
-# 引用方式: {{ hugo.Data.theme.模块名.字段名 }}
-# 数据优先级: 项目根目录 data/theme.yaml > 主题 data/theme.yaml
+# 使命：页面内容数据与个性化，初期配置
+# 修改频率：开局初始化，后期微调
+# 注意：所有 UI 框架文字请修改 zh-CN.yaml，不要在此定义按钮/标签等文字
 # ============================================================================
 
 # ============================================================================
@@ -28,7 +28,6 @@ home:
     quote:
       text: "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。"
       author: "爱则心痛"
-
   posts:
     title: "最新文章"
     subtitle: "分享思考，记录成长"
@@ -36,13 +35,11 @@ home:
     showMore:
       text: "查看所有文章"
       url: "/posts"
-
   about:
     title: "关于爱则心痛"
     description: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。相信代码可以改变世界，享受解决问题的过程，热爱分享知识。"
     btnText: "了解更多"
     btnUrl: "/about"
-
   skills:
     title: "技术栈"
     subtitle: "不断学习，持续进步"
@@ -56,7 +53,6 @@ about:
     name: "爱则心痛 (azxt)"
     title: "全栈开发者 · 技术爱好者 · 开源贡献者"
     quote: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"
-
   stats:
     - icon: "fas fa-code"
       number: "auto"
@@ -70,7 +66,6 @@ about:
     - icon: "fas fa-heart"
       number: "∞"
       label: "热爱程度"
-
   philosophy:
     title: "技术理念"
     items:
@@ -86,7 +81,6 @@ about:
       - icon: "fas fa-user-check"
         title: "用户体验"
         description: "技术服务于人，优秀的用户体验是产品的灵魂"
-
   contact:
     title: "保持联系"
     subtitle: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"
@@ -115,8 +109,6 @@ assets:
   avatar:
     url: "/headimg.jpg"
     alt: "站点头像"
-    rss: "/headimg.jpg"
-
   background:
     mobile:
       url: "https://t.alcy.cc/mp"
@@ -128,26 +120,16 @@ assets:
       url: "https://t.alcy.cc/ycy"
       alt: "自适应背景"
       description: "推荐使用，自动适配不同设备"
-      breakpoint: "768px"
-
   openGraph:
     default:
       url: "https://t.alcy.cc/og"
       alt: "分享配图"
       width: 1200
       height: 630
-    article:
-      fallback: "https://t.alcy.cc/ycy"
-
   defaults:
     postCover: "https://t.alcy.cc/ycy"
     friendAvatar: "https://t.alcy.cc/tx"
     skillIcon: "fas fa-code"
-
-  imageService:
-    cdn: "https://t.alcy.cc"
-    lazyLoad: true
-    responsive: false
 
 # ============================================================================
 # 社交链接
@@ -185,19 +167,11 @@ social:
       label: "微信"
       show: false
 
-  footer:
-    icp: ""
-    police: ""
-    year: ""
-    since: "2024"
-
 # ============================================================================
 # 技能页面
 # ============================================================================
 skills:
   overview:
-    title: "技能总览"
-    subtitle: "掌握多项技术，持续学习进步"
     categories:
       - icon: "fas fa-code"
         title: "前端开发"
@@ -215,7 +189,6 @@ skills:
         title: "开发工具"
         description: "Git、Docker、VS Code、构建工具"
         progress: 100
-
   skills:
     - name: "JavaScript"
       level: 90
@@ -250,7 +223,6 @@ skills:
       level: 55
       description: "了解Rust语言特性，掌握基础语法和内存安全机制。"
       projects: []
-
   timeline:
     - year: "2022"
       title: "基础学习"
@@ -271,11 +243,8 @@ skills:
 # ============================================================================
 # 友链页面
 # ============================================================================
+# data/theme.yaml 中的 friends 部分
 friends:
-  page:
-    title: "我的朋友们"
-    subtitle: "与志同道合的朋友们互相链接"
-
   friends:
     - name: "示例友链"
       url: "https://example.com"
@@ -297,7 +266,6 @@ friends:
       avatar: "https://t.alcy.cc/pc"
       description: "优秀的开源项目展示"
       category: "开源项目"
-
   apply:
     title: "申请友链"
     conditions:
@@ -323,11 +291,6 @@ friends:
 # 工具页面
 # ============================================================================
 tools:
-  page:
-    title: "我的工具"
-    subtitle: "日常使用的效率工具集合"
-    enable: true
-
   categories:
     - name: "开发工具"
       icon: "fas fa-code"
@@ -349,7 +312,6 @@ tools:
           url: "https://www.postman.com"
           description: "API 测试和开发工具"
           icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/postman.svg"
-
     - name: "设计工具"
       icon: "fas fa-palette"
       description: "UI/UX 设计和图像处理工具"
@@ -362,7 +324,6 @@ tools:
           url: "https://www.canva.com"
           description: "在线图形设计平台"
           icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/canva.svg"
-
     - name: "效率工具"
       icon: "fas fa-bolt"
       description: "提升工作效率的辅助工具"
@@ -379,7 +340,6 @@ tools:
           url: "https://obsidian.md"
           description: "基于 Markdown 的双向链接笔记"
           icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/obsidian.svg"
-
     - name: "在线服务"
       icon: "fas fa-cloud"
       description: "常用的在线服务和平台"
@@ -406,7 +366,6 @@ error404:
     description: "页面不存在或已被移除"
     message: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"
     icon: "fas fa-ghost"
-
   buttons:
     home:
       text: "返回首页"
@@ -427,25 +386,18 @@ tags:
     perPage: 25
 
 # ============================================================================
-# 布局与功能开关
+# 布局与样式参数（从原 layout 节点移入，仅保留样式相关）
 # ============================================================================
 layout:
-  hero:
-    layout: "centered"
-    showAvatar: true
-    showTitle: true
-    showSubtitle: true
-    typewriter: true
-
   posts:
     layout: "grid"
     columns: 2
     perPage: 12
+    excerptLength: 160
     showDate: true
     showCategory: true
     showTags: true
     showExcerpt: true
-    excerptLength: 160
 
   skills:
     layout: "grid"
@@ -455,18 +407,9 @@ layout:
     showProjects: true
 
   links:
-    showApply: true
     showCategory: true
 
-  footer:
-    layout: "columns"
-    showCopyright: true
-    showPoweredBy: true
-    showSocial: true
-    showQuickLinks: true
-
   sidebar:
-    enable: true
     position: "right"
     showTOC: true
     showInfo: true
@@ -477,16 +420,3 @@ layout:
     showCopy: true
     expandLines: 0
     lineNumbers: false
-
-  animations:
-    scroll: true
-    particles: true
-    typewriter: true
-    card3D: true
-
-  seo:
-    schema: true
-    openGraph: true
-    twitterCards: true
-    baiduVerification: ""
-    googleVerification: ""

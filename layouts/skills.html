@@ -12,8 +12,8 @@
 
     <section class="skills-overview" data-aos="fade-up">
       <div class="skills-summary card">
-        <h2 class="section-title">{{ $overview.title }}</h2>
-        <p class="section-subtitle">{{ $overview.subtitle }}</p>
+        <h2 class="section-title">{{ $overview.title | default (i18n "skills_overview") }}</h2>
+        <p class="section-subtitle">{{ $overview.subtitle | default (i18n "skills_overview_subtitle") }}</p>
         <div class="skills-categories">
           {{ with $overview.categories }}{{ range . }}
           <div class="category-item" data-aos="zoom-in">
@@ -28,15 +28,15 @@
     </section>
 
     <section class="detailed-skills" data-aos="fade-up">
-      <h2 class="section-title">{{ i18n "skillsdetail" }}</h2>
-      <p class="section-subtitle">{{ i18n "skillsdetailsubtitle" }}</p>
+      <h2 class="section-title">{{ i18n "skills_detail" }}</h2>
+      <p class="section-subtitle">{{ i18n "skills_detail_subtitle" }}</p>
       <div class="skills-detailed-grid">
         {{ range $skillsData.skills }}
         <div class="skill-detail-item card" data-aos="fade-up">
           <div class="skill-header"><h3 class="skill-name">{{ .name }}</h3><span class="skill-level">{{ .level }}%</span></div>
           <div class="skill-bar"><div class="skill-progress" data-level="{{ .level }}"></div></div>
           {{ with .description }}<div class="skill-description">{{ . }}</div>{{ end }}
-          {{ with .projects }}{{ if gt (len .) 0 }}<div class="skill-projects"><h4>{{ i18n "skillsprojects" }}</h4><ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul></div>{{ end }}{{ end }}
+          {{ with .projects }}{{ if gt (len .) 0 }}<div class="skill-projects"><h4>{{ i18n "skills_projects" }}</h4><ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul></div>{{ end }}{{ end }}
         </div>
         {{ end }}
       </div>
@@ -44,7 +44,7 @@
 
     <section class="skill-development" data-aos="fade-up">
       <div class="development-timeline card">
-        <h2 class="section-title">{{ i18n "skillstimeline" }}</h2>
+        <h2 class="section-title">{{ i18n "skills_timeline" }}</h2>
         <div class="timeline">
           {{ with $skillsData.timeline }}{{ range . }}
           <div class="timeline-item" data-aos="fade-up">

@@ -1,14 +1,15 @@
 {{ define "main" }}
+{{- /* 统一分类/标签聚合页模板 - 合并原 tags.html、terms.html 的功能 */ -}}
 
 <div class="section-content" role="main">
   <header class="section-header">
     <h1 class="section-title">
       {{ if eq .Data.Singular "tags" }}
-        <i class="fas fa-tags section-title-icon"></i>{{ hugo.Data.theme.tags.page.title | default (i18n "tagsheadertitle") }}
+        <i class="fas fa-tags section-title-icon"></i>{{ i18n "tags_header_title" }}
       {{ else if eq .Data.Singular "categories" }}
-        <i class="fas fa-folder section-title-icon"></i>{{ i18n "categoriesheadertitle" }}
+        <i class="fas fa-folder section-title-icon"></i>{{ i18n "categories_header_title" }}
       {{ else }}
-        <i class="fas fa-tag section-title-icon"></i>{{ .Title }}
+        <i class="fas fa-tag section-title-icon"></i>{{ i18n "tags_header_title" }}
       {{ end }}
     </h1>
     {{ if .Content }}
@@ -19,15 +20,14 @@
     <div class="tag-header-meta">
       <span class="tag-article-count">
         <i class="fas fa-tags" aria-hidden="true"></i>
-        {{ $taxonomy := .Data.Plural }}
-        {{ if eq $taxonomy "tags" }}
+        {{ if eq .Data.Singular "tags" }}
           {{ $totalTags := len .Data.Terms.Alphabetical }}
-          {{ i18n "tagscount" (dict "Count" $totalTags) }}
-        {{ else if eq $taxonomy "categories" }}
+          {{ i18n "tags_count" (dict "Count" $totalTags) }}
+        {{ else if eq .Data.Singular "categories" }}
           {{ $totalCats := len .Data.Terms.Alphabetical }}
-          {{ i18n "categoriescount" (dict "Count" $totalCats) }}
+          {{ i18n "categories_count" (dict "Count" $totalCats) }}
         {{ else }}
-          {{ i18n "taxonomycount" (dict "Count" (len .Data.Terms.Alphabetical)) }}
+          {{ i18n "taxonomy_count" (dict "Count" (len .Data.Terms.Alphabetical)) }}
         {{ end }}
       </span>
     </div>
@@ -36,13 +36,8 @@
   <div class="container">
     {{ if .Data.Terms }}
       {{ $perPage := hugo.Data.theme.tags.page.perPage | default 25 }}
-      
-      {{/* 使用 .Data.Terms.Alphabetical 获取去重后的 term 列表 */}}
       {{ $terms := .Data.Terms.Alphabetical }}
-      
-      {{/* 按文章数量降序排序 */}}
       {{ $sortedTerms := sort $terms "Count" "desc" }}
-      
       {{ $totalTerms := len $sortedTerms }}
 
       <div class="tags-grid" data-aos="fade-up" id="tags-grid" data-per-page="{{ $perPage }}" data-total="{{ $totalTerms }}">
@@ -50,27 +45,27 @@
           <div class="tags-card-wrapper">
             <a href="{{ .Page.RelPermalink }}" class="tags-card">
               <span class="tags-card-name">{{ .Page.Title }}</span>
-              <span class="tags-card-count">{{ .Count }} 篇文章</span>
+              <span class="tags-card-count">{{ i18n "tags_article_count" (dict "Count" .Count) }}</span>
             </a>
           </div>
         {{ end }}
       </div>
 
-      <nav class="pagination" id="tags-pagination" aria-label="{{ i18n "paginationnav" }}" style="display:none;">
-        <a href="#" class="page-link prev" id="page-prev" aria-label="{{ i18n "pageprev" }}">
+      <nav class="pagination" id="tags-pagination" aria-label="{{ i18n "page_nav" }}" style="display:none;">
+        <a href="#" class="page-link prev" id="page-prev" aria-label="{{ i18n "page_prev" }}">
           <i class="fas fa-chevron-left"></i>
-          {{ i18n "pageprev" }}
+          {{ i18n "page_prev" }}
         </a>
         <div class="page-numbers" id="page-numbers"></div>
-        <a href="#" class="page-link next" id="page-next" aria-label="{{ i18n "pagenext" }}">
-          {{ i18n "pagenext" }}
+        <a href="#" class="page-link next" id="page-next" aria-label="{{ i18n "page_next" }}">
+          {{ i18n "page_next" }}
           <i class="fas fa-chevron-right"></i>
         </a>
       </nav>
       
     {{ else }}
       <div class="no-terms-message" data-aos="fade-up">
-        <p>{{ i18n "taxonomyempty" }}</p>
+        <p>{{ i18n "taxonomy_empty" }}</p>
       </div>
     {{ end }}
   </div>

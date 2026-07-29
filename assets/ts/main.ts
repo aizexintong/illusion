@@ -1,7 +1,6 @@
 // ==========================================================================
-// 幻梦 Illusion v2.2.0 - TypeScript 版本
-// 合并所有JS模块到单个文件
-// 包含：主题管理、特效管理、动画管理、交互管理、文档增强、通用功能
+// 幻梦 Illusion v2.2.0 - TypeScript
+// 所有用户可见文字均通过 i18n 系统获取，便于多语言扩展
 // ==========================================================================
 
 // ==========================================================================
@@ -9,21 +8,9 @@
 // ==========================================================================
 
 interface ThemeConfig {
-  light: {
-    name: string;
-    icon: string;
-    label: string;
-  };
-  dark: {
-    name: string;
-    icon: string;
-    label: string;
-  };
-  system: {
-    name: string;
-    icon: string;
-    label: string;
-  };
+  light: { name: string; icon: string; label: string };
+  dark: { name: string; icon: string; label: string };
+  system: { name: string; icon: string; label: string };
 }
 
 interface Particle {
@@ -52,6 +39,40 @@ interface SpectralType {
 }
 
 // ==========================================================================
+// i18n 辅助函数 - 从 DOM 数据集读取翻译
+// ==========================================================================
+
+const I18n = {
+  /**
+   * 从 data-i18n 属性获取翻译文本
+   * 优先级: data-i18n-xxx 属性 > window.i18nData > 默认英文
+   */
+  t(key: string, params?: Record<string, string | number>): string {
+    // 尝试从 window.i18nData 获取
+    const i18nData = (window as any).i18nData;
+    if (i18nData && i18nData[key]) {
+      return this._interpolate(i18nData[key], params);
+    }
+    // 尝试从 DOM 元素获取（如果有全局容器）
+    const globalEl = document.getElementById('i18n-data');
+    if (globalEl) {
+      const val = globalEl.getAttribute('data-i18n-' + key);
+      if (val) return this._interpolate(val, params);
+    }
+    // 返回 key 本身作为 fallback
+    console.warn('[I18n] Missing translation key:', key);
+    return key;
+  },
+
+  _interpolate(text: string, params?: Record<string, string | number>): string {
+    if (!params) return text;
+    return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
+      return params[key] !== undefined ? String(params[key]) : `{{${key}}}`;
+    });
+  }
+};
+
+// ==========================================================================
 // 主题管理系统
 // ==========================================================================
 
@@ -60,23 +81,27 @@ const ThemeManager = {
     light: {
       name: 'light',
       icon: 'fas fa-sun',
-      label: window.themeConfig?.lightLabel || '切换到深色模式'
+      label: ''
     },
     dark: {
       name: 'dark',
       icon: 'fas fa-moon',
-      label: window.themeConfig?.darkLabel || '切换到浅色模式'
+      label: ''
     },
     system: {
       name: 'system',
       icon: 'fas fa-desktop',
-      label: window.themeConfig?.systemLabel || '切换到手动模式'
+      label: ''
     }
   } satisfies ThemeConfig,
 
   currentTheme: null as string | null,
 
   init(): void {
+    this.config.light.label = I18n.t('theme_light');
+    this.config.dark.label = I18n.t('theme_dark');
+    this.config.system.label = I18n.t('theme_system');
+
     this.setThemeImmediately();
 
     if (document.readyState === 'loading') {
@@ -96,21 +121,17 @@ const ThemeManager = {
 
   applyTheme(theme: string): void {
     let themeToApply = theme;
-
     if (theme === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       themeToApply = prefersDark ? 'dark' : 'light';
     }
-
     document.documentElement.setAttribute('data-theme', themeToApply);
   },
 
   initToggle(): void {
     const toggleBtn = document.getElementById('theme-toggle');
     if (!toggleBtn) return;
-
     this.updateToggleButton(toggleBtn);
-
     toggleBtn.addEventListener('click', () => {
       this.cycleTheme();
       toggleBtn.style.transform = 'scale(0.9)';
@@ -128,20 +149,17 @@ const ThemeManager = {
 
   setTheme(theme: string): void {
     if (!this.config[theme as keyof ThemeConfig]) return;
-
     this.currentTheme = theme;
     localStorage.setItem('theme', theme);
-    
     this.applyTheme(theme);
     this.updateAllToggleButtons();
-
-    document.dispatchEvent(new CustomEvent('themeChanged', { 
-      detail: { 
+    document.dispatchEvent(new CustomEvent('themeChanged', {
+      detail: {
         theme: this.currentTheme,
-        applied: this.currentTheme === 'system' 
+        applied: this.currentTheme === 'system'
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme
-      } 
+      }
     }));
   },
 
@@ -153,7 +171,6 @@ const ThemeManager = {
     if (!button) return;
     const config = this.config[this.currentTheme as keyof ThemeConfig];
     const icon = button.querySelector('i');
-
     if (icon) {
       icon.className = config.icon;
       icon.setAttribute('aria-label', config.label);
@@ -165,13 +182,11 @@ const ThemeManager = {
   watchSystemTheme(): void {
     if (!window.matchMedia) return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
     const handleChange = () => {
       if (this.currentTheme === 'system') {
         this.applyTheme('system');
       }
     };
-
     mediaQuery.addEventListener('change', handleChange);
   }
 };
@@ -188,13 +203,8 @@ const EffectsManager = {
   currentMode: null as string | null,
   isRunning: false,
   lastTime: 0,
-  frameCount: 0,
-  fps: 0,
-  targetFPS: 60,
   frameInterval: 1000 / 60,
   performanceMultiplier: 1,
-  offscreenCanvas: null as HTMLCanvasElement | null,
-  offscreenCtx: null as CanvasRenderingContext2D | null,
   shootingStars: [] as ShootingStar[],
   lastShootingStarTime: 0,
   _w: 0,
@@ -230,27 +240,24 @@ const EffectsManager = {
     if (this.isRunning) return;
     this.detectPerformance();
     this.createCanvas();
-    this.createOffscreenCanvas();
     this.bindEvents();
     this.detectMode();
     this.isRunning = true;
   },
 
   detectPerformance(): void {
-    const isLowEnd = navigator.hardwareConcurrency <= 2 || 
-                     (navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined && (navigator as Navigator & { deviceMemory?: number }).deviceMemory! <= 2 ||
-                     /Mobi|Android/i.test(navigator.userAgent);
+    const isLowEnd = navigator.hardwareConcurrency <= 2 ||
+      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined &&
+        (navigator as Navigator & { deviceMemory?: number }).deviceMemory! <= 2) ||
+      /Mobi|Android/i.test(navigator.userAgent);
     this.performanceMultiplier = isLowEnd ? 0.5 : 1;
-    
+
     if (isLowEnd) {
       this.config.candy.ribbonCount = Math.floor(this.config.candy.ribbonCount * 0.5);
       this.config.candy.candyCount = Math.floor(this.config.candy.candyCount * 0.5);
       this.config.candy.heartCount = Math.floor(this.config.candy.heartCount * 0.5);
       this.config.candy.starCount = Math.floor(this.config.candy.starCount * 0.5);
       this.config.star.count = Math.floor(this.config.star.count * 0.5);
-      this.config.star.spectralTypes.forEach(t => {
-        t.minSize *= 0.8; t.maxSize *= 0.8;
-      });
       this.config.firefly.count = Math.floor(this.config.firefly.count * 0.5);
     }
   },
@@ -260,14 +267,8 @@ const EffectsManager = {
     this.canvas = document.createElement('canvas');
     this.canvas.id = 'effects-canvas';
     this.canvas.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      will-change: transform;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 0; will-change: transform;
     `;
     const overlay = document.querySelector('.bg-overlay-layer');
     if (overlay && overlay.nextSibling) {
@@ -278,12 +279,6 @@ const EffectsManager = {
     const ctx = this.canvas.getContext('2d', { alpha: true });
     if (ctx) this.ctx = ctx;
     this.resize();
-  },
-
-  createOffscreenCanvas(): void {
-    this.offscreenCanvas = document.createElement('canvas');
-    const ctx = this.offscreenCanvas.getContext('2d', { alpha: true });
-    if (ctx) this.offscreenCtx = ctx;
   },
 
   resize(): void {
@@ -298,11 +293,6 @@ const EffectsManager = {
     this._w = w;
     this._h = h;
     if (this.ctx) this.ctx.scale(dpr, dpr);
-    
-    if (this.offscreenCanvas) {
-      this.offscreenCanvas.width = this.canvas.width;
-      this.offscreenCanvas.height = this.canvas.height;
-    }
   },
 
   bindEvents(): void {
@@ -311,18 +301,13 @@ const EffectsManager = {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => this.resize(), 100);
     });
-
     const observer = new MutationObserver(() => this.detectMode());
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme']
-    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   },
 
   detectMode(): void {
     const theme = document.documentElement.getAttribute('data-theme');
     const isDark = theme === 'dark';
-
     if (isDark && this.currentMode !== 'night') {
       this.switchMode('night');
     } else if (!isDark && this.currentMode !== 'day') {
@@ -331,22 +316,17 @@ const EffectsManager = {
   },
 
   switchMode(mode: string): void {
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
+    if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
     this.particles = [];
     this.shootingStars = [];
     this.currentMode = mode;
     this._w = window.innerWidth;
     this._h = window.innerHeight;
-
     if (mode === 'day') {
       this.initDayEffects();
     } else {
       this.initNightEffects();
     }
-
     this.lastTime = performance.now();
     this.animate(this.lastTime);
   },
@@ -362,36 +342,25 @@ const EffectsManager = {
   createRibbon(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     return {
-      type: 'ribbon',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h * 2 - this._h,
+      type: 'ribbon', x: Math.random() * this._w, y: Math.random() * this._h * 2 - this._h,
       speed: 0.6 + depth * 1.5,
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.06,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.02 + Math.random() * 0.03,
-      width: 4 + Math.random() * 6,
-      height: 25 + Math.random() * 35,
-      depth: depth
+      rotation: Math.random() * Math.PI * 2, rotationSpeed: (Math.random() - 0.5) * 0.06,
+      wobble: Math.random() * Math.PI * 2, wobbleSpeed: 0.02 + Math.random() * 0.03,
+      width: 4 + Math.random() * 6, height: 25 + Math.random() * 35, depth: depth
     };
   },
 
   createCandy(config: typeof EffectsManager.config.candy) {
     const depth = Math.random();
     return {
-      type: 'candy',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h * 2 - this._h,
+      type: 'candy', x: Math.random() * this._w, y: Math.random() * this._h * 2 - this._h,
       speed: 0.5 + depth * 1.2,
       color: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
       stripeColor: config.candyColors[Math.floor(Math.random() * config.candyColors.length)],
-      size: 8 + Math.random() * 12,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.05,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.015 + Math.random() * 0.02,
-      depth: depth,
+      size: 8 + Math.random() * 12, rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.05, wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.015 + Math.random() * 0.02, depth: depth,
       candyType: Math.floor(Math.random() * 3)
     };
   },
@@ -400,17 +369,12 @@ const EffectsManager = {
     const depth = Math.random();
     const colors = ['#FF6B6B', '#F783AC', '#FFA94D', '#FF8787', '#9775FA', '#4DABF7'];
     return {
-      type: 'heart',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h * 2 - this._h,
+      type: 'heart', x: Math.random() * this._w, y: Math.random() * this._h * 2 - this._h,
       speed: 0.4 + depth * 0.8,
       color: colors[Math.floor(Math.random() * colors.length)],
-      size: 6 + Math.random() * 10,
-      rotation: (Math.random() - 0.5) * 0.3,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.02 + Math.random() * 0.02,
-      depth: depth,
-      pulse: Math.random() * Math.PI * 2
+      size: 6 + Math.random() * 10, rotation: (Math.random() - 0.5) * 0.3,
+      wobble: Math.random() * Math.PI * 2, wobbleSpeed: 0.02 + Math.random() * 0.02,
+      depth: depth, pulse: Math.random() * Math.PI * 2
     };
   },
 
@@ -418,17 +382,12 @@ const EffectsManager = {
     const depth = Math.random();
     const colors = ['#FFD43B', '#FFA94D', '#FF6B6B', '#69DB7C', '#4DABF7', '#F783AC'];
     return {
-      type: 'dayStar',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h * 2 - this._h,
+      type: 'dayStar', x: Math.random() * this._w, y: Math.random() * this._h * 2 - this._h,
       speed: 0.3 + depth * 0.7,
       color: colors[Math.floor(Math.random() * 4)],
-      size: 5 + Math.random() * 8,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.04,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.01 + Math.random() * 0.02,
-      depth: depth,
+      size: 5 + Math.random() * 8, rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.04, wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.01 + Math.random() * 0.02, depth: depth,
       points: 4 + Math.floor(Math.random() * 2)
     };
   },
@@ -444,16 +403,11 @@ const EffectsManager = {
     const totalWeight = config.spectralTypes.reduce((s, t) => s + t.weight, 0);
     let roll = Math.random() * totalWeight;
     let type = config.spectralTypes[0];
-    for (const t of config.spectralTypes) {
-      roll -= t.weight;
-      if (roll <= 0) { type = t; break; }
-    }
+    for (const t of config.spectralTypes) { roll -= t.weight; if (roll <= 0) { type = t; break; } }
     const size = type.minSize + Math.random() * (type.maxSize - type.minSize);
     const isBright = size > 2.5;
     return {
-      type: 'star',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h * 0.85,
+      type: 'star', x: Math.random() * this._w, y: Math.random() * this._h * 0.85,
       size: size,
       color: type.colors[Math.floor(Math.random() * type.colors.length)],
       twinkle: Math.random() * Math.PI * 2,
@@ -467,16 +421,12 @@ const EffectsManager = {
     const angle = Math.random() * Math.PI * 2;
     const speed = 0.3 + Math.random() * 0.8;
     return {
-      type: 'firefly',
-      x: Math.random() * this._w,
-      y: Math.random() * this._h,
+      type: 'firefly', x: Math.random() * this._w, y: Math.random() * this._h,
       size: config.minSize + Math.random() * (config.maxSize - config.minSize),
       color: config.colors[Math.floor(Math.random() * config.colors.length)],
       glowSize: config.glowSize + Math.random() * 15,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      phase: Math.random() * Math.PI * 2,
-      phaseSpeed: 0.03 + Math.random() * 0.05,
+      vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      phase: Math.random() * Math.PI * 2, phaseSpeed: 0.03 + Math.random() * 0.05,
       wanderAngle: Math.random() * Math.PI * 2
     };
   },
@@ -515,48 +465,32 @@ const EffectsManager = {
     this.ctx.scale(depthScale, depthScale);
     const size = p.size as number;
     if (p.candyType === 0) {
-      this.ctx.beginPath();
-      this.ctx.arc(0, 0, size, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color as string;
-      this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor as string;
-      this.ctx.lineWidth = 2;
-      this.ctx.beginPath();
-      this.ctx.arc(0, 0, size * 0.7, 0, Math.PI);
-      this.ctx.stroke();
-      this.ctx.beginPath();
-      this.ctx.arc(-size * 0.3, -size * 0.3, size * 0.25, 0, Math.PI * 2);
-      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      this.ctx.fill();
+      this.ctx.beginPath(); this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string; this.ctx.fill();
+      this.ctx.strokeStyle = p.stripeColor as string; this.ctx.lineWidth = 2;
+      this.ctx.beginPath(); this.ctx.arc(0, 0, size * 0.7, 0, Math.PI); this.ctx.stroke();
+      this.ctx.beginPath(); this.ctx.arc(-size * 0.3, -size * 0.3, size * 0.25, 0, Math.PI * 2);
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; this.ctx.fill();
     } else if (p.candyType === 1) {
       this.ctx.fillStyle = '#E8D898';
       this.ctx.fillRect(-1.5, size, 3, size * 1.5);
-      this.ctx.beginPath();
-      this.ctx.arc(0, 0, size, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color as string;
-      this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor as string;
-      this.ctx.lineWidth = 2;
+      this.ctx.beginPath(); this.ctx.arc(0, 0, size, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string; this.ctx.fill();
+      this.ctx.strokeStyle = p.stripeColor as string; this.ctx.lineWidth = 2;
       for (let i = 0; i < 3; i++) {
-        this.ctx.beginPath();
-        this.ctx.arc(0, 0, size * (0.4 + i * 0.2), 0, Math.PI * 1.5);
-        this.ctx.stroke();
+        this.ctx.beginPath(); this.ctx.arc(0, 0, size * (0.4 + i * 0.2), 0, Math.PI * 1.5); this.ctx.stroke();
       }
     } else {
-      this.ctx.beginPath();
-      this.ctx.ellipse(0, 0, size * 1.5, size * 0.6, 0, 0, Math.PI * 2);
-      this.ctx.fillStyle = p.color as string;
-      this.ctx.fill();
-      this.ctx.strokeStyle = p.stripeColor as string;
-      this.ctx.lineWidth = 2;
+      this.ctx.beginPath(); this.ctx.ellipse(0, 0, size * 1.5, size * 0.6, 0, 0, Math.PI * 2);
+      this.ctx.fillStyle = p.color as string; this.ctx.fill();
+      this.ctx.strokeStyle = p.stripeColor as string; this.ctx.lineWidth = 2;
       this.ctx.beginPath();
       this.ctx.moveTo(-size * 1.2, 0);
       this.ctx.quadraticCurveTo(-size * 0.5, -size * 0.5, 0, 0);
       this.ctx.quadraticCurveTo(size * 0.5, size * 0.5, size * 1.2, 0);
       this.ctx.stroke();
       this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      this.ctx.beginPath();
-      this.ctx.ellipse(-size * 0.5, -size * 0.2, size * 0.4, size * 0.2, -0.3, 0, Math.PI * 2);
+      this.ctx.beginPath(); this.ctx.ellipse(-size * 0.5, -size * 0.2, size * 0.4, size * 0.2, -0.3, 0, Math.PI * 2);
       this.ctx.fill();
     }
     this.ctx.restore();
@@ -576,12 +510,10 @@ const EffectsManager = {
     this.ctx.moveTo(0, size * 0.3);
     this.ctx.bezierCurveTo(-size, -size * 0.3, -size, -size, 0, -size * 0.5);
     this.ctx.bezierCurveTo(size, -size, size, -size * 0.3, 0, size * 0.3);
-    this.ctx.fillStyle = p.color as string;
-    this.ctx.fill();
+    this.ctx.fillStyle = p.color as string; this.ctx.fill();
     this.ctx.beginPath();
     this.ctx.ellipse(-size * 0.3, -size * 0.4, size * 0.2, size * 0.15, -0.5, 0, Math.PI * 2);
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    this.ctx.fill();
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; this.ctx.fill();
     this.ctx.restore();
   },
 
@@ -602,16 +534,13 @@ const EffectsManager = {
       const angle = (i * Math.PI) / spikes - Math.PI / 2;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
-      if (i === 0) this.ctx.moveTo(x, y);
-      else this.ctx.lineTo(x, y);
+      if (i === 0) this.ctx.moveTo(x, y); else this.ctx.lineTo(x, y);
     }
     this.ctx.closePath();
-    this.ctx.fillStyle = p.color as string;
-    this.ctx.fill();
+    this.ctx.fillStyle = p.color as string; this.ctx.fill();
     this.ctx.beginPath();
     this.ctx.arc(-(p.size as number) * 0.2, -(p.size as number) * 0.2, (p.size as number) * 0.2, 0, Math.PI * 2);
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    this.ctx.fill();
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; this.ctx.fill();
     this.ctx.restore();
   },
 
@@ -630,23 +559,16 @@ const EffectsManager = {
     gradient.addColorStop(0.5, (p.color as string) + '50');
     gradient.addColorStop(1, 'transparent');
     this.ctx.fillStyle = gradient;
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, glowSize, 0, Math.PI * 2);
-    this.ctx.fill();
+    this.ctx.beginPath(); this.ctx.arc(p.x, p.y, glowSize, 0, Math.PI * 2); this.ctx.fill();
     this.ctx.fillStyle = '#FFFFFF';
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
-    this.ctx.fill();
+    this.ctx.beginPath(); this.ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2); this.ctx.fill();
     if (p.hasRays) {
       const rayLen = (p.rayLength as number) * currentSize * (0.7 + twinkleValue * 0.5);
-      this.ctx.strokeStyle = p.color as string;
-      this.ctx.lineWidth = 0.8;
+      this.ctx.strokeStyle = p.color as string; this.ctx.lineWidth = 0.8;
       this.ctx.globalAlpha = alpha * 0.7;
       this.ctx.beginPath();
-      this.ctx.moveTo(p.x - rayLen, p.y);
-      this.ctx.lineTo(p.x + rayLen, p.y);
-      this.ctx.moveTo(p.x, p.y - rayLen);
-      this.ctx.lineTo(p.x, p.y + rayLen);
+      this.ctx.moveTo(p.x - rayLen, p.y); this.ctx.lineTo(p.x + rayLen, p.y);
+      this.ctx.moveTo(p.x, p.y - rayLen); this.ctx.lineTo(p.x, p.y + rayLen);
       this.ctx.stroke();
     }
     this.ctx.restore();
@@ -661,16 +583,11 @@ const EffectsManager = {
     gradient.addColorStop(0, p.color as string);
     gradient.addColorStop(0.3, (p.color as string) + 'B0');
     gradient.addColorStop(1, 'transparent');
-    this.ctx.globalAlpha = glow * 0.7;
-    this.ctx.fillStyle = gradient;
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
-    this.ctx.fill();
+    this.ctx.globalAlpha = glow * 0.7; this.ctx.fillStyle = gradient;
+    this.ctx.beginPath(); this.ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2); this.ctx.fill();
     this.ctx.globalAlpha = glow;
     this.ctx.fillStyle = '#B0FFB0';
-    this.ctx.beginPath();
-    this.ctx.arc(p.x, p.y, (p.size as number) * 0.5, 0, Math.PI * 2);
-    this.ctx.fill();
+    this.ctx.beginPath(); this.ctx.arc(p.x, p.y, (p.size as number) * 0.5, 0, Math.PI * 2); this.ctx.fill();
     this.ctx.restore();
   },
 
@@ -681,10 +598,7 @@ const EffectsManager = {
     p.x = (p.x as number) + Math.sin(p.wobble as number) * 0.8;
     if (p.rotation !== undefined) p.rotation = (p.rotation as number) + (p.rotationSpeed as number || 0);
     if (p.pulse !== undefined) p.pulse = (p.pulse as number) + 0.05;
-    if ((p.y as number) > this._h + 50) {
-      p.y = -50;
-      p.x = Math.random() * this._w;
-    }
+    if ((p.y as number) > this._h + 50) { p.y = -50; p.x = Math.random() * this._w; }
   },
 
   updateNightParticle(p: Particle): void {
@@ -696,7 +610,7 @@ const EffectsManager = {
       p.vx = (p.vx as number) + Math.cos(p.wanderAngle as number) * 0.03;
       p.vy = (p.vy as number) + Math.sin(p.wanderAngle as number) * 0.03;
       const maxSpeed = 1.2;
-      const speed = Math.sqrt((p.vx as number) * (p.vx as number) + (p.vy as number) * (p.vy as number));
+      const speed = Math.sqrt((p.vx as number) ** 2 + (p.vy as number) ** 2);
       if (speed > maxSpeed) {
         p.vx = ((p.vx as number) / speed) * maxSpeed;
         p.vy = ((p.vy as number) / speed) * maxSpeed;
@@ -716,42 +630,26 @@ const EffectsManager = {
     const startY = Math.random() * this._h * 0.5;
     const angle = Math.PI / 3 + (Math.random() - 0.5) * 0.8;
     const speed = 6 + Math.random() * 12;
-    return {
-      x: startX,
-      y: startY,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      length: 50 + Math.random() * 100,
-      life: 1,
-      decay: 0.008 + Math.random() * 0.015,
-      width: 1 + Math.random() * 1.5
-    };
+    return { x: startX, y: startY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      length: 50 + Math.random() * 100, life: 1, decay: 0.008 + Math.random() * 0.015, width: 1 + Math.random() * 1.5 };
   },
 
   updateShootingStars(): void {
     if (this.currentMode !== 'night') return;
-    
     const now = Date.now();
     const interval = 2000 + Math.random() * 10000;
     if (now - this.lastShootingStarTime > interval) {
       const count = Math.random() > 0.7 ? 2 + Math.floor(Math.random() * 3) : 1;
       for (let i = 0; i < count; i++) {
         const star = this.createShootingStar();
-        if (i > 0) {
-          star.x += (Math.random() - 0.5) * 200;
-          star.y += (Math.random() - 0.5) * 100;
-        }
+        if (i > 0) { star.x += (Math.random() - 0.5) * 200; star.y += (Math.random() - 0.5) * 100; }
         this.shootingStars.push(star);
       }
       this.lastShootingStarTime = now;
     }
-    
     for (let i = this.shootingStars.length - 1; i >= 0; i--) {
       const star = this.shootingStars[i];
-      star.x += star.vx;
-      star.y += star.vy;
-      star.life -= star.decay;
-      
+      star.x += star.vx; star.y += star.vy; star.life -= star.decay;
       if (star.life <= 0 || star.x > this._w + 100 || star.y > this._h + 100) {
         this.shootingStars.splice(i, 1);
       }
@@ -763,7 +661,6 @@ const EffectsManager = {
     for (const star of this.shootingStars) {
       this.ctx.save();
       this.ctx.globalAlpha = star.life;
-      
       const gradient = this.ctx.createLinearGradient(
         star.x, star.y,
         star.x - star.vx * 0.1 * star.length / 8,
@@ -772,50 +669,32 @@ const EffectsManager = {
       gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
       gradient.addColorStop(0.2, 'rgba(230, 240, 255, 0.9)');
       gradient.addColorStop(1, 'transparent');
-      
-      this.ctx.strokeStyle = gradient;
-      this.ctx.lineWidth = star.width;
-      this.ctx.lineCap = 'round';
+      this.ctx.strokeStyle = gradient; this.ctx.lineWidth = star.width; this.ctx.lineCap = 'round';
       this.ctx.beginPath();
       this.ctx.moveTo(star.x, star.y);
-      this.ctx.lineTo(
-        star.x - star.vx * 0.1 * star.length / 8,
-        star.y - star.vy * 0.1 * star.length / 8
-      );
+      this.ctx.lineTo(star.x - star.vx * 0.1 * star.length / 8, star.y - star.vy * 0.1 * star.length / 8);
       this.ctx.stroke();
-      
       const headGradient = this.ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, 6);
       headGradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
       headGradient.addColorStop(0.3, 'rgba(230, 240, 255, 0.6)');
       headGradient.addColorStop(1, 'transparent');
       this.ctx.fillStyle = headGradient;
-      this.ctx.beginPath();
-      this.ctx.arc(star.x, star.y, 6, 0, Math.PI * 2);
-      this.ctx.fill();
-      
+      this.ctx.beginPath(); this.ctx.arc(star.x, star.y, 6, 0, Math.PI * 2); this.ctx.fill();
       this.ctx.fillStyle = '#FFFFFF';
-      this.ctx.beginPath();
-      this.ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2);
-      this.ctx.fill();
-      
+      this.ctx.beginPath(); this.ctx.arc(star.x, star.y, 1.5, 0, Math.PI * 2); this.ctx.fill();
       this.ctx.restore();
     }
   },
 
   animate(currentTime: number): void {
     if (!this.ctx || !this.canvas) return;
-    
     const deltaTime = currentTime - this.lastTime;
-    
     if (deltaTime < this.frameInterval) {
       this.animationId = requestAnimationFrame((t) => this.animate(t));
       return;
     }
-    
     this.lastTime = currentTime - (deltaTime % this.frameInterval);
-    
     this.ctx.clearRect(0, 0, this._w, this._h);
-    
     for (const p of this.particles) {
       switch (p.type) {
         case 'ribbon': this.updateDayParticle(p); this.drawRibbon(p); break;
@@ -826,29 +705,15 @@ const EffectsManager = {
         case 'firefly': this.updateNightParticle(p); this.drawFirefly(p); break;
       }
     }
-    
     this.updateShootingStars();
     this.drawShootingStars();
-    
     this.animationId = requestAnimationFrame((t) => this.animate(t));
   },
 
   destroy(): void {
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
-    if (this.canvas) {
-      this.canvas.remove();
-      this.canvas = null;
-    }
-    if (this.offscreenCanvas) {
-      this.offscreenCanvas = null;
-      this.offscreenCtx = null;
-    }
-    this.particles = [];
-    this.shootingStars = [];
-    this.isRunning = false;
+    if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
+    if (this.canvas) { this.canvas.remove(); this.canvas = null; }
+    this.particles = []; this.shootingStars = []; this.isRunning = false;
   }
 };
 
@@ -868,37 +733,27 @@ const AnimationManager = {
   ensureVisibility(): void {
     setTimeout(() => {
       const hiddenElements = document.querySelectorAll('[data-aos]:not(.aos-animate)');
-      if (hiddenElements.length > 0) {
-        hiddenElements.forEach(el => {
-          if (getComputedStyle(el).opacity === '0') {
-            (el as HTMLElement).style.opacity = '1';
-            (el as HTMLElement).style.transform = 'none';
-            (el as HTMLElement).style.transition = 'none';
-          }
-        });
-      }
+      hiddenElements.forEach(el => {
+        if (getComputedStyle(el).opacity === '0') {
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.transform = 'none';
+          (el as HTMLElement).style.transition = 'none';
+        }
+      });
     }, 2000);
   },
 
   initAOS(): void {
     if (typeof AOS !== 'undefined') {
       AOS.init({
-        duration: 400,
-        easing: 'ease-out-cubic',
-        once: true,
-        offset: 80,
-        delay: 50,
+        duration: 400, easing: 'ease-out-cubic', once: true, offset: 80, delay: 50,
         disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
       });
     } else {
       setTimeout(() => {
         if (typeof AOS !== 'undefined') {
           AOS.init({
-            duration: 400,
-            easing: 'ease-out-cubic',
-            once: true,
-            offset: 80,
-            delay: 50,
+            duration: 400, easing: 'ease-out-cubic', once: true, offset: 80, delay: 50,
             disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
           });
         } else {
@@ -938,16 +793,13 @@ const AnimationManager = {
           bar.style.willChange = 'width';
           bar.style.width = `${level}%`;
           bar.style.opacity = '1';
-          setTimeout(() => {
-            bar.style.willChange = 'auto';
-          }, 1500);
+          setTimeout(() => { bar.style.willChange = 'auto'; }, 1500);
           observer.unobserve(bar);
         }
       });
     }, { threshold: 0.3 });
     skillBars.forEach(bar => {
-      bar.style.width = '0%';
-      bar.style.opacity = '0.3';
+      bar.style.width = '0%'; bar.style.opacity = '0.3';
       bar.style.transition = 'width 1s ease-out, opacity 0.5s ease-out';
       observer.observe(bar);
     });
@@ -960,11 +812,7 @@ const AnimationManager = {
       this.initTypedElements(typedElements);
     } else {
       setTimeout(() => {
-        if (typeof Typed !== 'undefined') {
-          this.initTypedElements(typedElements);
-        } else {
-          console.warn('Typed.js未加载，跳过打字机效果');
-        }
+        if (typeof Typed !== 'undefined') { this.initTypedElements(typedElements); }
       }, 500);
     }
   },
@@ -975,17 +823,11 @@ const AnimationManager = {
         const dataAttr = el.getAttribute('data-typed');
         const data = dataAttr ? JSON.parse(dataAttr) : [];
         new Typed(el, {
-          strings: data,
-          typeSpeed: 60,
-          backSpeed: 40,
-          backDelay: 2000,
-          startDelay: 500,
-          loop: true,
-          showCursor: true,
-          cursorChar: '|'
+          strings: data, typeSpeed: 60, backSpeed: 40, backDelay: 2000,
+          startDelay: 500, loop: true, showCursor: true, cursorChar: '|'
         });
       } catch (e) {
-        console.warn('Typed.js初始化失败:', e);
+        console.warn('Typed.js initialization failed:', e);
       }
     });
   },
@@ -993,7 +835,6 @@ const AnimationManager = {
   initScrollAnimations(): void {
     const animatedElements = document.querySelectorAll<HTMLElement>('[data-aos]');
     if (animatedElements.length === 0) return;
-    
     animatedElements.forEach(el => {
       el.style.opacity = '0';
       el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
@@ -1009,25 +850,20 @@ const AnimationManager = {
         default: el.style.transform = 'none';
       }
     });
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const el = entry.target as HTMLElement;
           const delay = parseInt(el.getAttribute('data-aos-delay') || '0');
           setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'none';
+            el.style.opacity = '1'; el.style.transform = 'none';
             el.classList.add('aos-animate');
-            setTimeout(() => {
-              el.style.willChange = 'auto';
-            }, 500);
+            setTimeout(() => { el.style.willChange = 'auto'; }, 500);
           }, delay);
           observer.unobserve(el);
         }
       });
     }, { threshold: 0.1 });
-
     animatedElements.forEach(el => observer.observe(el));
   }
 };
@@ -1055,30 +891,19 @@ const InteractionManager = {
     const overlay = document.querySelector('.mobile-menu-overlay') as HTMLElement;
     if (!menuToggle || !menu) return;
     const setMenuFocusable = (focusable: boolean): void => {
-      const elements = menu.querySelectorAll('a, button, [tabindex]');
-      elements.forEach(el => {
+      menu.querySelectorAll('a, button, [tabindex]').forEach(el => {
         el.setAttribute('tabindex', focusable ? '0' : '-1');
       });
     };
     const openMenu = (): void => {
-      menu.classList.add('active');
-      menu.setAttribute('aria-hidden', 'false');
-      if (overlay) {
-        overlay.classList.add('active');
-        overlay.setAttribute('aria-hidden', 'false');
-      }
-      setMenuFocusable(true);
-      document.body.style.overflow = 'hidden';
+      menu.classList.add('active'); menu.setAttribute('aria-hidden', 'false');
+      if (overlay) { overlay.classList.add('active'); overlay.setAttribute('aria-hidden', 'false'); }
+      setMenuFocusable(true); document.body.style.overflow = 'hidden';
     };
     const closeMenu = (): void => {
-      menu.classList.remove('active');
-      menu.setAttribute('aria-hidden', 'true');
-      if (overlay) {
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden', 'true');
-      }
-      setMenuFocusable(false);
-      document.body.style.overflow = '';
+      menu.classList.remove('active'); menu.setAttribute('aria-hidden', 'true');
+      if (overlay) { overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true'); }
+      setMenuFocusable(false); document.body.style.overflow = '';
     };
     setMenuFocusable(false);
     menuToggle.addEventListener('click', openMenu);
@@ -1126,8 +951,7 @@ const InteractionManager = {
   initTouchInteractions(): void {
     if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
     document.body.classList.add('touch-device');
-    const touchElements = document.querySelectorAll('.btn, .card, .post-card, .skill-item');
-    touchElements.forEach(el => {
+    document.querySelectorAll('.btn, .card, .post-card, .skill-item').forEach(el => {
       el.addEventListener('touchstart', function() { this.classList.add('touch-active'); }, { passive: true });
       el.addEventListener('touchend', function() { this.classList.remove('touch-active'); }, { passive: true });
     });
@@ -1137,7 +961,7 @@ const InteractionManager = {
     const skipLink = document.createElement('a');
     skipLink.href = '#main';
     skipLink.className = 'skip-link';
-    skipLink.textContent = '跳转到主要内容';
+    skipLink.textContent = I18n.t('a11y_skip_to_main');
     document.body.insertBefore(skipLink, document.body.firstChild);
   },
 
@@ -1148,8 +972,7 @@ const InteractionManager = {
     window.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const currentScroll = window.pageYOffset;
-          if (currentScroll > 50) header.classList.add('scrolled');
+          if (window.pageYOffset > 50) header.classList.add('scrolled');
           else header.classList.remove('scrolled');
           ticking = false;
         });
@@ -1187,18 +1010,14 @@ const InteractionManager = {
       if (e.key === 'Escape' && searchModal.classList.contains('active')) closeSearch();
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        if (searchModal.classList.contains('active')) closeSearch();
-        else openSearch();
+        searchModal.classList.contains('active') ? closeSearch() : openSearch();
       }
     });
-    searchModal.addEventListener('click', (e) => {
-      if (e.target === searchModal) closeSearch();
-    });
+    searchModal.addEventListener('click', (e) => { if (e.target === searchModal) closeSearch(); });
   },
 
   initCardHover(): void {
-    const cards = document.querySelectorAll('.card, .post-card, .skill-item, .link-card');
-    cards.forEach(card => {
+    document.querySelectorAll('.card, .post-card, .skill-item, .link-card').forEach(card => {
       let rafId: number | null = null;
       card.addEventListener('mousemove', (e) => {
         if (!card.classList.contains('enable-3d')) return;
@@ -1211,12 +1030,14 @@ const InteractionManager = {
           const centerY = rect.height / 2;
           const rotateY = ((x - centerX) / centerX) * 5;
           const rotateX = ((centerY - y) / centerY) * 5;
-          (card as HTMLElement).style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          (card as HTMLElement).style.transform =
+            `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
         });
       });
       card.addEventListener('mouseleave', () => {
         if (rafId) cancelAnimationFrame(rafId);
-        (card as HTMLElement).style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        (card as HTMLElement).style.transform =
+          'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
       });
     });
   }
@@ -1235,8 +1056,7 @@ const EnhancementManager = {
   },
 
   enhanceCodeBlocks(): void {
-    const codeBlocks = document.querySelectorAll('.highlight');
-    codeBlocks.forEach((highlight) => {
+    document.querySelectorAll('.highlight').forEach((highlight) => {
       const pre = highlight.querySelector('pre');
       const code = highlight.querySelector('code');
       if (!pre || !code) return;
@@ -1248,36 +1068,32 @@ const EnhancementManager = {
         if (langMatch) language = langMatch[1];
       }
       highlight.setAttribute('data-lang', language);
-      
+
       const copyBtn = document.createElement('button');
       copyBtn.className = 'code-copy-btn';
-      copyBtn.setAttribute('aria-label', '复制代码');
-      copyBtn.innerHTML = '<i class="fas fa-copy"></i><span>复制</span>';
+      copyBtn.setAttribute('aria-label', I18n.t('js_copy_code'));
+      copyBtn.innerHTML = `<i class="fas fa-copy"></i><span>${I18n.t('js_code_copy')}</span>`;
       highlight.appendChild(copyBtn);
-      
+
       copyBtn.addEventListener('click', async () => {
         const codeText = code.textContent || '';
         try {
           await navigator.clipboard.writeText(codeText);
-          copyBtn.innerHTML = '<i class="fas fa-check"></i><span>已复制</span>';
+          copyBtn.innerHTML = `<i class="fas fa-check"></i><span>${I18n.t('js_code_copied')}</span>`;
           copyBtn.classList.add('copied');
           setTimeout(() => {
-            copyBtn.innerHTML = '<i class="fas fa-copy"></i><span>复制</span>';
+            copyBtn.innerHTML = `<i class="fas fa-copy"></i><span>${I18n.t('js_code_copy')}</span>`;
             copyBtn.classList.remove('copied');
           }, 2000);
         } catch {
           const textarea = document.createElement('textarea');
-          textarea.value = codeText;
-          textarea.style.position = 'fixed';
-          textarea.style.opacity = '0';
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          copyBtn.innerHTML = '<i class="fas fa-check"></i><span>已复制</span>';
+          textarea.value = codeText; textarea.style.cssText = 'position:fixed;opacity:0;';
+          document.body.appendChild(textarea); textarea.select();
+          document.execCommand('copy'); document.body.removeChild(textarea);
+          copyBtn.innerHTML = `<i class="fas fa-check"></i><span>${I18n.t('js_code_copied')}</span>`;
           copyBtn.classList.add('copied');
           setTimeout(() => {
-            copyBtn.innerHTML = '<i class="fas fa-copy"></i><span>复制</span>';
+            copyBtn.innerHTML = `<i class="fas fa-copy"></i><span>${I18n.t('js_code_copy')}</span>`;
             copyBtn.classList.remove('copied');
           }, 2000);
         }
@@ -1286,21 +1102,18 @@ const EnhancementManager = {
   },
 
   enhanceTables(): void {
-    const tables = document.querySelectorAll('.article-text table');
-    tables.forEach(table => {
+    document.querySelectorAll('.article-text table').forEach(table => {
       if (table.parentElement?.classList.contains('table-wrapper')) return;
       const wrapper = document.createElement('div');
       wrapper.className = 'table-wrapper';
-      wrapper.style.overflowX = 'auto';
-      wrapper.style.margin = '1.5rem 0';
+      wrapper.style.cssText = 'overflow-x:auto;margin:1.5rem 0;';
       table.parentNode?.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     });
   },
 
   enhanceBlockquotes(): void {
-    const blockquotes = document.querySelectorAll('.article-text blockquote');
-    blockquotes.forEach(quote => {
+    document.querySelectorAll('.article-text blockquote').forEach(quote => {
       const text = quote.textContent?.trim() || '';
       if (text.startsWith('💡')) quote.classList.add('callout', 'callout-info');
       else if (text.startsWith('⚠️')) quote.classList.add('callout', 'callout-warning');
@@ -1310,8 +1123,7 @@ const EnhancementManager = {
   },
 
   addHeadingAnchors(): void {
-    const headings = document.querySelectorAll('.article-text h2, .article-text h3');
-    headings.forEach(heading => {
+    document.querySelectorAll('.article-text h2, .article-text h3').forEach(heading => {
       if (!heading.id) {
         const id = heading.textContent?.toLowerCase()
           .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
@@ -1323,7 +1135,7 @@ const EnhancementManager = {
 };
 
 // ==========================================================================
-// 通用功能管理器（滚动按钮、图片灯箱、TOC高亮、点击效果）
+// 通用功能管理器
 // ==========================================================================
 
 const UtilsManager = {
@@ -1339,43 +1151,22 @@ const UtilsManager = {
     if (!buttons) return;
     const topBtn = buttons.querySelector('.scroll-to-top') as HTMLElement;
     const bottomBtn = buttons.querySelector('.scroll-to-bottom') as HTMLElement;
-    if (topBtn) {
-      topBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    }
-    if (bottomBtn) {
-      bottomBtn.addEventListener('click', () => {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-      });
-    }
+    if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    if (bottomBtn) bottomBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
     let ticking = false;
     const updateButtons = (): void => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const threshold = 300;
-      if (scrollY > threshold) {
-        buttons.classList.add('visible');
-        if (topBtn) topBtn.style.display = 'flex';
-      } else {
-        if (topBtn) topBtn.style.display = 'none';
-      }
-      if (scrollY < maxScroll - threshold) {
-        buttons.classList.add('visible');
-        if (bottomBtn) bottomBtn.style.display = 'flex';
-      } else {
-        if (bottomBtn) bottomBtn.style.display = 'none';
-      }
-      if (scrollY <= threshold && scrollY >= maxScroll - threshold) {
-        buttons.classList.remove('visible');
-      }
+      if (scrollY > threshold) { buttons.classList.add('visible'); if (topBtn) topBtn.style.display = 'flex'; }
+      else { if (topBtn) topBtn.style.display = 'none'; }
+      if (scrollY < maxScroll - threshold) { buttons.classList.add('visible'); if (bottomBtn) bottomBtn.style.display = 'flex'; }
+      else { if (bottomBtn) bottomBtn.style.display = 'none'; }
+      if (scrollY <= threshold && scrollY >= maxScroll - threshold) buttons.classList.remove('visible');
       ticking = false;
     };
     window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateButtons);
-        ticking = true;
-      }
+      if (!ticking) { window.requestAnimationFrame(updateButtons); ticking = true; }
     }, { passive: true });
     updateButtons();
   },
@@ -1389,20 +1180,13 @@ const UtilsManager = {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
     };
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeLightbox();
-    });
-    const contentImages = document.querySelectorAll('.article-text img');
-    contentImages.forEach(img => {
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+    document.querySelectorAll('.article-text img').forEach(img => {
       img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightboxImg.alt = img.alt || '';
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        lightboxImg.src = img.src; lightboxImg.alt = img.alt || '';
+        lightbox.classList.add('active'); document.body.style.overflow = 'hidden';
       });
     });
   },
@@ -1414,8 +1198,7 @@ const UtilsManager = {
     tocLinks.forEach(link => {
       const href = link.getAttribute('href');
       if (href && href.startsWith('#')) {
-        const id = href.substring(1);
-        const heading = document.getElementById(id);
+        const heading = document.getElementById(href.substring(1));
         if (heading) headings.push({ element: heading, link: link });
       }
     });
@@ -1423,18 +1206,13 @@ const UtilsManager = {
     const updateActiveTOC = (): void => {
       let current = headings[0];
       const scrollTop = window.scrollY + 100;
-      headings.forEach(item => {
-        if (item.element.offsetTop <= scrollTop) current = item;
-      });
+      headings.forEach(item => { if (item.element.offsetTop <= scrollTop) current = item; });
       tocLinks.forEach(link => link.classList.remove('active'));
       if (current) current.link.classList.add('active');
       ticking = false;
     };
     window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateActiveTOC);
-        ticking = true;
-      }
+      if (!ticking) { window.requestAnimationFrame(updateActiveTOC); ticking = true; }
     }, { passive: true });
     updateActiveTOC();
   },
@@ -1452,21 +1230,14 @@ const UtilsManager = {
       document.head.appendChild(style);
     }
     document.addEventListener('click', (e) => {
-      const x = e.clientX;
-      const y = e.clientY;
       const effect = document.createElement('div');
       effect.className = 'click-effect';
       effect.style.cssText = `
-        position: fixed;
-        left: ${x}px;
-        top: ${y}px;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
+        position: fixed; left: ${e.clientX}px; top: ${e.clientY}px;
+        width: 200px; height: 200px; border-radius: 50%;
         background: radial-gradient(circle, var(--c-primary-400) 0%, transparent 70%);
         transform: translate(-50%, -50%) scale(0);
-        pointer-events: none;
-        z-index: 10000;
+        pointer-events: none; z-index: 10000;
         animation: clickRipple 0.5s ease-out forwards;
         will-change: transform, opacity;
       `;
@@ -1492,8 +1263,7 @@ const FontFallback = {
         const faUrl = linkFallback?.dataset?.href || '';
         if (faUrl) {
           const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = faUrl;
+          link.rel = 'stylesheet'; link.href = faUrl;
           document.head.appendChild(link);
         }
       }
@@ -1503,13 +1273,11 @@ const FontFallback = {
 };
 
 // ==========================================================================
-// 页脚管理器 - 版权年份/站点运行时长
+// 页脚管理器
 // ==========================================================================
 
 const FooterManager = {
-  siteTime: '',
-  siteUrl: '',
-  author: '',
+  siteTime: '', siteUrl: '', author: '',
   uptimeColors: ['#E06050', '#E09040', '#E0A070', '#50C878', '#60A8D0', '#D08090'],
   _timer: null as ReturnType<typeof setInterval> | null,
 
@@ -1530,16 +1298,16 @@ const FooterManager = {
     const currentYear = now.getFullYear();
     const startYear = siteStart.getFullYear();
 
-    const yearStr = currentYear === startYear ? '\u00A9 ' + currentYear : '\u00A9 ' + startYear + ' - ' + currentYear;
+    const yearStr = currentYear === startYear ? `\u00A9 ${currentYear}` : `\u00A9 ${startYear} - ${currentYear}`;
 
     const copyrightEl = document.getElementById('footer-copyright');
     if (copyrightEl) {
-      copyrightEl.innerHTML = yearStr + ' ' + this.author + '\u00B7\u7F51\u7AD9\u7248\u6743\u7531 <a href="' + this.siteUrl + '" style="color: var(--c-primary-400);">' + this.author + '</a> \u6240\u6709';
+      copyrightEl.innerHTML = `${yearStr} ${this.author} \u00B7 ${I18n.t('footer_copyright', { Year: String(currentYear), Author: this.author })}`;
     }
 
     const poweredEl = document.getElementById('footer-powered');
     if (poweredEl) {
-      poweredEl.innerHTML = '\u7531 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> \u5F3A\u529B\u9A71\u52A8 \u00B7 \u4E3B\u9898\uFF1A<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">\u5E7B\u68A6 Illusion</a> \u00B7 \u4F5C\u8005\uFF1A<a href="https://github.com/aizexintong" target="_blank" rel="noopener">' + this.author + '</a>';
+      poweredEl.innerHTML = I18n.t('footer_powered_by', { Author: this.author });
     }
 
     const displayEl = document.getElementById('uptime-display');
@@ -1555,15 +1323,8 @@ const FooterManager = {
     let months = now.getMonth() - siteStart.getMonth();
     let days = now.getDate() - siteStart.getDate();
 
-    if (days < 0) {
-      months--;
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonth.getDate();
-    }
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+    if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
+    if (months < 0) { years--; months += 12; }
 
     const nums = [this.pad4(years), this.pad2(months), this.pad2(days), this.pad2(hours), this.pad2(minutes), this.pad2(seconds)];
     const seps = [
@@ -1574,10 +1335,10 @@ const FooterManager = {
       '<span style="color:var(--c-text-subtle);margin:0 1px;">:</span>'
     ];
 
-    let html = '\u5DF2\u8FD0\u884C ';
+    let html = `${I18n.t('js_uptime_label')} `;
     for (let i = 0; i < nums.length; i++) {
       if (i > 0) html += seps[i - 1];
-      html += '<span style="color:' + this.uptimeColors[i] + ';font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">' + nums[i] + '</span>';
+      html += `<span style="color:${this.uptimeColors[i]};font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${nums[i]}</span>`;
     }
     displayEl.innerHTML = html;
   },
@@ -1606,13 +1367,11 @@ const SearchEngine = {
         if (!response.ok) throw new Error('HTTP error: ' + response.status);
         return response.json();
       })
-      .then(data => {
-        this.searchIndex = data;
-      })
+      .then(data => { this.searchIndex = data; })
       .catch(() => {
-        const i18nError = searchForm.dataset.i18nSearcherror || '搜索索引加载失败';
-        const i18nHint = searchForm.dataset.i18nSearcherrorhint || '';
-        searchResults.innerHTML = '<div class="search-error"><p><i class="fas fa-exclamation-triangle"></i> ' + i18nError + '</p>' + (i18nHint ? '<p class="search-error-hint">' + i18nHint + '</p>' : '') + '</div>';
+        const errorMsg = I18n.t('js_search_error');
+        const hintMsg = I18n.t('js_search_error_hint');
+        searchResults.innerHTML = `<div class="search-error"><p><i class="fas fa-exclamation-triangle"></i> ${errorMsg}</p>${hintMsg ? `<p class="search-error-hint">${hintMsg}</p>` : ''}</div>`;
       });
 
     searchForm.addEventListener('submit', (e) => {
@@ -1621,27 +1380,18 @@ const SearchEngine = {
     });
 
     searchInput.addEventListener('input', () => {
-      if (searchInput.value.length >= 2) {
-        this.performSearch(searchInput, searchResults, searchForm);
-      } else {
-        searchResults.innerHTML = '';
-      }
+      if (searchInput.value.length >= 2) this.performSearch(searchInput, searchResults, searchForm);
+      else searchResults.innerHTML = '';
     });
 
     searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        searchInput.value = '';
-        searchResults.innerHTML = '';
-      }
+      if (e.key === 'Escape') { searchInput.value = ''; searchResults.innerHTML = ''; }
     });
   },
 
   performSearch(input: HTMLInputElement, results: HTMLElement, form: HTMLElement): void {
     const query = input.value;
-    if (!query.trim() || this.searchIndex.length === 0) {
-      results.innerHTML = '';
-      return;
-    }
+    if (!query.trim() || this.searchIndex.length === 0) { results.innerHTML = ''; return; }
 
     const normalizedQuery = query.toLowerCase().trim();
     const filtered = this.searchIndex.filter((item: any) => {
@@ -1652,20 +1402,28 @@ const SearchEngine = {
     });
 
     if (filtered.length === 0) {
-      const i18nNoResults = form.dataset.i18nSearchnoresults || '未找到';
-      const i18nTitle = form.dataset.i18nSearchtitle || '搜索结果';
-      results.innerHTML = '<div class="search-no-results"><p>' + i18nNoResults + ' "<strong>' + query + '</strong>" ' + i18nTitle + '</p></div>';
+      const noResults = I18n.t('js_search_no_results');
+      const resultsFor = I18n.t('js_search_results_for');
+      results.innerHTML = `<div class="search-no-results"><p>${noResults} "<strong>${query}</strong>" ${resultsFor}</p></div>`;
       return;
     }
 
-    const i18nResults = form.dataset.i18nSearchresults || '个结果';
-    let html = '<div class="search-results-header"><p>' + filtered.length + ' ' + i18nResults + '</p></div><ul class="search-results-list">';
+    const resultsCount = I18n.t('js_search_results_count');
+    let html = `<div class="search-results-header"><p>${filtered.length} ${resultsCount}</p></div><ul class="search-results-list">`;
 
     filtered.forEach((result: any) => {
       const title = this.highlightText(result.title, query);
       const excerpt = this.getExcerpt(result.content || result.summary, query);
-      const tags = result.tags ? '<span class="search-result-tags">' + result.tags.join(', ') + '</span>' : '';
-      html += '<li class="search-result-item"><a href="' + result.permalink + '" class="search-result-link"><h3 class="search-result-title">' + title + '</h3><div class="search-result-excerpt">' + excerpt + '</div><div class="search-result-meta"><span class="search-result-date">' + this.formatDate(result.date) + '</span>' + tags + '</div></a></li>';
+      const tags = result.tags ? `<span class="search-result-tags">${result.tags.join(', ')}</span>` : '';
+      html += `<li class="search-result-item">
+        <a href="${result.permalink}" class="search-result-link">
+          <h3 class="search-result-title">${title}</h3>
+          <div class="search-result-excerpt">${excerpt}</div>
+          <div class="search-result-meta">
+            <span class="search-result-date">${this.formatDate(result.date)}</span>${tags}
+          </div>
+        </a>
+      </li>`;
     });
 
     html += '</ul>';
@@ -1718,17 +1476,19 @@ const CalendarWidget = {
     const month = now.getMonth();
     const today = now.getDate();
 
-    const monthNames = Array.from({ length: 12 }, (_, i) =>
-      new Intl.DateTimeFormat('zh-CN', { month: 'long' }).format(new Date(2024, i, 1))
-    );
-    const weekDays = Array.from({ length: 7 }, (_, i) =>
-      new Intl.DateTimeFormat('zh-CN', { weekday: 'short' }).format(new Date(2024, 0, i + 1))
-    );
+    const weekDays = I18n.t('calendar_weekdays').split(',');
+
+    const monthNames = [
+      I18n.t('archives_month_01'), I18n.t('archives_month_02'), I18n.t('archives_month_03'),
+      I18n.t('archives_month_04'), I18n.t('archives_month_05'), I18n.t('archives_month_06'),
+      I18n.t('archives_month_07'), I18n.t('archives_month_08'), I18n.t('archives_month_09'),
+      I18n.t('archives_month_10'), I18n.t('archives_month_11'), I18n.t('archives_month_12')
+    ];
 
     const monthEl = document.getElementById('calendar-month');
     const yearEl = document.getElementById('calendar-year');
     if (monthEl) monthEl.textContent = monthNames[month];
-    if (yearEl) yearEl.textContent = year + '\u5E74';
+    if (yearEl) yearEl.textContent = year + I18n.t('calendar_year_suffix');
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1752,13 +1512,18 @@ const CalendarWidget = {
 
     const dateEl = document.getElementById('current-date');
     if (dateEl) {
-      dateEl.textContent = year + '\u5E74' + (month + 1) + '\u6708' + today + '\u65E5 ' + weekDays[now.getDay()];
+      const fmt = I18n.t('calendar_date_format');
+      dateEl.textContent = fmt
+        .replace('%s', String(year))
+        .replace('%s', String(month + 1))
+        .replace('%s', String(today))
+        .replace('%s', weekDays[now.getDay()]);
     }
   }
 };
 
 // ==========================================================================
-// 归档导航器 - 年份/月份切换
+// 归档导航器
 // ==========================================================================
 
 const ArchivesNavigator = {
@@ -1770,22 +1535,20 @@ const ArchivesNavigator = {
     this.parseYears();
     if (this.years.length === 0) {
       const display = document.getElementById('current-year-display');
-      if (display) display.textContent = '\u65E0\u6570\u636E';
+      if (display) display.textContent = I18n.t('js_archives_no_data');
       const prevBtn = document.getElementById('year-prev') as HTMLButtonElement | null;
       const nextBtn = document.getElementById('year-next') as HTMLButtonElement | null;
       if (prevBtn) prevBtn.disabled = true;
       if (nextBtn) nextBtn.disabled = true;
       return;
     }
-
     this.bindEvents();
     this.currentYearIndex = 0;
     this.updateYearDisplay();
   },
 
   parseYears(): void {
-    const yearSections = document.querySelectorAll('.archive-year');
-    yearSections.forEach(section => {
+    document.querySelectorAll('.archive-year').forEach(section => {
       const y = section.getAttribute('data-year');
       if (y) this.years.push(Number(y));
     });
@@ -1794,11 +1557,8 @@ const ArchivesNavigator = {
 
   buildMonthCounts(year: string): Record<string, number> {
     const counts: Record<string, number> = {};
-    for (let m = 1; m <= 12; m++) {
-      counts[String(m).padStart(2, '0')] = 0;
-    }
-    const yearSections = document.querySelectorAll('.archive-year');
-    yearSections.forEach(section => {
+    for (let m = 1; m <= 12; m++) counts[String(m).padStart(2, '0')] = 0;
+    document.querySelectorAll('.archive-year').forEach(section => {
       if (section.getAttribute('data-year') === year) {
         section.querySelectorAll('.archive-month').forEach(month => {
           const id = month.id;
@@ -1816,37 +1576,23 @@ const ArchivesNavigator = {
     if (this.years.length === 0) return;
     if (this.currentYearIndex < 0) this.currentYearIndex = 0;
     if (this.currentYearIndex >= this.years.length) this.currentYearIndex = this.years.length - 1;
-
     const year = this.years[this.currentYearIndex];
     const yearStr = String(year);
-
     const yearDisplay = document.getElementById('current-year-display');
     if (yearDisplay) yearDisplay.textContent = yearStr;
-
     const monthCounts = this.buildMonthCounts(yearStr);
-
     document.querySelectorAll('.month-item').forEach(item => {
       const month = item.getAttribute('data-month');
       const countSpan = item.querySelector('.month-count');
-      if (countSpan && month) {
-        countSpan.textContent = String(monthCounts[month] || 0);
-      }
+      if (countSpan && month) countSpan.textContent = String(monthCounts[month] || 0);
       item.setAttribute('data-year', yearStr);
       item.classList.add('active');
     });
-
     document.querySelectorAll('.archive-year').forEach(section => {
-      const sectionYear = section.getAttribute('data-year');
-      if (sectionYear === yearStr) {
-        (section as HTMLElement).style.display = 'block';
-        if (section.getAttribute('data-aos') && !section.classList.contains('aos-animate')) {
-          section.classList.add('aos-animate');
-        }
-      } else {
-        (section as HTMLElement).style.display = 'none';
-      }
+      section.getAttribute('data-year') === yearStr
+        ? ((section as HTMLElement).style.display = 'block')
+        : ((section as HTMLElement).style.display = 'none');
     });
-
     const prevBtn = document.getElementById('year-prev') as HTMLButtonElement | null;
     const nextBtn = document.getElementById('year-next') as HTMLButtonElement | null;
     if (prevBtn) prevBtn.disabled = this.currentYearIndex <= 0;
@@ -1856,50 +1602,29 @@ const ArchivesNavigator = {
   bindEvents(): void {
     const prevBtn = document.getElementById('year-prev');
     const nextBtn = document.getElementById('year-next');
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        if (this.currentYearIndex > 0) {
-          this.currentYearIndex--;
-          this.updateYearDisplay();
-        }
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (this.currentYearIndex < this.years.length - 1) {
-          this.currentYearIndex++;
-          this.updateYearDisplay();
-        }
-      });
-    }
-
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+      if (this.currentYearIndex > 0) { this.currentYearIndex--; this.updateYearDisplay(); }
+    });
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+      if (this.currentYearIndex < this.years.length - 1) { this.currentYearIndex++; this.updateYearDisplay(); }
+    });
     document.querySelectorAll('.month-item').forEach(item => {
       item.addEventListener('click', () => {
         const month = item.getAttribute('data-month');
         const year = item.getAttribute('data-year');
         if (!year) return;
-
         const yearIndex = this.years.indexOf(Number(year));
         if (yearIndex !== -1 && yearIndex !== this.currentYearIndex) {
-          this.currentYearIndex = yearIndex;
-          this.updateYearDisplay();
+          this.currentYearIndex = yearIndex; this.updateYearDisplay();
         }
-
         if (month) {
           const target = document.getElementById('month-' + month);
-          if (target) {
-            setTimeout(() => {
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
-          }
+          if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
         }
       });
     });
-
     document.addEventListener('keydown', (e) => {
-      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA' || (e.target as HTMLElement).tagName === 'SELECT') return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) return;
       const prevBtnEl = document.getElementById('year-prev') as HTMLButtonElement | null;
       const nextBtnEl = document.getElementById('year-next') as HTMLButtonElement | null;
       if (e.key === 'ArrowLeft' && prevBtnEl && !prevBtnEl.disabled) { prevBtnEl.click(); e.preventDefault(); }
@@ -1915,21 +1640,13 @@ const ArchivesNavigator = {
 const NavClickEffect = {
   init(): void {
     document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const navLink = target.closest('.nav-link');
-      if (!navLink) return;
-      this.createClickStar(e);
+      if (!(e.target as HTMLElement).closest('.nav-link')) return;
+      const star = document.createElement('span');
+      star.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;pointer-events:none;z-index:9999;font-size:14px;transform:translate(-50%,-50%);animation:starPop 0.6s ease-out forwards;`;
+      star.textContent = '\u2728';
+      document.body.appendChild(star);
+      setTimeout(() => star.remove(), 600);
     });
-  },
-
-  createClickStar(e: MouseEvent): void {
-    const star = document.createElement('span');
-    const x = e.clientX;
-    const y = e.clientY;
-    star.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y + 'px;pointer-events:none;z-index:9999;font-size:14px;transform:translate(-50%,-50%);animation:starPop 0.6s ease-out forwards;';
-    star.textContent = '\u2728';
-    document.body.appendChild(star);
-    setTimeout(() => star.remove(), 600);
   }
 };
 
@@ -1947,29 +1664,16 @@ const TagsPagination = {
     const grid = document.getElementById('tags-grid');
     const pagination = document.getElementById('tags-pagination');
     if (!grid || !pagination) return;
-
     this.perPage = parseInt(grid.dataset.perPage || '25');
     const total = parseInt(grid.dataset.total || '0');
     this.totalPages = Math.ceil(total / this.perPage);
-
     if (this.totalPages <= 1) return;
-
     pagination.style.display = 'flex';
     this.wrappers = Array.from(grid.querySelectorAll('.tags-card-wrapper')) as HTMLElement[];
-
     const prevBtn = document.getElementById('page-prev') as HTMLElement;
     const nextBtn = document.getElementById('page-next') as HTMLElement;
-
-    prevBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (this.currentPage > 1) this.showPage(this.currentPage - 1);
-    });
-
-    nextBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (this.currentPage < this.totalPages) this.showPage(this.currentPage + 1);
-    });
-
+    prevBtn.addEventListener('click', (e) => { e.preventDefault(); if (this.currentPage > 1) this.showPage(this.currentPage - 1); });
+    nextBtn.addEventListener('click', (e) => { e.preventDefault(); if (this.currentPage < this.totalPages) this.showPage(this.currentPage + 1); });
     const urlParams = new URLSearchParams(window.location.search);
     const initialPage = parseInt(urlParams.get('page') || '1');
     this.showPage(Math.min(Math.max(initialPage, 1), this.totalPages));
@@ -1977,98 +1681,47 @@ const TagsPagination = {
 
   showPage(page: number): void {
     this.currentPage = page;
-
     this.wrappers.forEach((wrapper, index) => {
       const itemPage = Math.floor(index / this.perPage) + 1;
       wrapper.style.display = itemPage === page ? '' : 'none';
     });
-
     this.renderPageNumbers();
     this.updateNavButtons();
-
-    if (page === 1) {
-      history.replaceState(null, '', window.location.pathname);
-    } else {
-      history.replaceState(null, '', '?page=' + page);
-    }
-
-    const grid = document.getElementById('tags-grid');
-    if (grid) {
-      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    history.replaceState(null, '', page === 1 ? window.location.pathname : `?page=${page}`);
+    document.getElementById('tags-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   },
 
   renderPageNumbers(): void {
     const pageNumbers = document.getElementById('page-numbers');
     if (!pageNumbers) return;
     pageNumbers.innerHTML = '';
-
     const startPage = Math.max(1, this.currentPage - 3);
     const endPage = Math.min(this.totalPages, this.currentPage + 3);
-
     if (startPage > 1) {
       this.addPageLink(pageNumbers, 1);
-      if (startPage > 2) {
-        const dots = document.createElement('span');
-        dots.className = 'page-link dots';
-        dots.textContent = '…';
-        pageNumbers.appendChild(dots);
-      }
+      if (startPage > 2) { const dots = document.createElement('span'); dots.className = 'page-link dots'; dots.textContent = '\u2026'; pageNumbers.appendChild(dots); }
     }
-
-    for (let i = startPage; i <= endPage; i++) {
-      this.addPageLink(pageNumbers, i);
-    }
-
+    for (let i = startPage; i <= endPage; i++) this.addPageLink(pageNumbers, i);
     if (endPage < this.totalPages) {
-      if (endPage < this.totalPages - 1) {
-        const dots = document.createElement('span');
-        dots.className = 'page-link dots';
-        dots.textContent = '…';
-        pageNumbers.appendChild(dots);
-      }
+      if (endPage < this.totalPages - 1) { const dots = document.createElement('span'); dots.className = 'page-link dots'; dots.textContent = '\u2026'; pageNumbers.appendChild(dots); }
       this.addPageLink(pageNumbers, this.totalPages);
     }
   },
 
   addPageLink(container: HTMLElement, pageNum: number): void {
     const link = document.createElement('a');
-    link.href = '#';
-    link.className = 'page-link';
-    if (pageNum === this.currentPage) {
-      link.classList.add('current');
-    }
+    link.href = '#'; link.className = 'page-link';
+    if (pageNum === this.currentPage) link.classList.add('current');
     link.textContent = String(pageNum);
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.showPage(pageNum);
-    });
+    link.addEventListener('click', (e) => { e.preventDefault(); this.showPage(pageNum); });
     container.appendChild(link);
   },
 
   updateNavButtons(): void {
     const prevBtn = document.getElementById('page-prev') as HTMLElement;
     const nextBtn = document.getElementById('page-next') as HTMLElement;
-
-    if (prevBtn) {
-      if (this.currentPage <= 1) {
-        prevBtn.style.pointerEvents = 'none';
-        prevBtn.style.opacity = '0.4';
-      } else {
-        prevBtn.style.pointerEvents = 'auto';
-        prevBtn.style.opacity = '1';
-      }
-    }
-
-    if (nextBtn) {
-      if (this.currentPage >= this.totalPages) {
-        nextBtn.style.pointerEvents = 'none';
-        nextBtn.style.opacity = '0.4';
-      } else {
-        nextBtn.style.pointerEvents = 'auto';
-        nextBtn.style.opacity = '1';
-      }
-    }
+    if (prevBtn) { prevBtn.style.pointerEvents = this.currentPage <= 1 ? 'none' : 'auto'; prevBtn.style.opacity = this.currentPage <= 1 ? '0.4' : '1'; }
+    if (nextBtn) { nextBtn.style.pointerEvents = this.currentPage >= this.totalPages ? 'none' : 'auto'; nextBtn.style.opacity = this.currentPage >= this.totalPages ? '0.4' : '1'; }
   }
 };
 
@@ -2077,34 +1730,32 @@ const TagsPagination = {
 // ==========================================================================
 
 function initIllusionTheme(): void {
-  if (window.IllusionThemeInitialized) return;
-  window.IllusionThemeInitialized = true;
+  if ((window as any).IllusionThemeInitialized) return;
+  (window as any).IllusionThemeInitialized = true;
 
   FontFallback.init();
   ThemeManager.init();
   UtilsManager.init();
   EnhancementManager.init();
   AnimationManager.init();
-  
+
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     EffectsManager.init();
   }
-  
+
   InteractionManager.init();
   FooterManager.init();
   SearchEngine.init();
   CalendarWidget.init();
   ArchivesNavigator.init();
   NavClickEffect.init();
-  TagsPagination.init();  // ← 新增这一行
+  TagsPagination.init();
 
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      AnimationManager.initSkillBars();
-    }, 500);
+    setTimeout(() => AnimationManager.initSkillBars(), 500);
   });
 
-  console.log('幻梦主题 v2.2.0 初始化完成');
+  console.log('Illusion Theme v2.2.0 initialized');
 }
 
 // ==========================================================================
@@ -2114,23 +1765,13 @@ function initIllusionTheme(): void {
 initIllusionTheme();
 
 // 导出接口
-window.IllusionTheme = {
-  ThemeManager,
-  EffectsManager,
-  AnimationManager,
-  InteractionManager,
-  EnhancementManager,
-  UtilsManager,
-  FontFallback,
-  FooterManager,
-  SearchEngine,
-  CalendarWidget,
-  ArchivesNavigator,
-  NavClickEffect,
-  TagsPagination
+(window as any).IllusionTheme = {
+  ThemeManager, EffectsManager, AnimationManager,
+  InteractionManager, EnhancementManager, UtilsManager,
+  FontFallback, FooterManager, SearchEngine,
+  CalendarWidget, ArchivesNavigator, NavClickEffect, TagsPagination
 };
 
-console.log('幻梦主题 v2.2.0 已初始化');
+console.log('Illusion Theme v2.2.0 ready');
 
-// 导出以供外部使用
 export {};

@@ -1,9 +1,10 @@
 # ==========================================================================
-# 幻梦主题 - 中文翻译文件
-# 所有用户可见的文字都应在此定义，方便维护和多语言支持
+# 幻梦主题 - 中文翻译文件 (zh-CN.yaml)
+# 使命：国际化翻译起点，所有 UI 框架文字的唯一来源
+# 修改频率：一劳永逸，新增语种时以此为模板
 # ==========================================================================
 
-# ----- 通用 -----
+# ----- 站点基础信息 -----
 sitetitle:
   other: "爱则心痛 · azxt"
 sitedescription:
@@ -13,432 +14,488 @@ siteauthor:
 sitekeywords:
   other: "技术博客,编程,开发,JavaScript,Python,Flutter,Rust"
 
-# ----- 导航 -----
-navhome:
+# ----- 导航菜单 -----
+nav_home:
   other: "首页"
-navposts:
+nav_posts:
   other: "文章"
-navarchives:
+nav_archives:
   other: "归档"
-navcategories:
-  other: "分类"
-navtags:
+nav_tags:
   other: "标签"
-navabout:
+nav_categories:
+  other: "分类"
+nav_about:
   other: "关于"
-navskills:
+nav_skills:
   other: "技能"
-navlinks:
+nav_links:
   other: "友链"
-navsearch:
+nav_tools:
+  other: "工具"
+nav_search:
+  other: "搜索"
+nav_privacy:
+  other: "隐私政策"
+nav_terms:
+  other: "使用条款"
+
+# ----- 通用按钮 -----
+btn_read_more:
+  other: "阅读全文"
+btn_read_article:
+  other: "阅读文章"
+btn_about_me:
+  other: "关于我"
+btn_back_home:
+  other: "返回首页"
+btn_browse:
+  other: "浏览文章"
+btn_learn_more:
+  other: "了解更多"
+btn_view_all:
+  other: "查看所有文章"
+btn_apply:
+  other: "申请友链"
+btn_submit:
+  other: "提交"
+btn_close:
+  other: "关闭"
+btn_copy:
+  other: "复制"
+btn_copied:
+  other: "已复制"
+btn_scroll_top:
+  other: "返回顶部"
+btn_scroll_bottom:
+  other: "跳到底部"
+btn_open_menu:
+  other: "打开菜单"
+btn_close_menu:
+  other: "关闭菜单"
+btn_visit_site:
+  other: "访问网站"
+btn_search:
   other: "搜索"
 
-# ----- 按钮 -----
-btnreadmore:
-  other: "阅读文章"
-btnabout:
-  other: "关于我"
-btnbackhome:
-  other: "返回首页"
-btnbrowse:
-  other: "浏览文章"
-btnlearnmore:
-  other: "了解更多"
-btnviewall:
-  other: "查看所有文章"
-btnapply:
-  other: "申请友链"
-
-# ----- 文章相关 -----
-postreadtime:
-  other: "分钟"
-postwordcount:
+# ----- 文章/帖子相关 -----
+post_read_time:
+  other: "分钟阅读"
+post_word_count:
   other: "字"
-postpublished:
+post_published:
   other: "发布"
-postupdated:
+post_updated:
   other: "更新"
-postprev:
+post_prev:
   other: "← 上一篇"
-postnext:
+post_next:
   other: "下一篇 →"
-postcontents:
+post_contents:
   other: "目录"
-postinfo:
-  other: "信息"
-posttags:
+post_info:
+  other: "文章信息"
+post_tags:
   other: "标签"
-postcategory:
-  other: "分类"
+post_category:
+  other: "文章分类"
+post_read_article:
+  other: "阅读文章"
+post_continue:
+  other: "继续阅读"
+post_meta_info:
+  other: "文章信息"
+post_first_published:
+  other: "首次发布，未修改"
+post_recently_updated:
+  other: "最近更新过"
+post_modified_after:
+  other: "发布 {{ .Days }} 天后修改"
+post_new_published:
+  other: "新发布"
+post_badge_updated:
+  other: "已更新"
+post_image_alt:
+  other: "文章封面"
 
 # ----- 分页 -----
-pageprev:
+page_prev:
   other: "上一页"
-pagenext:
+page_next:
   other: "下一页"
+page_nav:
+  other: "分页导航"
+page_of:
+  other: "第 {{ .Current }} 页 / 共 {{ .Total }} 页"
 
 # ----- 归档页 -----
-archivestitle:
+archives_title:
   other: "所有文章，按时间归档"
-archivescount:
+archives_count:
   other: "共 {{ .Count }} 篇文章"
-archivesyearcount:
+archives_year_count:
   other: "{{ .Count }} 篇"
+archives_nav_title:
+  other: "归档导航"
+archives_total_articles:
+  other: "总文章"
+archives_total_years:
+  other: "总年份"
+archives_month_01:
+  other: "一月"
+archives_month_02:
+  other: "二月"
+archives_month_03:
+  other: "三月"
+archives_month_04:
+  other: "四月"
+archives_month_05:
+  other: "五月"
+archives_month_06:
+  other: "六月"
+archives_month_07:
+  other: "七月"
+archives_month_08:
+  other: "八月"
+archives_month_09:
+  other: "九月"
+archives_month_10:
+  other: "十月"
+archives_month_11:
+  other: "十一月"
+archives_month_12:
+  other: "十二月"
 
 # ----- 404页 -----
-notfoundtitle:
+not_found_title:
   other: "页面不存在或已被移除"
-notfounddesc:
+not_found_desc:
   other: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"
 
 # ----- 关于页 -----
-aboutsubtitle:
+about_subtitle:
   other: "技术爱好者 · 开发贡献者"
-aboutquote:
+about_quote:
   other: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"
-aboutarticles:
+about_articles:
   other: "技术文章"
-aboutskills:
+about_skills:
   other: "技术技能"
-aboutphilosophy:
+about_experience:
+  other: "开发经验"
+about_passion:
+  other: "热爱程度"
+about_philosophy:
   other: "技术理念"
-aboutcontact:
+about_contact:
   other: "保持联系"
-aboutcontactdesc:
+about_contact_desc:
   other: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"
-aboutcontactnote:
+about_contact_note:
   other: "欢迎交流技术问题、项目合作或开源贡献！"
+about_contact_email:
+  other: "邮箱"
+about_contact_github:
+  other: "GitHub"
+about_contact_website:
+  other: "网站"
 
 # ----- 技能页 -----
-skillstitle:
+skills_overview:
   other: "技能总览"
-skillssubtitle:
+skills_overview_subtitle:
   other: "掌握多项技术，持续学习进步"
-skillsdetail:
+skills_detail:
   other: "详细技能"
-skillsdetailsubtitle:
+skills_detail_subtitle:
   other: "每一项技能都经过项目实践验证"
-skillsprojects:
+skills_projects:
   other: "相关项目"
-skillstimeline:
+skills_timeline:
   other: "技能发展历程"
+skills_level:
+  other: "技能等级"
 
 # ----- 友链页 -----
-linkstitle:
+links_title:
   other: "我的朋友们"
-linkssubtitle:
+links_subtitle:
   other: "与志同道合的朋友们互相链接"
-linksvisit:
+links_visit:
   other: "访问网站"
-linksapply:
+links_apply_title:
   other: "申请友链"
-linksconditions:
+links_conditions:
   other: "申请条件"
-linksinfo:
+links_conditions_list:
+  other:
+    - "内容优质，原创技术文章优先"
+    - "定期更新，保持活跃"
+    - "无不良内容，健康向上"
+    - "已添加本站链接"
+links_site_info:
   other: "本站信息"
-linksname:
+links_site_name:
   other: "名称："
-linksurl:
+links_site_url:
   other: "网址："
-linksdesc:
+links_site_desc:
   other: "描述："
-linkscontact:
+links_contact_title:
   other: "联系方式"
-linkscontactdesc:
+links_contact_desc:
   other: "如果你符合条件并希望交换链接，请通过以下方式联系："
+links_contact_email:
+  other: "发送邮件"
+links_contact_github:
+  other: "GitHub Issues"
+links_category:
+  other: "分类"
+
+# ----- 工具页 -----
+tools_title:
+  other: "我的工具"
+tools_subtitle:
+  other: "日常使用的效率工具集合"
 
 # ----- 首页 -----
-homebadge:
+home_badge:
   other: "欢迎来到我的世界"
-homegreeting:
+home_greeting:
   other: "你好，我是"
-homedescription:
-  other: "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。"
-homequote:
-  other: "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。"
-homescroll:
+home_scroll_hint:
   other: "向下滚动探索"
-homeposts:
+home_posts:
   other: "最新文章"
-homepostssubtitle:
+home_posts_subtitle:
   other: "分享思考，记录成长"
-homereadtime:
-  other: "分钟"
-homereadmore:
-  other: "阅读全文"
-homeabouttitle:
-  other: "关于{{ .Site.Params.author }}"
-homeaboutdesc:
+home_about_title:
+  other: "关于{{ .Author }}"
+home_about_desc:
   other: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。"
-homearticlescount:
+home_articles_count:
   other: "篇文章"
-hometagscount:
+home_tags_count:
   other: "个标签"
-homeskillscount:
+home_skills_count:
   other: "项技能"
-hometechstack:
+home_tech_stack:
   other: "技术栈"
-hometechstacksubtitle:
+home_tech_stack_subtitle:
   other: "不断学习，持续进步"
 
 # ----- 页脚 -----
-footerabout:
+footer_about:
   other: "关于我"
-footeraboutdesc:
+footer_about_desc:
   other: "{{ .Author }}，一名热爱技术的开发者。专注于前端开发、移动应用和新兴技术。"
-footerquicklinks:
+footer_quick_links:
   other: "快速链接"
-footertechstack:
+footer_tech_stack:
   other: "技术栈"
-footerfollow:
+footer_follow_me:
   other: "关注我"
-footermotto:
+footer_motto:
   other: "分享知识，共同进步"
-footersitemap:
+footer_sitemap:
   other: "网站地图"
-footercopyright:
+footer_rss:
+  other: "RSS 订阅"
+footer_uptime_label:
+  other: "已运行"
+footer_uptime_loading:
+  other: "加载中..."
+footer_copyright:
   other: "© {{ .Year }} {{ .Author }} · 保留所有权利"
-footerpowered:
-  other: "由 <a href=\"{{ .HugoURL }}\" target=\"_blank\" rel=\"noopener\">Hugo</a> 强力驱动 · 主题：<a href=\"{{ .IllusionURL }}\" target=\"_blank\" rel=\"noopener\">幻梦 Illusion</a>"
+footer_powered_by:
+  other: "由 Hugo 强力驱动 · 主题：幻梦 Illusion · 作者：{{ .Author }}"
 
 # ----- 搜索 -----
-searchtitle:
+search_title:
   other: "搜索文章"
-searchplaceholder:
+search_placeholder:
   other: "搜索文章..."
-searchclose:
+search_close:
   other: "关闭搜索"
-searchnoresults:
+search_no_results:
   other: "未找到包含"
-searchresults:
-  other: "个相关结果"
-searcherror:
+search_results:
+  other: "个结果"
+search_error:
   other: "搜索功能暂时不可用"
-searcherrorhint:
+search_error_hint:
   other: "请刷新页面重试或直接浏览文章"
-searchdisabled:
+search_disabled:
   other: "搜索功能已关闭。"
+search_results_title:
+  other: "搜索结果"
 
 # ----- 评论 -----
-commentstitle:
+comments_title:
   other: "评论"
-commentsnoscript:
+comments_section:
+  other: "评论区域"
+comments_enable_js:
   other: "请启用JavaScript以查看Disqus评论。"
-commentsdisquswarn:
+comments_disqus_warn:
   other: "Disqus配置未完成，请在站点配置中设置disqusShortname。"
-commentsutteranceswarn:
+comments_utterances_warn:
   other: "Utterances配置未完成，请在站点配置中设置utterancesRepo。"
-commentsgiscuswarn:
+comments_giscus_warn:
   other: "Giscus配置未完成，请在站点配置中设置giscusRepo。"
-commentsdisabled:
+comments_disabled:
   other: "评论功能已关闭。"
 
-# ----- 日历 -----
-calendarmonths:
-  other: "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月"
-month01:
-  other: "一月"
-month02:
-  other: "二月"
-month03:
-  other: "三月"
-month04:
-  other: "四月"
-month05:
-  other: "五月"
-month06:
-  other: "六月"
-month07:
-  other: "七月"
-month08:
-  other: "八月"
-month09:
-  other: "九月"
-month10:
-  other: "十月"
-month11:
-  other: "十一月"
-month12:
-  other: "十二月"
-calendarweekdays:
-  other: "日,一,二,三,四,五,六"
-calendarweekdaysshort:
-  other: "日,一,二,三,四,五,六"
-
 # ----- 主题切换 -----
-themelabel:
+theme_label:
   other: "切换主题模式"
-themelight:
+theme_light:
   other: "切换到深色模式"
-themedark:
+theme_dark:
   other: "切换到浅色模式"
-themesystem:
+theme_system:
   other: "切换到手动模式"
-themLightLabel:
+theme_light_label:
   other: "浅色模式"
-themDarkLabel:
+theme_dark_label:
   other: "深色模式"
-themSystemLabel:
+theme_system_label:
   other: "跟随系统"
 
-# ----- 滚动按钮 -----
-scrolltotop:
-  other: "返回顶部"
-scrolltobottom:
-  other: "跳到底部"
-
 # ----- 标签云 -----
-tagcloudtitle:
+tag_cloud_title:
   other: "标签云"
+tags_header_title:
+  other: "标签"
+tags_count:
+  other: "共 {{ .Count }} 个标签"
+tags_article_count:
+  other: "{{ .Count }} 篇文章"
+tags_empty:
+  other: "暂无标签"
+tags_more:
+  other: "+{{ .Count }}"
 
 # ----- 分类 -----
-categoriestitle:
+categories_header_title:
   other: "分类"
-tagstitle:
-  other: "标签"
-taxonomycount:
-  other: "共 {{ .Count }} 个标签/分类/条目"
-tagsheadertitle:
-  other: "标签"
-tagscount:
-  other: "共 {{ .Count }} 个标签"
-categoriesheadertitle:
-  other: "分类"
-categoriescount:
+categories_count:
   other: "共 {{ .Count }} 个分类"
-taxonomyempty:
-  other: "暂无标签/分类/条目"
-termcount:
+categories_empty:
+  other: "暂无分类"
+categories_article_count:
+  other: "{{ .Count }} 篇文章"
+
+# ----- 分类/标签聚合页 -----
+taxonomy_count:
+  other: "共 {{ .Count }} 个条目"
+taxonomy_empty:
+  other: "暂无内容"
+term_count:
   other: "共 {{ .Count }} 篇文章"
-termempty:
+term_empty:
   other: "暂无文章"
 
-# ----- 技能短代码 -----
-skillsoverview:
-  other: "技术技能概览"
-
-# ----- 关于页统计 -----
-aboutarticlesunit:
-  other: "篇文章"
-abouttagsunit:
-  other: "个标签"
-aboutskillsunit:
-  other: "项技能"
-
-# ----- 页头 -----
-headersubtitle:
-  other: "爱则心痛 · azxt"
-headermainnav:
-  other: "主导航"
-headeropenmenu:
-  other: "打开菜单"
-headerclosemenu:
-  other: "关闭菜单"
-headermobilenav:
-  other: "移动端导航"
-headersociallinks:
-  other: "社交链接"
-headertitletoggle:
-  other: "切换深色/浅色主题"
-
-# ----- 默认值 -----
-defaultauthor:
-  other: "爱则心痛"
-defaultsubtitle:
-  other: "技术爱好者 · 开发贡献者"
-
-# ----- 列表/章节页 -----
-sectiontitle:
-  other: "文字随笔"
-sectionsubtitle:
-  other: "记录生活，分享思考"
-minread:
-  other: "分钟阅读"
-paginationnav:
-  other: "分页导航"
-page:
-  other: "页"
-
-# ----- 日历（JavaScript用） -----
-calendaryear:
+# ----- 日历 -----
+calendar_weekdays:
+  other: "日,一,二,三,四,五,六"
+calendar_year_suffix:
   other: "年"
-calendardateformat:
-  other: "年"
-calendardatemonth:
+calendar_month_suffix:
   other: "月"
-calendardateday:
+calendar_day_suffix:
   other: "日"
-calendarweekday0:
-  other: "星期日"
-calendarweekday1:
-  other: "星期一"
-calendarweekday2:
-  other: "星期二"
-calendarweekday3:
-  other: "星期三"
-calendarweekday4:
-  other: "星期四"
-calendarweekday5:
-  other: "星期五"
-calendarweekday6:
-  other: "星期六"
-
-# ----- 文章信息标签 -----
-postwordcountlabel:
-  other: "字数"
-postreadlabel:
-  other: "阅读"
-postcategorylabel:
-  other: "文章分类"
-postreadarticle:
-  other: "阅读文章"
-postmetainfo:
-  other: "文章信息"
-postcontinue:
-  other: "继续阅读"
+calendar_date_format:
+  other: "%s年%s月%s日 %s"
 
 # ----- 相对时间 -----
-reljustnow:
+rel_just_now:
   other: "刚刚"
-relminutesago:
+rel_minutes_ago:
   other: " 分钟前"
-relhoursago:
+rel_hours_ago:
   other: " 小时前"
-reldaysago:
+rel_days_ago:
   other: " 天前"
-relweeksago:
+rel_weeks_ago:
   other: " 周前"
-relmonthsago:
+rel_months_ago:
   other: " 个月前"
-relyearsago:
+rel_years_ago:
   other: " 年前"
 
-# ----- 文章修改状态 -----
-postfirstpublished:
-  other: "首次发布，未修改"
-postrecentlyupdated:
-  other: "最近更新过"
-postmodifiedafter:
-  other: "发布 {{ .Days }} 天后修改" 
-siteuptime:
-  other: "建站运行时长"
-rsssub:
-  other: "RSS 订阅"
+# ----- 搜索 (JS 运行时) -----
+js_search_error:
+  other: "搜索索引加载失败"
+js_search_error_hint:
+  other: "请刷新页面重试或直接浏览文章"
+js_search_no_results:
+  other: "未找到"
+js_search_results_for:
+  other: "的搜索结果"
+js_search_results_count:
+  other: "个结果"
 
-# ----- 通用 ----- 
-close:
-  other: "关闭"
-searchmodaltitle:
-  other: "搜索文章"
-searchmodalclose:
-  other: "关闭搜索"
-searchloading:
-  other: "加载中..."
-commentsection:
-  other: "评论区域"
-comments:
-  other: "评论"
-commentenablejs:
+# ----- 代码复制 (JS 运行时) -----
+js_code_copy:
+  other: "复制"
+js_code_copied:
+  other: "已复制"
+
+# ----- 归档导航 (JS 运行时) -----
+js_archives_no_data:
+  other: "无数据"
+js_archives_year_prev:
+  other: "上一年"
+js_archives_year_next:
+  other: "下一年"
+
+# ----- 站点运行时长 (JS 运行时) -----
+js_uptime_label:
+  other: "已运行"
+
+# ----- 评论 (JS 运行时) -----
+js_comments_enable_js:
   other: "请启用JavaScript以查看Disqus评论"
-relatedposts:
+
+# ----- 按钮标签 (JS 运行时) -----
+js_copy_code:
+  other: "复制代码"
+
+# ----- 社交链接 -----
+social_github:
+  other: "GitHub"
+social_email:
+  other: "邮箱"
+social_rss:
+  other: "RSS 订阅"
+social_twitter:
+  other: "Twitter"
+social_telegram:
+  other: "Telegram"
+social_wechat:
+  other: "微信"
+
+# ----- 辅助功能 -----
+a11y_skip_to_main:
+  other: "跳转到主要内容"
+a11y_header_main_nav:
+  other: "主导航"
+a11y_header_mobile_nav:
+  other: "移动端导航"
+a11y_header_social_links:
+  other: "社交链接"
+a11y_header_title_toggle:
+  other: "切换深色/浅色主题"
+a11y_pagination_nav:
+  other: "分页导航"
+a11y_background_image:
+  other: "背景图片"
+
+# ----- 页头 -----
+header_subtitle:
+  other: "爱则心痛 · azxt"
+
+# ----- 推荐阅读 -----
+related_posts:
   other: "推荐阅读"
