@@ -1,0 +1,25 @@
+{{ define "main" }}
+<div class="section-content" role="main">
+  {{ partial "_components/page-header.html" (dict
+    "Title" .Title
+    "Icon" "fas fa-tag"
+  ) }}
+  <div class="container">
+    {{ if gt (len .Pages) 0 }}
+    <div class="posts-list" role="list">
+      {{ range .Pages }}
+      <article class="post-item" role="listitem">
+        <div class="post-item-content">
+          <h3 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{ if .Date }}<div class="post-meta"><span><i class="fas fa-calendar-alt"></i>{{ .Date.Format "2006-01-02" }}</span></div>{{ end }}
+          <a href="{{ .RelPermalink }}" class="read-more"><span>{{ i18n "btn_read_more" }}</span><i class="fas fa-arrow-right"></i></a>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+    {{ else }}
+    <div class="no-terms-message"><p>{{ i18n "term_empty" }}</p></div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

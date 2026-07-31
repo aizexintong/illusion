@@ -1,0 +1,17 @@
+{{ define "main" }}
+<article class="article-page">
+  <div class="container">
+    <div class="article-desc">
+      {{ partial "_components/page-header.html" (dict
+        "Title" .Title
+        "Icon" "fas fa-file-alt"
+      ) }}
+    </div>
+    <div class="article-body-wrap">
+      <div class="article-left">
+        <div class="article-text">{{ .Content }}</div>
+      </div>
+    </div>
+  </div>
+</article>
+{{ end }}

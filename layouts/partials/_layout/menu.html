@@ -1,0 +1,22 @@
+{{ $menuID := .menuID }}
+{{ $page := .page }}
+{{ if index site.Menus $menuID }}
+<ul class="menu-list">
+  {{ range index site.Menus $menuID }}
+  <li class="menu-item{{ if .HasChildren }} has-children{{ end }}{{ if or ($page.IsMenuCurrent $menuID .) ($page.HasMenuCurrent $menuID .) }} active{{ end }}">
+    <a href="{{ .URL }}" {{ if .HasChildren }}aria-haspopup="true" aria-expanded="false"{{ end }} title="{{ .Name }}">
+      {{ if .Pre }}<i class="{{ .Pre }}"></i>{{ end }}<span>{{ .Name }}</span>
+    </a>
+    {{ if .HasChildren }}
+    <ul class="submenu">
+      {{ range .Children }}
+      <li class="submenu-item{{ if $page.IsMenuCurrent $menuID . }} active{{ end }}">
+        <a href="{{ .URL }}" title="{{ .Name }}">{{ .Name }}</a>
+      </li>
+      {{ end }}
+    </ul>
+    {{ end }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}

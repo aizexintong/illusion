@@ -10,7 +10,9 @@
 {{- $limit := .Limit | default 3 -}}
 
 {{- with $page.GetTerms $taxonomy -}}
-<div class="post-tags-container" title="{{ delimit (apply . "LinkTitle" ".") ", " }}">
+{{- $termNames := slice -}}
+{{- range . -}}{{- $termNames = $termNames | append .LinkTitle -}}{{- end -}}
+<div class="post-tags-container" title="{{ delimit $termNames ", " }}">
   <div class="post-tags">
     {{ range first $limit . }}
     <a href="{{ .RelPermalink }}" class="post-tag">#{{ .LinkTitle }}</a>

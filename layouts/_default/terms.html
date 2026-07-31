@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="section-content" role="main">
+  {{ partial "_components/page-header.html" (dict
+    "Title" .Title
+    "Icon" "fas fa-tags"
+  ) }}
+  <div class="container">
+    {{ if .Data.Terms }}
+    <div class="tags-grid" data-aos="fade-up">
+      {{ range sort .Data.Terms.Alphabetical "Count" "desc" }}
+      <div class="tags-card-wrapper">
+        <a href="{{ .Page.RelPermalink }}" class="tags-card">
+          <span class="tags-card-name">{{ .Page.Title }}</span>
+          <span class="tags-card-count">{{ .Count }}</span>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+    {{ else }}
+    <div class="no-terms-message"><p>{{ i18n "taxonomy_empty" }}</p></div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
