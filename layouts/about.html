@@ -1,70 +1,58 @@
 {{ define "main" }}
-
+{{ $aboutData := hugo.Data.theme.about }}
 <div class="section-content">
   <div class="container">
-    {{ $aboutData := hugo.Data.theme.about }}
-    {{ $intro := $aboutData.intro }}
-    {{ $philosophy := $aboutData.philosophy }}
-    {{ $contact := $aboutData.contact }}
-
-    <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description }}</p>
-    </section>
+    {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
     <section class="about-intro" data-aos="fade-up">
       <div class="intro-card card">
         <div class="intro-content">
           <div class="intro-text">
-            <h2>{{ $intro.name }}</h2>
-            <p class="intro-subtitle">{{ $intro.title }}</p>
+            <h2>{{ $aboutData.intro.name }}</h2>
+            <p class="intro-subtitle">{{ $aboutData.intro.title }}</p>
             <div class="intro-quote">
               <i class="fas fa-quote-left"></i>
-              <p>{{ $intro.quote }}</p>
+              <p>{{ $aboutData.intro.quote }}</p>
               <i class="fas fa-quote-right"></i>
             </div>
           </div>
-           <div class="intro-image">
+          <div class="intro-image">
             {{- $assets := hugo.Data.theme.assets -}}
-            <img src="{{ $assets.avatar.url }}" alt="{{ $intro.name }}" loading="lazy">
+            <img src="{{ $assets.avatar.url }}" alt="{{ $aboutData.intro.name }}" loading="lazy">
             <div class="image-decoration"></div>
           </div>
         </div>
 
         <div class="intro-stats">
-          {{ with $aboutData.stats }}
-            {{ range . }}
-            <div class="stat-item">
-              <div class="stat-icon"><i class="{{ .icon }}"></i></div>
-              <div class="stat-content">
-                <div class="stat-number">
-                  {{ if eq .number "auto" }}
-                    {{ if eq .label (i18n "about_articles") }}{{ len (where site.RegularPages "Type" "posts") }}
-                    {{ else if eq .label (i18n "about_skills") }}{{ len (default slice (hugo.Data.theme.skills).skills) }}
-                    {{ else }}{{ .number }}{{ end }}
+          {{ with $aboutData.stats }}{{ range . }}
+          <div class="stat-item">
+            <div class="stat-icon"><i class="{{ .icon }}"></i></div>
+            <div class="stat-content">
+              <div class="stat-number">
+                {{ if eq .number "auto" }}
+                  {{ if eq .label (i18n "about_articles") }}{{ len (where site.RegularPages "Type" "posts") }}
+                  {{ else if eq .label (i18n "about_skills") }}{{ len (default slice (hugo.Data.theme.skills).skills) }}
                   {{ else }}{{ .number }}{{ end }}
-                </div>
-                <div class="stat-label">{{ .label }}</div>
+                {{ else }}{{ .number }}{{ end }}
               </div>
+              <div class="stat-label">{{ .label }}</div>
             </div>
-            {{ end }}
-          {{ end }}
+          </div>
+          {{ end }}{{ end }}
         </div>
       </div>
     </section>
 
     <section class="about-philosophy" data-aos="fade-up">
-      <h2 class="section-title">{{ $philosophy.title | default (i18n "about_philosophy") }}</h2>
+      <h2 class="section-title">{{ $aboutData.philosophy.title | default (i18n "about_philosophy") }}</h2>
       <div class="philosophy-grid">
-        {{ with $philosophy.items }}
-          {{ range . }}
-          <div class="philosophy-item card" data-aos="zoom-in">
-            <div class="philosophy-icon"><i class="{{ .icon }}"></i></div>
-            <h3>{{ .title }}</h3>
-            <p>{{ .description }}</p>
-          </div>
-          {{ end }}
-        {{ end }}
+        {{ with $aboutData.philosophy.items }}{{ range . }}
+        <div class="philosophy-item card" data-aos="zoom-in">
+          <div class="philosophy-icon"><i class="{{ .icon }}"></i></div>
+          <h3>{{ .title }}</h3>
+          <p>{{ .description }}</p>
+        </div>
+        {{ end }}{{ end }}
       </div>
     </section>
 
@@ -78,19 +66,17 @@
 
     <section class="about-contact" data-aos="fade-up">
       <div class="contact-card card">
-        <h2 class="section-title">{{ $contact.title | default (i18n "about_contact") }}</h2>
-        <p class="section-subtitle">{{ $contact.subtitle | default (i18n "about_contact_desc") }}</p>
+        <h2 class="section-title">{{ $aboutData.contact.title | default (i18n "about_contact") }}</h2>
+        <p class="section-subtitle">{{ $aboutData.contact.subtitle | default (i18n "about_contact_desc") }}</p>
         <div class="contact-methods">
-          {{ with $contact.methods }}
-            {{ range . }}
-            <a href="{{ .link }}" class="contact-method" {{ if eq .type "github" }}target="_blank" rel="noopener"{{ end }}>
-              <div class="method-icon"><i class="{{ .icon }}"></i></div>
-              <div class="method-info"><h3>{{ .label }}</h3><p>{{ .value }}</p></div>
-            </a>
-            {{ end }}
-          {{ end }}
+          {{ with $aboutData.contact.methods }}{{ range . }}
+          <a href="{{ .link }}" class="contact-method" {{ if eq .type "github" }}target="_blank" rel="noopener"{{ end }}>
+            <div class="method-icon"><i class="{{ .icon }}"></i></div>
+            <div class="method-info"><h3>{{ .label }}</h3><p>{{ .value }}</p></div>
+          </a>
+          {{ end }}{{ end }}
         </div>
-        <div class="contact-note"><p>{{ $contact.note | default (i18n "about_contact_note") }}</p></div>
+        <div class="contact-note"><p>{{ $aboutData.contact.note | default (i18n "about_contact_note") }}</p></div>
       </div>
     </section>
   </div>

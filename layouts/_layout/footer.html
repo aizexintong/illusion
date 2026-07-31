@@ -1,0 +1,53 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h2 class="title-anime">{{ i18n "footer_about" }}</h2>
+        <p>{{ i18n "footer_about_desc" (dict "Author" .Site.Params.author) }}</p>
+        <div class="contact-info">
+          <p><i class="fas fa-envelope"></i> {{ .Site.Params.email }}</p>
+          <p><i class="fas fa-globe"></i> {{ .Site.Params.domain }}</p>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h2 class="title-anime">{{ i18n "footer_quick_links" }}</h2>
+        <ul class="footer-links quick-links-grid">
+          {{ range site.Menus.main }}
+          <li><a href="{{ .URL }}" class="footer-link">{{ with .Params.icon }}<i class="{{ . }}"></i>{{ end }}{{ .Name }}</a></li>
+          {{ end }}
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h2 class="title-anime">{{ i18n "footer_tech_stack" }}</h2>
+        <div class="tech-tags">
+          {{- with hugo.Data.theme.skills.skills -}}
+            {{- range first 6 . -}}<span class="tech-tag">{{ .name }}</span>{{- end -}}
+          {{- end -}}
+        </div>
+      </div>
+      <div class="footer-section">
+        <h2 class="title-anime">{{ i18n "footer_follow_me" }}</h2>
+        <div class="social-links">
+          {{- range hugo.Data.theme.social.links -}}
+            {{- if and .show .url -}}
+          <a href="{{ .url }}" class="social-link" target="_blank" rel="noopener nofollow" aria-label="{{ .label }}"><i class="{{ .icon }}"></i></a>
+            {{- end -}}
+          {{- end -}}
+        </div>
+        <p class="footer-note">{{ i18n "footer_motto" }}</p>
+      </div>
+    </div>
+    <div class="copyright">
+      <div class="copyright-links">
+        {{ range site.Menus.footer }}
+        <a href="{{ .URL }}" class="footer-link">{{ with .Params.icon }}<i class="{{ . }}"></i>{{ end }}{{ .Name }}</a>
+        {{ end }}
+        <a href="{{ "sitemap.xml" | relURL }}" class="footer-link"><i class="fas fa-sitemap"></i> {{ i18n "footer_sitemap" }}</a>
+        <a href="{{ "index.xml" | relURL }}" class="footer-link"><i class="fas fa-rss"></i> {{ i18n "footer_rss" }}</a>
+      </div>
+      <p id="footer-copyright"></p>
+      <p class="site-uptime"><i class="fas fa-clock"></i> <span id="uptime-display">{{ i18n "footer_uptime_loading" }}</span></p>
+      <p class="powered-by" id="footer-powered"></p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}" dir="{{ or site.Language.Direction `ltr` }}">
+<head>
+  {{ partial "_layout/head.html" . }}
+  <script>
+    window.i18nData = {
+      "theme_light": "{{ i18n "theme_light" }}",
+      "theme_dark": "{{ i18n "theme_dark" }}",
+      "theme_system": "{{ i18n "theme_system" }}",
+      "a11y_skip_to_main": "{{ i18n "a11y_skip_to_main" }}",
+      "js_code_copy": "{{ i18n "js_code_copy" }}",
+      "js_code_copied": "{{ i18n "js_code_copied" }}",
+      "js_copy_code": "{{ i18n "js_copy_code" }}",
+      "js_search_error": "{{ i18n "js_search_error" }}",
+      "js_search_error_hint": "{{ i18n "js_search_error_hint" }}",
+      "js_search_no_results": "{{ i18n "js_search_no_results" }}",
+      "js_search_results_for": "{{ i18n "js_search_results_for" }}",
+      "js_search_results_count": "{{ i18n "js_search_results_count" }}",
+      "js_uptime_label": "{{ i18n "js_uptime_label" }}",
+      "js_archives_no_data": "{{ i18n "js_archives_no_data" }}",
+      "calendar_weekdays": "{{ i18n "calendar_weekdays" }}",
+      "calendar_year_suffix": "{{ i18n "calendar_year_suffix" }}",
+      "calendar_date_format": "{{ i18n "calendar_date_format" }}",
+      "archives_month_01": "{{ i18n "archives_month_01" }}",
+      "archives_month_02": "{{ i18n "archives_month_02" }}",
+      "archives_month_03": "{{ i18n "archives_month_03" }}",
+      "archives_month_04": "{{ i18n "archives_month_04" }}",
+      "archives_month_05": "{{ i18n "archives_month_05" }}",
+      "archives_month_06": "{{ i18n "archives_month_06" }}",
+      "archives_month_07": "{{ i18n "archives_month_07" }}",
+      "archives_month_08": "{{ i18n "archives_month_08" }}",
+      "archives_month_09": "{{ i18n "archives_month_09" }}",
+      "archives_month_10": "{{ i18n "archives_month_10" }}",
+      "archives_month_11": "{{ i18n "archives_month_11" }}",
+      "archives_month_12": "{{ i18n "archives_month_12" }}",
+      "footer_copyright": "{{ i18n "footer_copyright" }}",
+      "footer_powered_by": "{{ i18n "footer_powered_by" }}"
+    };
+  </script>
+</head>
+<body>
+  <div class="bg-layer bg-image-layer">
+    {{- $assets := hugo.Data.theme.assets -}}
+    {{- $bg := $assets.background.adaptive.url | default "https://t.alcy.cc/ycy" -}}
+    <img src="{{ $bg }}" alt="{{ i18n "a11y_background_image" }}" class="bg-image" loading="lazy" width="1920" height="1080">
+  </div>
+  <div class="bg-layer bg-overlay-layer"></div>
+
+  <div class="content-wrapper">
+    <header>{{ partial "_layout/header.html" . }}</header>
+    <main id="main">{{ block "main" . }}{{ end }}</main>
+    <footer>{{ partial "_layout/footer.html" . }}</footer>
+  </div>
+
+  {{ partial "_layout/search-modal.html" . }}
+
+  <div class="scroll-buttons" id="scroll-buttons">
+    <button class="scroll-btn scroll-to-top" aria-label="{{ i18n "btn_scroll_top" }}" title="{{ i18n "btn_scroll_top" }}">
+      <i class="fas fa-chevron-up"></i>
+    </button>
+    <button class="scroll-btn scroll-to-bottom" aria-label="{{ i18n "btn_scroll_bottom" }}" title="{{ i18n "btn_scroll_bottom" }}">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+
+  <div class="img-lightbox" id="img-lightbox">
+    <button class="img-lightbox-close" aria-label="{{ i18n "btn_close" }}"><i class="fas fa-times"></i></button>
+    <img src="" alt="" id="img-lightbox-img">
+  </div>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"
+    onerror="var a=document.createElement('script');a.defer=true;a.src='{{ "lib/aos/aos.js" | relURL }}';this.insertAdjacentElement('afterend',a)"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.js" crossorigin="anonymous"
+    onerror="var t=document.createElement('script');t.defer=true;t.src='{{ "lib/typed.js/typed.js" | relURL }}';this.insertAdjacentElement('afterend',t)"></script>
+
+  <script>
+    window.siteConfig = {
+      siteTime: "{{ .Site.Params.siteTime }}",
+      baseURL: "{{ .Site.BaseURL }}",
+      author: "{{ .Site.Params.author }}"
+    };
+  </script>
+</body>
+</html>

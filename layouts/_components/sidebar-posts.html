@@ -1,0 +1,39 @@
+{{- /* 文章列表页侧栏：日历 + 最新文章 + 标签云 */ -}}
+<aside class="posts-sidebar">
+  <div class="sidebar-card calendar-card sidebar-widget">
+    <div class="calendar-header">
+      <span class="calendar-month" id="calendar-month"></span>
+      <span class="calendar-year" id="calendar-year"></span>
+    </div>
+    <div class="calendar-body">
+      <div class="calendar-weekdays">
+        {{ range split (i18n "calendar_weekdays") "," }}<span>{{ . }}</span>{{ end }}
+      </div>
+      <div class="calendar-days" id="calendar-days"></div>
+    </div>
+    <div class="calendar-date"><span id="current-date"></span></div>
+  </div>
+
+  <div class="sidebar-card sidebar-widget">
+    <h3 class="sidebar-title"><i class="fas fa-fire"></i> {{ i18n "home_posts" }}</h3>
+    <ul class="recent-posts-list">
+      {{ range first 5 (where site.RegularPages "Type" "posts") }}
+      <li class="recent-post-item">
+        <a href="{{ .RelPermalink }}" class="recent-post-link" title="{{ .Title }}">
+          <span class="recent-post-title">{{ .Title }}</span>
+          <span class="recent-post-date">{{ .Date.Format "01-02" }}</span>
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+
+  <div class="sidebar-card sidebar-widget">
+    <h3 class="sidebar-title"><i class="fas fa-cloud"></i> {{ i18n "tag_cloud_title" }}</h3>
+    <div class="tag-cloud">
+      {{ range first 10 (sort site.Taxonomies.tags "Count" "desc") }}
+      <a href="{{ .Page.RelPermalink }}" class="cloud-tag" data-weight="{{ .Count }}">{{ .Page.Title }}</a>
+      {{ end }}
+    </div>
+  </div>
+</aside>

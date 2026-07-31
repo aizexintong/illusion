@@ -1,0 +1,4 @@
+{{- $opts := dict "targetPath" "main.js" "minify" (not hugo.IsDevelopment) "target" "es2015" "format" "iife" "sourceMap" (cond hugo.IsDevelopment "inline" "") "params" (dict "api" "https://github.com/aizexintong" "theme" "illusion") }}
+{{- with resources.Get "ts/main.ts" | js.Build $opts | fingerprint -}}
+<script defer src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}"></script>
+{{- end -}}

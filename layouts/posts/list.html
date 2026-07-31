@@ -1,0 +1,51 @@
+{{ define "main" }}
+<div class="section-content" role="main">
+  {{ partial "_components/page-header.html" (dict
+    "Title" (i18n "nav_posts")
+    "Icon" "fas fa-feather-alt"
+    "Subtitle" (i18n "home_posts_subtitle")
+  ) }}
+
+  <div class="container">
+    {{ $paginator := .Paginate .Pages 10 }}
+    <div class="posts-layout">
+      <div class="posts-main">
+        <div class="posts-list" role="list">
+          {{ range $index, $page := $paginator.Pages }}
+          <article class="post-item{{ if and $page.Params.image (eq (mod $index 2) 1) }} reverse{{ end }}" role="listitem">
+            {{ if $page.Params.image }}
+            <div class="post-item-image">
+              <img src="{{ $page.Params.image }}" alt="{{ $page.Title }}" loading="lazy" width="400" height="200" />
+              <div class="post-image-overlay"></div>
+              {{ if $page.Params.categories }}
+              <span class="post-category" aria-label="{{ i18n "post_category" }}">{{ index $page.Params.categories 0 }}</span>
+              {{ end }}
+            </div>
+            {{ end }}
+            <div class="post-item-content">
+              <h3 class="post-title" title="{{ $page.Title }}">
+                <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+              </h3>
+              <div class="post-meta">
+                {{ if $page.Date }}<span><i class="fas fa-calendar-alt"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
+                {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
+              </div>
+              {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 3) }}
+              <div class="post-excerpt">
+                {{ with $page.Description }}{{ . | plainify | truncate 120 }}{{ else }}{{ $page.Summary | plainify | truncate 120 }}{{ end }}
+              </div>
+              <a href="{{ $page.RelPermalink }}" class="read-more">
+                <span>{{ i18n "btn_read_more" }}</span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </article>
+          {{ end }}
+        </div>
+        {{ partial "_components/pagination.html" $paginator }}
+      </div>
+      {{ partial "_components/sidebar-posts.html" . }}
+    </div>
+  </div>
+</div>
+{{ end }}

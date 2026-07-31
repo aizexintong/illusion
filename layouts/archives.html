@@ -1,17 +1,16 @@
 {{ define "main" }}
+{{ $posts := where site.RegularPages "Type" "posts" }}
+{{ $totalPosts := len $posts }}
+{{ $years := slice }}
+{{ range $posts.GroupByDate "2006" }}{{ $years = $years | append .Key }}{{ end }}
+{{ $sortedYears := sort $years "" "desc" }}
 
 <div class="section-content">
   <div class="container">
-    {{ $posts := where site.RegularPages "Type" "posts" }}
-    {{ $totalPosts := len $posts }}
-    {{ $years := slice }}
-    {{ range $posts.GroupByDate "2006" }}{{ $years = $years | append .Key }}{{ end }}
-    {{ $sortedYears := sort $years "" "desc" }}
-
-    <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description | default (i18n "archives_title") }}</p>
-    </section>
+    {{ partial "_components/page-header.html" (dict
+      "Title" .Title
+      "Description" (.Description | default (i18n "archives_title"))
+    ) }}
 
     <div class="archives-summary" data-aos="fade-up">
       <span class="archives-count"><i class="fas fa-file-alt"></i> {{ i18n "archives_count" (dict "Count" $totalPosts) }}</span>
@@ -22,7 +21,10 @@
         {{ if gt (len $sortedYears) 0 }}
           {{ range ($posts.GroupByDate "2006") }}
           <div class="archive-year" data-aos="fade-up" id="year-{{ .Key }}" data-year="{{ .Key }}">
-            <h2 class="archive-year-title"><i class="fas fa-calendar-alt"></i> {{ .Key }} <span class="archive-year-count">{{ i18n "archives_year_count" (dict "Count" (len .Pages)) }}</span></h2>
+            <h2 class="archive-year-title">
+              <i class="fas fa-calendar-alt"></i> {{ .Key }}
+              <span class="archive-year-count">{{ i18n "archives_year_count" (dict "Count" (len .Pages)) }}</span>
+            </h2>
             {{ range (.Pages.GroupByDate "01") }}
             <div class="archive-month" id="month-{{ .Key }}">
               <h3 class="archive-month-title">{{ .Key }} <span class="archive-month-count">({{ len .Pages }})</span></h3>
@@ -45,18 +47,26 @@
           <div class="no-terms-message" data-aos="fade-up"><p>{{ i18n "taxonomy_empty" }}</p></div>
         {{ end }}
       </div>
+
       <aside class="archives-sidebar">
         <div class="sidebar-card archives-nav-card">
           <div class="sidebar-title"><i class="fas fa-calendar-alt"></i> {{ i18n "archives_nav_title" }}</div>
           <div class="year-navigation">
-            <button class="year-nav-btn" id="year-prev" aria-label="{{ i18n "js_archives_year_prev" }}"><i class="fas fa-chevron-left"></i></button>
+            <button class="year-nav-btn" id="year-prev"><i class="fas fa-chevron-left"></i></button>
             <span class="current-year-display" id="current-year-display">{{ index $sortedYears 0 | default "2024" }}</span>
-            <button class="year-nav-btn" id="year-next" aria-label="{{ i18n "js_archives_year_next" }}"><i class="fas fa-chevron-right"></i></button>
+            <button class="year-nav-btn" id="year-next"><i class="fas fa-chevron-right"></i></button>
           </div>
           <div class="month-list" id="month-list" role="list">
             {{ $currentYear := index $sortedYears 0 | default "2024" }}
-            {{ range $i := seq 1 12 }}{{ $monthNum := printf "%02d" $i }}{{ $count := 0 }}{{ range where $posts "Date.Year" (int $currentYear) }}{{ if eq (printf "%02d" .Date.Month) $monthNum }}{{ $count = add $count 1 }}{{ end }}{{ end }}
-            <span class="month-item" data-month="{{ $monthNum }}" data-year="{{ $currentYear }}" role="listitem">{{ $monthNum }} <span class="month-count">{{ $count }}</span></span>
+            {{ range $i := seq 1 12 }}
+              {{ $monthNum := printf "%02d" $i }}
+              {{ $count := 0 }}
+              {{ range where $posts "Date.Year" (int $currentYear) }}
+                {{ if eq (printf "%02d" .Date.Month) $monthNum }}{{ $count = add $count 1 }}{{ end }}
+              {{ end }}
+            <span class="month-item" data-month="{{ $monthNum }}" data-year="{{ $currentYear }}" role="listitem">
+              {{ $monthNum }} <span class="month-count">{{ $count }}</span>
+            </span>
             {{ end }}
           </div>
           <div class="archive-stats">

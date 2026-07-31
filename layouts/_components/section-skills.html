@@ -1,0 +1,32 @@
+{{- /* 首页"技术栈"板块 */ -}}
+{{- $homeData := hugo.Data.theme.home | default dict -}}
+{{- $skillsData := $homeData.skills | default dict -}}
+{{- $skillCount := $skillsData.count | default 6 -}}
+{{- $skillsList := default slice (hugo.Data.theme.skills).skills -}}
+
+<section class="skills-section" data-aos="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon"><i class="fas fa-rocket"></i></div>
+      <h2 class="section-title">{{ $skillsData.title | default (i18n "home_tech_stack") }}</h2>
+      <p class="section-subtitle">{{ $skillsData.subtitle | default (i18n "home_tech_stack_subtitle") }}</p>
+    </div>
+    <div class="skills-grid" role="list">
+      {{ range $index, $skill := first $skillCount $skillsList }}
+      <div class="skill-item" data-aos="zoom-in" data-aos-delay="{{ mul $index 80 }}" role="listitem">
+        <div class="skill-icon">
+          {{ if eq $skill.name "JavaScript" }}<i class="fab fa-js-square"></i>
+          {{ else if eq $skill.name "HTML5" }}<i class="fab fa-html5"></i>
+          {{ else if eq $skill.name "CSS3" }}<i class="fab fa-css3-alt"></i>
+          {{ else if eq $skill.name "Python" }}<i class="fab fa-python"></i>
+          {{ else }}<i class="fas fa-code"></i>{{ end }}
+        </div>
+        <div class="skill-info">
+          <div class="skill-name"><span>{{ $skill.name }}</span><span class="skill-percent">{{ $skill.level }}%</span></div>
+          <div class="skill-bar"><div class="skill-progress" data-level="{{ $skill.level }}"></div></div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>

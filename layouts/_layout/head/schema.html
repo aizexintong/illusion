@@ -1,0 +1,28 @@
+{{- if .Site.Params.enableSchema }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ site.Title }}",
+  "url": "{{ site.BaseURL }}",
+  "logo": "{{ (hugo.Data.theme.assets).avatar.url | default "/headimg.jpg" | absURL }}",
+  "description": "{{ .Site.Params.description }}",
+  "email": "{{ .Site.Params.email }}",
+  "author": { "@type": "Person", "name": "{{ .Site.Params.author }}" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "{{ site.Title }}",
+  "url": "{{ site.BaseURL }}",
+  "description": "{{ .Site.Params.description }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ site.BaseURL }}search/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{{- end }}

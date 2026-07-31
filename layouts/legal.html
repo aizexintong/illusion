@@ -1,10 +1,7 @@
 {{ define "main" }}
 <div class="section-content">
   <div class="container">
-    <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description }}</p>
-    </section>
+    {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
     <div class="legal-content" data-aos="fade-up">
       <div class="legal-card card">
         <div class="markdown-content">{{ .Content }}</div>

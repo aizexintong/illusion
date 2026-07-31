@@ -1,0 +1,35 @@
+{{- /*
+  统一页面头部组件
+  参数:
+    .Title       - 页面标题 (必填)
+    .Icon        - 标题图标 class (可选)
+    .Subtitle    - 副标题 (可选)
+    .Description - 描述文字 (可选)
+    .Meta        - 底部元信息文字 (可选)
+    .MetaIcon    - 元信息图标 (可选)
+    .Content     - 额外内容 (可选)
+*/ -}}
+{{- $title := .Title -}}
+{{- $icon := .Icon | default "" -}}
+{{- $subtitle := .Subtitle | default "" -}}
+{{- $description := .Description | default "" -}}
+{{- $meta := .Meta | default "" -}}
+{{- $metaIcon := .MetaIcon | default "fas fa-file-alt" -}}
+
+<header class="section-header">
+  <h1 class="section-title">
+    {{ if $icon }}<i class="{{ $icon }} section-title-icon"></i>{{ end }}
+    {{ $title }}
+  </h1>
+  {{ if $subtitle }}<p class="section-subtitle">{{ $subtitle }}</p>{{ end }}
+  {{ if $description }}<div class="section-description">{{ $description }}</div>{{ end }}
+  {{ if .Content }}<div class="section-description">{{ .Content }}</div>{{ end }}
+  {{ if $meta }}
+  <div class="tag-header-meta">
+    <span class="tag-article-count">
+      <i class="{{ $metaIcon }}" aria-hidden="true"></i>
+      {{ $meta }}
+    </span>
+  </div>
+  {{ end }}
+</header>

@@ -1,0 +1,47 @@
+{{- /* 首页"关于"板块 */ -}}
+{{- $homeData := hugo.Data.theme.home | default dict -}}
+{{- $aboutData := $homeData.about | default dict -}}
+
+<section class="about-section" data-aos="fade-up">
+  <div class="container">
+    <div class="about-card card">
+      <div class="about-content">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-user-circle"></i></div>
+          <h2 class="section-title">{{ $aboutData.title | default (i18n "home_about_title" (dict "Author" .Site.Params.author)) }}</h2>
+        </div>
+        <p class="about-description">{{ $aboutData.description | default (i18n "home_about_desc") }}</p>
+        <div class="about-stats">
+          <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-number">{{ len (where site.RegularPages "Type" "posts") }}</div>
+            <div class="stat-label">{{ i18n "home_articles_count" }}</div>
+          </div>
+          <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-icon"><i class="fas fa-tags"></i></div>
+            <div class="stat-number">{{ len .Site.Taxonomies.tags }}</div>
+            <div class="stat-label">{{ i18n "home_tags_count" }}</div>
+          </div>
+          <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
+            <div class="stat-icon"><i class="fas fa-code"></i></div>
+            <div class="stat-number">{{ len (default slice (hugo.Data.theme.skills).skills) }}</div>
+            <div class="stat-label">{{ i18n "home_skills_count" }}</div>
+          </div>
+        </div>
+        <div class="about-cta">
+          <a href="{{ $aboutData.btnUrl | default "/about" }}" class="btn btn-primary">
+            <i class="fas fa-arrow-right"></i>
+            <span>{{ $aboutData.btnText | default (i18n "btn_learn_more") }}</span>
+          </a>
+        </div>
+      </div>
+      <div class="about-image-wrapper">
+        <div class="about-image">
+          {{- $assets := hugo.Data.theme.assets -}}
+          <img src="{{ $assets.avatar.url | default "https://t.alcy.cc/tx" }}" alt="{{ i18n "siteauthor" }}" loading="lazy">
+        </div>
+        <div class="about-image-decoration"></div>
+      </div>
+    </div>
+  </div>
+</section>

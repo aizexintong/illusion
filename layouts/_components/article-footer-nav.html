@@ -1,0 +1,29 @@
+{{- /* 文章底部导航：上一篇 / 推荐阅读 / 下一篇 */ -}}
+{{ $relCount := 4 }}
+{{ if or (not .PrevInSection) (not .NextInSection) }}{{ $relCount = 5 }}{{ end }}
+{{ $related := where (.Site.RegularPages.Related .) "Type" "posts" | first $relCount }}
+
+<div class="post-footer-nav">
+  <div class="post-footer-flex">
+    {{ with .PrevInSection }}
+    <a href="{{ .RelPermalink }}" class="nav-card nav-prev">
+      <span class="nav-card-label">{{ i18n "post_prev" }}</span>
+      <span class="nav-card-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+
+    {{ range $related }}
+    <a href="{{ .RelPermalink }}" class="nav-card nav-rel">
+      {{ if .Params.image }}<div class="nav-rel-img"><img src="{{ .Params.image }}" alt="" loading="lazy"/></div>{{ end }}
+      <span class="nav-card-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+
+    {{ with .NextInSection }}
+    <a href="{{ .RelPermalink }}" class="nav-card nav-next">
+      <span class="nav-card-label">{{ i18n "post_next" }}</span>
+      <span class="nav-card-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </div>
+</div>

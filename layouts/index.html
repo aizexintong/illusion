@@ -1,0 +1,7 @@
+{{ define "main" }}
+  {{ partial "_components/page-hero.html" . }}
+  {{ partial "_components/section-posts.html" . }}
+  {{ partial "_components/section-about.html" . }}
+  {{ partial "_components/section-skills.html" . }}
+  {{ .Content }}
+{{ end }}

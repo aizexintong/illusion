@@ -1,0 +1,30 @@
+{{- /* 首页"最新文章"板块 */ -}}
+{{- $homeData := hugo.Data.theme.home | default dict -}}
+{{- $postsData := $homeData.posts | default dict -}}
+{{- $postCount := $postsData.count | default 6 -}}
+
+<section class="posts-section" data-aos="fade-up">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-icon"><i class="fas fa-feather-alt"></i></div>
+      <h2 class="section-title">{{ $postsData.title | default (i18n "home_posts") }}</h2>
+      <p class="section-subtitle">{{ $postsData.subtitle | default (i18n "home_posts_subtitle") }}</p>
+    </div>
+    <div class="posts-grid" role="list">
+      {{ range $index, $page := first $postCount (where site.RegularPages "Type" "posts") }}
+      <div data-aos="fade-up" data-aos-delay="{{ mul $index 100 }}">
+        {{ partial "_components/article-card.html" (dict "Page" $page "Style" "grid" "ExcerptLength" 80 "Index" $index) }}
+      </div>
+      {{ end }}
+    </div>
+    {{ if gt (len (where site.RegularPages "Type" "posts")) $postCount }}
+    <div class="text-center" data-aos="fade-up">
+      <a href="{{ $postsData.showMore.url | default "/posts" }}" class="btn btn-outline">
+        <i class="fas fa-th-large"></i>
+        <span>{{ $postsData.showMore.text | default (i18n "btn_view_all") }}</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    {{ end }}
+  </div>
+</section>

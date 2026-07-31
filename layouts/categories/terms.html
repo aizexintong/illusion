@@ -1,0 +1,37 @@
+{{ define "main" }}
+<div class="section-content" role="main">
+  {{ partial "_components/page-header.html" (dict
+    "Title" (i18n "categories_header_title")
+    "Icon" "fas fa-folder"
+    "Meta" (i18n "categories_count" (dict "Count" (len .Data.Terms.Alphabetical)))
+    "MetaIcon" "fas fa-folder-open"
+  ) }}
+
+  <div class="container">
+    {{ if .Data.Terms }}
+      {{ $perPage := hugo.Data.theme.tags.page.perPage | default 25 }}
+      {{ $sortedTerms := sort .Data.Terms.Alphabetical "Count" "desc" }}
+      {{ $totalTerms := len $sortedTerms }}
+
+      <div class="tags-grid" data-aos="fade-up" id="tags-grid" data-per-page="{{ $perPage }}" data-total="{{ $totalTerms }}">
+        {{ range $sortedTerms }}
+        <div class="tags-card-wrapper">
+          <a href="{{ .Page.RelPermalink }}" class="tags-card">
+            <span class="tags-card-name">{{ .Page.Title }}</span>
+            <span class="tags-card-count">{{ i18n "categories_article_count" (dict "Count" .Count) }}</span>
+          </a>
+        </div>
+        {{ end }}
+      </div>
+
+      <nav class="pagination" id="tags-pagination" aria-label="{{ i18n "page_nav" }}" style="display:none;">
+        <a href="#" class="page-link prev" id="page-prev"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
+        <div class="page-numbers" id="page-numbers"></div>
+        <a href="#" class="page-link next" id="page-next">{{ i18n "page_next" }}<i class="fas fa-chevron-right"></i></a>
+      </nav>
+    {{ else }}
+      <div class="no-terms-message" data-aos="fade-up"><p>{{ i18n "taxonomy_empty" }}</p></div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

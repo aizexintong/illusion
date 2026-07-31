@@ -1,33 +1,36 @@
 {{ define "main" }}
-
-{{- $toolsData := hugo.Data.theme.tools -}}
-{{- $categories := $toolsData.categories -}}
-
+{{ $toolsData := hugo.Data.theme.tools }}
 <div class="section-content">
   <div class="container">
-    <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description }}</p>
-    </section>
+    {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
     <section class="tools-section">
-      {{- range $categories -}}
+      {{ range $toolsData.categories }}
       <div class="tools-category" data-aos="fade-up">
         <div class="category-header">
           <div class="category-icon"><i class="{{ .icon }}"></i></div>
-          <div class="category-info"><h2 class="category-title">{{ .name }}</h2><p class="category-description">{{ .description }}</p></div>
+          <div class="category-info">
+            <h2 class="category-title">{{ .name }}</h2>
+            <p class="category-description">{{ .description }}</p>
+          </div>
         </div>
         <div class="tools-grid">
-          {{- range .tools -}}
+          {{ range .tools }}
           <a href="{{ .url }}" class="tool-card" target="_blank" rel="noopener nofollow" data-aos="zoom-in">
-            <div class="tool-icon">{{- if hasPrefix .icon "http" -}}<img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">{{- else -}}<i class="{{ .icon }}"></i>{{- end -}}</div>
-            <div class="tool-content"><h3 class="tool-name">{{ .name }}</h3><p class="tool-description">{{ .description }}</p></div>
+            <div class="tool-icon">
+              {{- if hasPrefix .icon "http" -}}<img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">
+              {{- else -}}<i class="{{ .icon }}"></i>{{- end -}}
+            </div>
+            <div class="tool-content">
+              <h3 class="tool-name">{{ .name }}</h3>
+              <p class="tool-description">{{ .description }}</p>
+            </div>
             <div class="tool-arrow"><i class="fas fa-external-link-alt"></i></div>
           </a>
-          {{- end -}}
+          {{ end }}
         </div>
       </div>
-      {{- end -}}
+      {{ end }}
     </section>
   </div>
 </div>

@@ -1,0 +1,23 @@
+{{- /*
+  文章关联术语组件（原 partials/terms.html）
+  参数:
+    .Page     - 页面对象
+    .Taxonomy - 分类法名称 (如 "tags", "categories")
+    .Limit    - 显示数量限制 (默认 3)
+*/ -}}
+{{- $page := .Page -}}
+{{- $taxonomy := .Taxonomy -}}
+{{- $limit := .Limit | default 3 -}}
+
+{{- with $page.GetTerms $taxonomy -}}
+<div class="post-tags-container" title="{{ delimit (apply . "LinkTitle" ".") ", " }}">
+  <div class="post-tags">
+    {{ range first $limit . }}
+    <a href="{{ .RelPermalink }}" class="post-tag">#{{ .LinkTitle }}</a>
+    {{ end }}
+    {{ if gt (len .) $limit }}
+    <span class="post-tag-more">{{ i18n "tags_more" (dict "Count" (sub (len .) $limit)) }}</span>
+    {{ end }}
+  </div>
+</div>
+{{- end -}}

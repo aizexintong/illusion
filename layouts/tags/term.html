@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="section-content" role="main">
+  {{ partial "_components/page-header.html" (dict
+    "Title" .Title
+    "Icon" "fas fa-tag"
+    "Meta" (i18n "term_count" (dict "Count" (len .Pages)))
+    "MetaIcon" "fas fa-file-alt"
+  ) }}
+
+  <div class="container">
+    {{ if gt (len .Pages) 0 }}
+    {{ $paginator := .Paginate .Pages 16 }}
+    <div class="term-posts-grid" role="list">
+      {{ range $paginator.Pages }}
+        {{ partial "_components/article-card.html" (dict "Page" . "Style" "grid" "ExcerptLength" 80) }}
+      {{ end }}
+    </div>
+    {{ partial "_components/pagination.html" $paginator }}
+    {{ else }}
+    <div class="no-terms-message" data-aos="fade-up"><p>{{ i18n "term_empty" }}</p></div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

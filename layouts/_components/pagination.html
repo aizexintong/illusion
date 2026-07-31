@@ -1,0 +1,17 @@
+{{- /* 分页导航组件，接收 Paginator 对象 */ -}}
+{{ if gt .TotalPages 1 }}
+<nav class="pagination" aria-label="{{ i18n "page_nav" }}">
+  {{ if .HasPrev }}
+  <a href="{{ .Prev.URL }}" class="page-link prev"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
+  {{ end }}
+  <div class="page-numbers">
+    {{ range .Pagers }}
+      {{ if eq . $ }}<span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
+      {{ else }}<a href="{{ .URL }}" class="page-link">{{ .PageNumber }}</a>{{ end }}
+    {{ end }}
+  </div>
+  {{ if .HasNext }}
+  <a href="{{ .Next.URL }}" class="page-link next">{{ i18n "page_next" }}<i class="fas fa-chevron-right"></i></a>
+  {{ end }}
+</nav>
+{{ end }}

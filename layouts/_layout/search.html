@@ -1,0 +1,17 @@
+{{- if .Site.Params.enableSearch -}}
+<div class="search-component" role="search" aria-label='{{ i18n "search_title" }}'>
+  {{- if eq .Site.Params.searchProvider "local" -}}
+  <form class="search-form" id="search-form" role="search" data-index-url='{{ "index.json" | relURL }}'>
+    <div class="search-input-group">
+      <input type="search" id="search-input" class="search-input" placeholder='{{ i18n "search_placeholder" }}' aria-label='{{ i18n "search_title" }}' autocomplete="off" />
+      <button type="submit" class="search-button" aria-label='{{ i18n "btn_search" }}'><i class="fas fa-search"></i></button>
+    </div>
+    <div class="search-results" id="search-results" aria-live="polite" aria-atomic="true"></div>
+  </form>
+  {{- else if eq .Site.Params.searchProvider "algolia" -}}
+  <div class="algolia-search"><div id="search-box"></div><div id="hits"></div></div>
+  {{- else -}}
+  <div class="search-disabled" role="status"><p>{{ i18n "search_disabled" }}</p></div>
+  {{- end -}}
+</div>
+{{- end -}}

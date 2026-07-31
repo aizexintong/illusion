@@ -1,21 +1,15 @@
 {{ define "main" }}
-
+{{ $skillsData := hugo.Data.theme.skills }}
 <div class="section-content">
   <div class="container">
-    {{ $skillsData := hugo.Data.theme.skills }}
-    {{ $overview := $skillsData.overview }}
-
-    <section class="page-header" data-aos="fade-up">
-      <h1 class="page-title">{{ .Title }}</h1>
-      <p class="page-description">{{ .Description }}</p>
-    </section>
+    {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
     <section class="skills-overview" data-aos="fade-up">
       <div class="skills-summary card">
-        <h2 class="section-title">{{ $overview.title | default (i18n "skills_overview") }}</h2>
-        <p class="section-subtitle">{{ $overview.subtitle | default (i18n "skills_overview_subtitle") }}</p>
+        <h2 class="section-title">{{ $skillsData.overview.title | default (i18n "skills_overview") }}</h2>
+        <p class="section-subtitle">{{ $skillsData.overview.subtitle | default (i18n "skills_overview_subtitle") }}</p>
         <div class="skills-categories">
-          {{ with $overview.categories }}{{ range . }}
+          {{ with $skillsData.overview.categories }}{{ range . }}
           <div class="category-item" data-aos="zoom-in">
             <div class="category-icon"><i class="{{ .icon }}"></i></div>
             <h3>{{ .title }}</h3>
@@ -33,10 +27,15 @@
       <div class="skills-detailed-grid">
         {{ range $skillsData.skills }}
         <div class="skill-detail-item card" data-aos="fade-up">
-          <div class="skill-header"><h3 class="skill-name">{{ .name }}</h3><span class="skill-level">{{ .level }}%</span></div>
+          <div class="skill-header">
+            <h3 class="skill-name">{{ .name }}</h3>
+            <span class="skill-level">{{ .level }}%</span>
+          </div>
           <div class="skill-bar"><div class="skill-progress" data-level="{{ .level }}"></div></div>
           {{ with .description }}<div class="skill-description">{{ . }}</div>{{ end }}
-          {{ with .projects }}{{ if gt (len .) 0 }}<div class="skill-projects"><h4>{{ i18n "skills_projects" }}</h4><ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul></div>{{ end }}{{ end }}
+          {{ with .projects }}{{ if gt (len .) 0 }}
+          <div class="skill-projects"><h4>{{ i18n "skills_projects" }}</h4><ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul></div>
+          {{ end }}{{ end }}
         </div>
         {{ end }}
       </div>
