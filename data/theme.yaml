@@ -261,11 +261,6 @@ friends:
       avatar: "https://t.alcy.cc/moe"
       description: "记录学习过程中的心得体会"
       category: "学习笔记"
-    - name: "开源项目"
-      url: "https://opensource.example.com"
-      avatar: "https://t.alcy.cc/pc"
-      description: "优秀的开源项目展示"
-      category: "开源项目"
   apply:
     title: "申请友链"
     conditions:
@@ -285,7 +280,7 @@ friends:
         link: "mailto:admin@azxt.org"
       - icon: "fab fa-github"
         label: "GitHub Issues"
-        link: "https://github.com/aizexintong/azxt-blog/issues"
+        link: "https://github.com/aizexintong/illusion/issues"
 
 # ============================================================================
 # 工具页面

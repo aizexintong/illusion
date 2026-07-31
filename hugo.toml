@@ -10,7 +10,7 @@
 baseURL = 'https://azxt.org/'
 locale = 'zh-CN'
 languageName = '中文'
-title = '爱则心痛 | azxt'
+title = '爱则心痛(演示) | azxt'
 theme = 'illusion'
 defaultContentLanguage = 'zh'
 defaultContentLanguageInSubdir = false
@@ -21,8 +21,8 @@ enableGitInfo = true
 # ---------------------------------------------------------------------------
 [params]
   # -- 个人信息 --
-  author = "爱则心痛"
-  description = "爱则心痛的个人博客 - 分享技术、生活和思考"
+  author = "爱则心痛(演示)"
+  description = "爱则心痛(演示)的个人博客 - 分享技术、生活和思考"
   email = "admin@azxt.org"
   github = "aizexintong"
   domain = "azxt.org"

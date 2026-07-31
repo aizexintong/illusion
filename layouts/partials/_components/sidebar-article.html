@@ -1,3 +1,11 @@
+<aside class="article-right">
+{{ if and .Site.Params.enableTOC .TableOfContents }}
+<div class="side-box">
+  <div class="side-box-title"><i class="fas fa-list"></i> {{ i18n "post_contents" }}</div>
+  <div class="side-toc">{{ .TableOfContents }}</div>
+</div>
+{{ end }}
+
 <div class="side-box">
   <div class="side-box-title"><i class="fas fa-info"></i> {{ i18n "post_info" }}</div>
   <div class="side-info">
@@ -24,11 +32,7 @@
     <div class="side-status">
       <i class="fas {{ if le $modDays 7 }}fa-clock{{ else }}fa-history{{ end }}"></i>
       <span class="side-status-text">
-        {{ if le $modDays 7 }}
-          {{ i18n "post_recently_updated" }}
-        {{ else }}
-          {{ i18n "post_modified_after" (dict "Days" $modDays) }}
-        {{ end }}
+        {{ if le $modDays 7 }}{{ i18n "post_recently_updated" }}{{ else }}{{ i18n "post_modified_after" (dict "Days" $modDays) }}{{ end }}
       </span>
     </div>
     {{ else if .Date }}
@@ -40,16 +44,28 @@
 
     {{ if .WordCount }}
     <div class="side-info-row">
-      <span class="side-info-label">{{ i18n "post_word_count_label" | default "字数" }}</span>
+      <span class="side-info-label">{{ i18n "post_word_count_label" }}</span>
       <span class="side-info-value">{{ .WordCount }} {{ i18n "post_word_count" }}</span>
     </div>
     {{ end }}
 
     {{ if .ReadingTime }}
     <div class="side-info-row">
-      <span class="side-info-label">{{ i18n "post_read_label" | default "阅读" }}</span>
+      <span class="side-info-label">{{ i18n "post_read_label" }}</span>
       <span class="side-info-value">{{ .ReadingTime }} {{ i18n "post_read_time" }}</span>
     </div>
     {{ end }}
   </div>
 </div>
+
+{{ if .Params.tags }}
+<div class="side-box">
+  <div class="side-box-title"><i class="fas fa-tags"></i> {{ i18n "post_tags" }}</div>
+  <div class="side-tags">
+    {{ range .Params.tags }}
+    <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+</aside>

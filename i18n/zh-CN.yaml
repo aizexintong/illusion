@@ -310,9 +310,9 @@ footer_uptime_label:
 footer_uptime_loading:
   other: "加载中..."
 footer_copyright:
-  other: "© {{ .Year }} {{ .Author }} · 保留所有权利"
+  other: "© %s %s · 保留所有权利"
 footer_powered_by:
-  other: "由 Hugo 强力驱动 · 主题：幻梦 Illusion · 作者：{{ .Author }}"
+  other: "由 Hugo 强力驱动 · 主题：幻梦 Illusion · 作者：%s"
 
 # ----- 搜索 -----
 search_title:

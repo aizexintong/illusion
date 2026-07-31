@@ -1,5 +1,5 @@
 // ==========================================================================
-// 幻梦 Illusion v2.2.0 - TypeScript
+// 幻梦 Illusion v1.0.0 - TypeScript
 // 所有用户可见文字均通过 i18n 系统获取，便于多语言扩展
 // ==========================================================================
 
@@ -1296,18 +1296,16 @@ const FooterManager = {
     const now = new Date();
     const siteStart = new Date(this.siteTime);
     const currentYear = now.getFullYear();
-    const startYear = siteStart.getFullYear();
-
-    const yearStr = currentYear === startYear ? `\u00A9 ${currentYear}` : `\u00A9 ${startYear} - ${currentYear}`;
+    const siteUrl = this.siteUrl || '/';
 
     const copyrightEl = document.getElementById('footer-copyright');
     if (copyrightEl) {
-      copyrightEl.innerHTML = `${yearStr} ${this.author} \u00B7 ${I18n.t('footer_copyright', { Year: String(currentYear), Author: this.author })}`;
+      copyrightEl.innerHTML = `\u00A9 ${currentYear} <a href="${siteUrl}">${this.author}</a> \u535A\u5BA2 \u00B7 \u535A\u5BA2\u6240\u6709\u6743\u5F52\u4E8E <a href="${siteUrl}">${this.author}</a>`;
     }
 
     const poweredEl = document.getElementById('footer-powered');
     if (poweredEl) {
-      poweredEl.innerHTML = I18n.t('footer_powered_by', { Author: this.author });
+      poweredEl.innerHTML = `\u7531 <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a> \u5F3A\u529B\u9A71\u52A8 \u00B7 \u4E3B\u9898\uFF1A<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">\u5E7B\u68A6 Illusion</a> \u00B7 \u4F5C\u8005\uFF1A<a href="https://github.com/aizexintong" target="_blank" rel="noopener">${this.author}</a>`;
     }
 
     const displayEl = document.getElementById('uptime-display');
@@ -1676,10 +1674,10 @@ const TagsPagination = {
     nextBtn.addEventListener('click', (e) => { e.preventDefault(); if (this.currentPage < this.totalPages) this.showPage(this.currentPage + 1); });
     const urlParams = new URLSearchParams(window.location.search);
     const initialPage = parseInt(urlParams.get('page') || '1');
-    this.showPage(Math.min(Math.max(initialPage, 1), this.totalPages));
+    this.showPage(Math.min(Math.max(initialPage, 1), this.totalPages), false);
   },
 
-  showPage(page: number): void {
+  showPage(page: number, scroll: boolean = true): void {
     this.currentPage = page;
     this.wrappers.forEach((wrapper, index) => {
       const itemPage = Math.floor(index / this.perPage) + 1;
@@ -1688,7 +1686,9 @@ const TagsPagination = {
     this.renderPageNumbers();
     this.updateNavButtons();
     history.replaceState(null, '', page === 1 ? window.location.pathname : `?page=${page}`);
-    document.getElementById('tags-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (scroll) {
+      document.getElementById('tags-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   },
 
   renderPageNumbers(): void {
@@ -1755,7 +1755,7 @@ function initIllusionTheme(): void {
     setTimeout(() => AnimationManager.initSkillBars(), 500);
   });
 
-  console.log('Illusion Theme v2.2.0 initialized');
+  console.log('Illusion Theme v1.0.0 initialized');
 }
 
 // ==========================================================================
@@ -1772,6 +1772,6 @@ initIllusionTheme();
   CalendarWidget, ArchivesNavigator, NavClickEffect, TagsPagination
 };
 
-console.log('Illusion Theme v2.2.0 ready');
+console.log('Illusion Theme v1.0.0 ready');
 
 export {};
