@@ -3972,6 +3972,7 @@ p {
   flex-direction: column;
   gap: var(--s4);
   width: var(--c);
+  overflow: hidden;
 
   @media (min-width: 576px) {
     width: var(--post-image-height);
@@ -3984,7 +3985,6 @@ p {
     top: calc(var(--hh) + var(--s4));
     align-self: flex-start;
     max-height: calc(100vh - var(--hh) - var(--s8));
-    overflow-y: auto;
   }
 
   @media (min-width: 992px) {
@@ -3996,6 +3996,8 @@ p {
   border-radius: var(--rxl);
   padding: var(--s5);
   border: 1px solid var(--cbdr);
+  overflow: hidden;
+  flex-shrink: 0;
 
   &-title {
     font-size: var(--s);
@@ -4014,9 +4016,33 @@ p {
   }
 }
 
+.side-box:has(.side-toc) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .side-toc {
-  max-height: var(--toc-max-height);
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--cbdrl);
+    border-radius: var(--rf);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--p3);
+    border-radius: var(--rf);
+  }
 
   nav {
     ul {
@@ -4033,6 +4059,7 @@ p {
       border-radius: var(--rs);
       transition: all var(--tf);
       line-height: 1.5;
+      word-break: break-word;
 
       &:hover,
       &.active {
@@ -4045,6 +4072,10 @@ p {
       padding-left: var(--s3);
     }
   }
+}
+
+.side-box:not(:has(.side-toc)) {
+  flex-shrink: 0;
 }
 
 .side-info {
