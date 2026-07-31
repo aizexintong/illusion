@@ -1,40 +1,55 @@
-{{- /* 文章详情页侧栏：TOC + 文章信息 + 标签 */ -}}
-<aside class="article-right">
-  {{ if and .Site.Params.enableTOC .TableOfContents }}
-  <div class="side-box">
-    <div class="side-box-title"><i class="fas fa-list"></i> {{ i18n "post_contents" }}</div>
-    <div class="side-toc">{{ .TableOfContents }}</div>
-  </div>
-  {{ end }}
-
-  <div class="side-box">
-    <div class="side-box-title"><i class="fas fa-info"></i> {{ i18n "post_info" }}</div>
-    <div class="side-info">
-      {{ if .Date }}
-      <p><span>{{ i18n "post_published" }}</span><span>{{ .Date.Format "2006-01-02" }} <span class="meta-relative">({{ partial "_utils/relative-time.html" .Date }})</span></span></p>
-      {{ end }}
-      {{- $isModified := and .Date .Lastmod (ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
-      {{ if $isModified }}
-      <p><span>{{ i18n "post_updated" }}</span><span>{{ .Lastmod.Format "2006-01-02" }} <span class="meta-relative">({{ partial "_utils/relative-time.html" .Lastmod }})</span></span></p>
-      {{- $modDays := int (div (sub .Lastmod.Unix .Date.Unix) 86400) -}}
-      <p class="side-status"><span></span><span class="side-status-text">
-        {{ if le $modDays 7 }}<i class="fas fa-clock"></i> {{ i18n "post_recently_updated" }}
-        {{ else }}<i class="fas fa-history"></i> {{ i18n "post_modified_after" (dict "Days" $modDays) }}{{ end }}
-      </span></p>
-      {{ else if .Date }}
-      <p class="side-status"><span></span><span class="side-status-text side-status-first"><i class="fas fa-check-circle"></i> {{ i18n "post_first_published" }}</span></p>
-      {{ end }}
-      {{ if .WordCount }}<p><span>{{ i18n "post_word_count_label" }}</span><span>{{ .WordCount }}</span></p>{{ end }}
-      {{ if .ReadingTime }}<p><span>{{ i18n "post_read_label" }}</span><span>{{ .ReadingTime }}{{ i18n "post_read_time" }}</span></p>{{ end }}
+<div class="side-box">
+  <div class="side-box-title"><i class="fas fa-info"></i> {{ i18n "post_info" }}</div>
+  <div class="side-info">
+    {{ if .Date }}
+    <div class="side-info-row">
+      <span class="side-info-label">{{ i18n "post_published" }}</span>
+      <span class="side-info-value">
+        {{ .Date.Format "2006-01-02" }}
+        <span class="side-info-relative">({{ partial "_utils/relative-time.html" .Date }})</span>
+      </span>
     </div>
-  </div>
+    {{ end }}
 
-  {{ if .Params.tags }}
-  <div class="side-box">
-    <div class="side-box-title"><i class="fas fa-tags"></i> {{ i18n "post_tags" }}</div>
-    <div class="side-tags">
-      {{ range .Params.tags }}<a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>{{ end }}
+    {{- $isModified := and .Date .Lastmod (ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
+    {{ if $isModified }}
+    <div class="side-info-row">
+      <span class="side-info-label">{{ i18n "post_updated" }}</span>
+      <span class="side-info-value">
+        {{ .Lastmod.Format "2006-01-02" }}
+        <span class="side-info-relative">({{ partial "_utils/relative-time.html" .Lastmod }})</span>
+      </span>
     </div>
+    {{- $modDays := int (div (sub .Lastmod.Unix .Date.Unix) 86400) -}}
+    <div class="side-status">
+      <i class="fas {{ if le $modDays 7 }}fa-clock{{ else }}fa-history{{ end }}"></i>
+      <span class="side-status-text">
+        {{ if le $modDays 7 }}
+          {{ i18n "post_recently_updated" }}
+        {{ else }}
+          {{ i18n "post_modified_after" (dict "Days" $modDays) }}
+        {{ end }}
+      </span>
+    </div>
+    {{ else if .Date }}
+    <div class="side-status">
+      <i class="fas fa-check-circle"></i>
+      <span class="side-status-text side-status-first">{{ i18n "post_first_published" }}</span>
+    </div>
+    {{ end }}
+
+    {{ if .WordCount }}
+    <div class="side-info-row">
+      <span class="side-info-label">{{ i18n "post_word_count_label" | default "字数" }}</span>
+      <span class="side-info-value">{{ .WordCount }} {{ i18n "post_word_count" }}</span>
+    </div>
+    {{ end }}
+
+    {{ if .ReadingTime }}
+    <div class="side-info-row">
+      <span class="side-info-label">{{ i18n "post_read_label" | default "阅读" }}</span>
+      <span class="side-info-value">{{ .ReadingTime }} {{ i18n "post_read_time" }}</span>
+    </div>
+    {{ end }}
   </div>
-  {{ end }}
-</aside>
+</div>

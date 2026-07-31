@@ -83,6 +83,10 @@ post_read_time:
   other: "分钟阅读"
 post_word_count:
   other: "字"
+post_word_count_label:
+  other: "字数"
+post_read_label:
+  other: "阅读"
 post_published:
   other: "发布"
 post_updated:
