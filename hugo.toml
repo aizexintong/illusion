@@ -38,13 +38,54 @@ enableGitInfo = true
   enableTypewriter = true
   enableAccessibility = true
   enableTOC = true
-  enableComments = false
+  enableComments = false          # 总开关
   lazyLoadImages = true
 
   # -- SEO / 社交分享 --
   enableSchema = true
   enableOpenGraph = true
   enableTwitterCards = true
+
+  # -- 评论系统配置 --
+  # 可选值: disqus | utterances | giscus | twikoo | waline | artalk
+  commentsProvider = "giscus"
+
+  # ----- Disqus -----
+  disqusShortname = ""
+
+  # ----- Utterances -----
+  utterancesRepo = ""                # 格式: owner/repo
+  utterancesIssueTerm = "pathname"   # pathname | url | title | og:title
+  utterancesTheme = "github-light"   # github-light | github-dark | preferred-color-scheme
+
+  # ----- Giscus -----
+  giscusRepo = ""
+  giscusRepoId = ""
+  giscusCategory = ""
+  giscusCategoryId = ""
+  giscusMapping = "pathname"         # pathname | url | title | og:title | specific
+  giscusReactions = "1"
+  giscusEmitMetadata = "0"
+  giscusInputPosition = "bottom"     # bottom | top
+  giscusTheme = "preferred-color-scheme"  # light | dark | preferred-color-scheme
+
+  # ----- Twikoo -----
+  twikooEnvId = ""                   # 腾讯云环境ID 或 自部署地址
+  twikooRegion = ""                  # 可选: ap-guangzhou | ap-shanghai | ...
+  twikooLang = "zh-CN"
+
+  # ----- Waline -----
+  walineServerURL = ""
+  walineLang = "zh-CN"
+  walinePageSize = 10
+  walineMeta = ['nick', 'mail', 'link']
+  walineRequiredMeta = ['nick', 'mail']
+
+  # ----- Artalk -----
+  artalkServer = ""                  # 自部署服务端地址
+  artalkSite = ""                    # 站点名称
+  artalkPlaceholder = "说点什么吧..."
+  artalkDarkMode = "auto"            # auto | manual | true | false
 
 # ---------------------------------------------------------------------------
 # 导航菜单

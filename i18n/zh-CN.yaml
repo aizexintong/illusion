@@ -305,14 +305,32 @@ footer_sitemap:
   other: "网站地图"
 footer_rss:
   other: "RSS 订阅"
+footer_copyright_prefix:
+  other: "©"
+footer_copyright_separator:
+  other: "-"
+footer_copyright_webmaster:
+  other: "站长"
+footer_copyright_reserved:
+  other: "保留"
+footer_copyright_rights:
+  other: "网站所有权利"
+footer_powered_prefix:
+  other: "由"
+footer_powered_hugo:
+  other: "Hugo 强力驱动"
+footer_powered_separator:
+  other: "·"
+footer_powered_theme:
+  other: "主题："
+footer_powered_author:
+  other: "作者："
 footer_uptime_label:
   other: "已运行"
 footer_uptime_loading:
   other: "加载中..."
-footer_copyright:
-  other: "© %s %s · 保留所有权利"
-footer_powered_by:
-  other: "由 Hugo 强力驱动 · 主题：幻梦 Illusion · 作者：%s"
+footer_render_time:
+  other: "加载耗时"
 
 # ----- 搜索 -----
 search_title:
@@ -340,15 +358,21 @@ comments_title:
 comments_section:
   other: "评论区域"
 comments_enable_js:
-  other: "请启用JavaScript以查看Disqus评论。"
+  other: "请启用JavaScript以查看评论。"
 comments_disqus_warn:
-  other: "Disqus配置未完成，请在站点配置中设置disqusShortname。"
+  other: "Disqus 配置未完成，请在站点配置中设置 disqusShortname。"
 comments_utterances_warn:
-  other: "Utterances配置未完成，请在站点配置中设置utterancesRepo。"
+  other: "Utterances 配置未完成，请在站点配置中设置 utterancesRepo。"
 comments_giscus_warn:
-  other: "Giscus配置未完成，请在站点配置中设置giscusRepo。"
+  other: "Giscus 配置未完成，请在站点配置中设置 giscusRepo、giscusRepoId、giscusCategory 和 giscusCategoryId。"
+comments_twikoo_warn:
+  other: "Twikoo 配置未完成，请在站点配置中设置 twikooEnvId。"
+comments_waline_warn:
+  other: "Waline 配置未完成，请在站点配置中设置 walineServerURL。"
+comments_artalk_warn:
+  other: "Artalk 配置未完成，请在站点配置中设置 artalkServer。"
 comments_disabled:
-  other: "评论功能已关闭。"
+  other: "评论功能已关闭或未正确配置。"
 
 # ----- 主题切换 -----
 theme_label:

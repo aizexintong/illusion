@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html lang="{{ site.Language.Locale }}" dir="{{ or site.Language.Direction `ltr` }}">
 <head>
+  <script>window.pageLoadTime = performance.now();</script>
   {{ partial "_layout/head.html" . }}
   <script>
     window.i18nData = {
+      // ===== 主题切换 =====
       "theme_light": "{{ i18n "theme_light" }}",
       "theme_dark": "{{ i18n "theme_dark" }}",
       "theme_system": "{{ i18n "theme_system" }}",
+
+      // ===== 辅助功能 =====
       "a11y_skip_to_main": "{{ i18n "a11y_skip_to_main" }}",
+
+      // ===== 代码复制 =====
       "js_code_copy": "{{ i18n "js_code_copy" }}",
       "js_code_copied": "{{ i18n "js_code_copied" }}",
       "js_copy_code": "{{ i18n "js_copy_code" }}",
+
+      // ===== 搜索 =====
       "js_search_error": "{{ i18n "js_search_error" }}",
       "js_search_error_hint": "{{ i18n "js_search_error_hint" }}",
       "js_search_no_results": "{{ i18n "js_search_no_results" }}",
       "js_search_results_for": "{{ i18n "js_search_results_for" }}",
       "js_search_results_count": "{{ i18n "js_search_results_count" }}",
+
+      // ===== 页脚 =====
       "js_uptime_label": "{{ i18n "js_uptime_label" }}",
+
+      // ===== 归档 =====
       "js_archives_no_data": "{{ i18n "js_archives_no_data" }}",
+
+      // ===== 日历 =====
       "calendar_weekdays": "{{ i18n "calendar_weekdays" }}",
       "calendar_year_suffix": "{{ i18n "calendar_year_suffix" }}",
       "calendar_date_format": "{{ i18n "calendar_date_format" }}",
+
+      // ===== 月份（归档导航用） =====
       "archives_month_01": "{{ i18n "archives_month_01" }}",
       "archives_month_02": "{{ i18n "archives_month_02" }}",
       "archives_month_03": "{{ i18n "archives_month_03" }}",
@@ -33,8 +49,30 @@
       "archives_month_10": "{{ i18n "archives_month_10" }}",
       "archives_month_11": "{{ i18n "archives_month_11" }}",
       "archives_month_12": "{{ i18n "archives_month_12" }}",
-      "footer_copyright": "{{ i18n "footer_copyright" }}",
-      "footer_powered_by": "{{ i18n "footer_powered_by" }}"
+
+      // ===== 页脚版权 =====
+      "footer_copyright_prefix": "{{ i18n "footer_copyright_prefix" }}",
+      "footer_copyright_separator": "{{ i18n "footer_copyright_separator" }}",
+      "footer_copyright_webmaster": "{{ i18n "footer_copyright_webmaster" }}",
+      "footer_copyright_reserved": "{{ i18n "footer_copyright_reserved" }}",
+      "footer_copyright_rights": "{{ i18n "footer_copyright_rights" }}",
+      "footer_powered_prefix": "{{ i18n "footer_powered_prefix" }}",
+      "footer_powered_hugo": "{{ i18n "footer_powered_hugo" }}",
+      "footer_powered_separator": "{{ i18n "footer_powered_separator" }}",
+      "footer_powered_theme": "{{ i18n "footer_powered_theme" }}",
+      "footer_powered_author": "{{ i18n "footer_powered_author" }}",
+      "footer_uptime_label": "{{ i18n "footer_uptime_label" }}",
+      "footer_render_time": "{{ i18n "footer_render_time" }}",
+
+      // ===== 评论系统警告（新增） =====
+      "comments_disqus_warn": "{{ i18n "comments_disqus_warn" }}",
+      "comments_utterances_warn": "{{ i18n "comments_utterances_warn" }}",
+      "comments_giscus_warn": "{{ i18n "comments_giscus_warn" }}",
+      "comments_twikoo_warn": "{{ i18n "comments_twikoo_warn" }}",
+      "comments_waline_warn": "{{ i18n "comments_waline_warn" }}",
+      "comments_artalk_warn": "{{ i18n "comments_artalk_warn" }}",
+      "comments_disabled": "{{ i18n "comments_disabled" }}",
+      "comments_enable_js": "{{ i18n "comments_enable_js" }}"
     };
   </script>
 </head>
@@ -77,7 +115,7 @@
     window.siteConfig = {
       siteTime: "{{ .Site.Params.siteTime }}",
       baseURL: "{{ .Site.BaseURL }}",
-      author: "{{ .Site.Params.author }}"
+      siteName: "{{ .Site.Title }}"
     };
   </script>
 </body>

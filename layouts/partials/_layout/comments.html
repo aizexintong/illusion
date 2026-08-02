@@ -3,16 +3,35 @@
   <div class="container">
     <h2 class="section-title">{{ i18n "comments_title" }}</h2>
     <div class="comments-container">
-      {{- if eq .Site.Params.commentsProvider "disqus" -}}
+
+      {{- /* ===== 根据配置选择评论系统 ===== */ -}}
+      {{- $provider := .Site.Params.commentsProvider | default "disqus" -}}
+
+      {{- /* ----- Disqus ----- */ -}}
+      {{- if eq $provider "disqus" -}}
         {{- if .Site.Params.disqusShortname -}}
           <div id="disqus_thread"></div>
           <script>
-            var disqus_config = function () {
-              this.page.url = '{{ .Permalink }}';
-              this.page.identifier = '{{ .File.UniqueID }}';
-              this.page.title = '{{ .Title }}';
-            };
             (function() {
+              // 如果页面有 Disqus 实例，先重置
+              if (window.DISQUS) {
+                window.DISQUS.reset({
+                  reload: true,
+                  config: function() {
+                    this.page.url = '{{ .Permalink }}';
+                    this.page.identifier = '{{ .File.UniqueID }}';
+                    this.page.title = '{{ .Title }}';
+                  }
+                });
+                return;
+              }
+
+              var disqus_config = function() {
+                this.page.url = '{{ .Permalink }}';
+                this.page.identifier = '{{ .File.UniqueID }}';
+                this.page.title = '{{ .Title }}';
+              };
+
               var d = document, s = d.createElement('script');
               s.src = 'https://{{ .Site.Params.disqusShortname }}.disqus.com/embed.js';
               s.setAttribute('data-timestamp', +new Date());
@@ -21,23 +40,210 @@
           </script>
           <noscript>{{ i18n "comments_enable_js" }}</noscript>
         {{- else -}}
-          <div class="comments-warning" role="alert"><p>{{ i18n "comments_disqus_warn" }}</p></div>
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_disqus_warn" }}</p>
+          </div>
         {{- end -}}
-      {{- else if eq .Site.Params.commentsProvider "utterances" -}}
+
+      {{- /* ----- Utterances ----- */ -}}
+      {{- else if eq $provider "utterances" -}}
         {{- if .Site.Params.utterancesRepo -}}
-          <script src="https://utteranc.es/client.js" repo="{{ .Site.Params.utterancesRepo }}" issue-term="pathname" theme="github-light" crossorigin="anonymous" async></script>
+          <script src="https://utteranc.es/client.js"
+            repo="{{ .Site.Params.utterancesRepo }}"
+            issue-term="{{ .Site.Params.utterancesIssueTerm | default "pathname" }}"
+            theme="{{ .Site.Params.utterancesTheme | default "github-light" }}"
+            crossorigin="anonymous"
+            async>
+          </script>
+          <script>
+            // 监听主题切换，重新加载 Utterances
+            document.addEventListener('themeChanged', function(e) {
+              const isDark = e.detail.applied === 'dark';
+              const theme = isDark ? 'github-dark' : 'github-light';
+              const iframe = document.querySelector('.utterances-frame');
+              if (iframe) {
+                iframe.contentWindow.postMessage({
+                  type: 'set-theme',
+                  theme: theme
+                }, 'https://utteranc.es');
+              }
+            });
+          </script>
         {{- else -}}
-          <div class="comments-warning" role="alert"><p>{{ i18n "comments_utterances_warn" }}</p></div>
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_utterances_warn" }}</p>
+          </div>
         {{- end -}}
-      {{- else if eq .Site.Params.commentsProvider "giscus" -}}
-        {{- if .Site.Params.giscusRepo -}}
-          <script src="https://giscus.app/client.js" data-repo="{{ .Site.Params.giscusRepo }}" data-repo-id="" data-category="" data-category-id="" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light" data-lang="zh-CN" crossorigin="anonymous" async></script>
+
+      {{- /* ----- Giscus ----- */ -}}
+      {{- else if eq $provider "giscus" -}}
+        {{- if and .Site.Params.giscusRepo .Site.Params.giscusRepoId .Site.Params.giscusCategory .Site.Params.giscusCategoryId -}}
+          <script src="https://giscus.app/client.js"
+            data-repo="{{ .Site.Params.giscusRepo }}"
+            data-repo-id="{{ .Site.Params.giscusRepoId }}"
+            data-category="{{ .Site.Params.giscusCategory }}"
+            data-category-id="{{ .Site.Params.giscusCategoryId }}"
+            data-mapping="{{ .Site.Params.giscusMapping | default "pathname" }}"
+            data-strict="0"
+            data-reactions-enabled="{{ .Site.Params.giscusReactions | default "1" }}"
+            data-emit-metadata="{{ .Site.Params.giscusEmitMetadata | default "0" }}"
+            data-input-position="{{ .Site.Params.giscusInputPosition | default "bottom" }}"
+            data-theme="{{ .Site.Params.giscusTheme | default "preferred-color-scheme" }}"
+            data-lang="{{ .Site.Language.Lang | default "zh-CN" }}"
+            crossorigin="anonymous"
+            async>
+          </script>
+          <script>
+            // 监听主题切换，Giscus 通过 data-theme 属性自动适配
+            document.addEventListener('themeChanged', function(e) {
+              const isDark = e.detail.applied === 'dark';
+              const giscusIframe = document.querySelector('iframe.giscus-frame');
+              if (giscusIframe) {
+                giscusIframe.contentWindow.postMessage({
+                  giscus: {
+                    setConfig: {
+                      theme: isDark ? 'dark' : 'light'
+                    }
+                  }
+                }, 'https://giscus.app');
+              }
+            });
+          </script>
         {{- else -}}
-          <div class="comments-warning" role="alert"><p>{{ i18n "comments_giscus_warn" }}</p></div>
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_giscus_warn" }}</p>
+          </div>
         {{- end -}}
+
+      {{- /* ----- Twikoo ----- */ -}}
+      {{- else if eq $provider "twikoo" -}}
+        {{- if .Site.Params.twikooEnvId -}}
+          <div id="twikoo-comments"></div>
+          <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.all.min.js" crossorigin="anonymous"></script>
+          <script>
+            let twikooInstance = null;
+
+            function initTwikoo() {
+              if (typeof twikoo === 'undefined') {
+                setTimeout(initTwikoo, 500);
+                return;
+              }
+              twikooInstance = twikoo.init({
+                envId: '{{ .Site.Params.twikooEnvId }}',
+                el: '#twikoo-comments',
+                lang: '{{ .Site.Params.twikooLang | default "zh-CN" }}',
+                {{- with .Site.Params.twikooRegion }}
+                region: '{{ . }}',
+                {{- end }}
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', initTwikoo);
+
+            // 监听主题切换
+            document.addEventListener('themeChanged', function(e) {
+              const isDark = e.detail.applied === 'dark';
+              const container = document.querySelector('#twikoo-comments .tk-comments');
+              if (container) {
+                container.setAttribute('data-theme', isDark ? 'dark' : 'light');
+              }
+              // Twikoo 会自动检测系统主题，无需额外操作
+            });
+          </script>
+        {{- else -}}
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_twikoo_warn" }}</p>
+          </div>
+        {{- end -}}
+
+      {{- /* ----- Waline ----- */ -}}
+      {{- else if eq $provider "waline" -}}
+        {{- if .Site.Params.walineServerURL -}}
+          <div id="waline-comments"></div>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@3/dist/waline.css" crossorigin="anonymous" />
+          <script type="module">
+            import { init } from 'https://cdn.jsdelivr.net/npm/@waline/client@3/dist/waline.mjs';
+
+            let walineInstance = null;
+
+            function initWaline() {
+              walineInstance = init({
+                el: '#waline-comments',
+                serverURL: '{{ .Site.Params.walineServerURL }}',
+                lang: '{{ .Site.Params.walineLang | default "zh-CN" }}',
+                dark: 'auto',
+                meta: {{ .Site.Params.walineMeta | default (slice "nick" "mail" "link") | jsonify | safeJS }},
+                requiredMeta: {{ .Site.Params.walineRequiredMeta | default (slice "nick" "mail") | jsonify | safeJS }},
+                pageSize: {{ .Site.Params.walinePageSize | default 10 }},
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', initWaline);
+
+            // 监听主题切换
+            document.addEventListener('themeChanged', function(e) {
+              const isDark = e.detail.applied === 'dark';
+              const walineEl = document.querySelector('#waline-comments');
+              if (walineEl) {
+                walineEl.setAttribute('data-dark', isDark ? 'true' : 'false');
+              }
+              // Waline 的 dark: 'auto' 会自动适配
+            });
+          </script>
+        {{- else -}}
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_waline_warn" }}</p>
+          </div>
+        {{- end -}}
+
+      {{- /* ----- Artalk ----- */ -}}
+      {{- else if eq $provider "artalk" -}}
+        {{- if .Site.Params.artalkServer -}}
+          <link rel="stylesheet" href="{{ .Site.Params.artalkServer }}/dist/Artalk.css" crossorigin="anonymous">
+          <div id="ArtalkComments"></div>
+          <script src="{{ .Site.Params.artalkServer }}/dist/Artalk.js" crossorigin="anonymous"></script>
+          <script>
+            let artalkInstance = null;
+
+            function initArtalk() {
+              if (typeof Artalk === 'undefined') {
+                setTimeout(initArtalk, 500);
+                return;
+              }
+
+              const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+              artalkInstance = Artalk.init({
+                el: '#ArtalkComments',
+                server: '{{ .Site.Params.artalkServer }}',
+                site: '{{ .Site.Params.artalkSite }}',
+                pageKey: '{{ .Permalink }}',
+                placeholder: '{{ .Site.Params.artalkPlaceholder | default "说点什么吧..." }}',
+                darkMode: isDark ? 'dark' : 'light',
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', initArtalk);
+
+            // 监听主题切换
+            document.addEventListener('themeChanged', function(e) {
+              if (artalkInstance && typeof artalkInstance.setDarkMode === 'function') {
+                artalkInstance.setDarkMode(e.detail.applied === 'dark');
+              }
+            });
+          </script>
+        {{- else -}}
+          <div class="comments-warning" role="alert">
+            <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_artalk_warn" }}</p>
+          </div>
+        {{- end -}}
+
+      {{- /* ----- 未配置或未知 Provider ----- */ -}}
       {{- else -}}
-        <div class="comments-disabled" role="status"><p>{{ i18n "comments_disabled" }}</p></div>
+        <div class="comments-disabled" role="status">
+          <p><i class="fas fa-comment-slash"></i> {{ i18n "comments_disabled" }}</p>
+        </div>
       {{- end -}}
+
     </div>
   </div>
 </section>

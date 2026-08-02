@@ -147,20 +147,67 @@ const ThemeManager = {
     this.setTheme(nextTheme);
   },
 
+  /**
+   * 设置主题并触发自定义事件
+   * 所有评论系统通过监听 'themeChanged' 事件响应暗色模式
+   */
   setTheme(theme: string): void {
     if (!this.config[theme as keyof ThemeConfig]) return;
+
+    const previousTheme = this.currentTheme;
     this.currentTheme = theme;
     localStorage.setItem('theme', theme);
+
+    // 应用主题到 DOM
     this.applyTheme(theme);
+
+    // 更新所有主题切换按钮
     this.updateAllToggleButtons();
+
+    // 获取实际应用的主题（处理 'system' 的情况）
+    const appliedTheme = this.currentTheme === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+
+    // ============================================================
+    // 关键：触发自定义事件，通知所有评论系统主题已变化
+    // ============================================================
     document.dispatchEvent(new CustomEvent('themeChanged', {
       detail: {
-        theme: this.currentTheme,
-        applied: this.currentTheme === 'system'
-          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-          : theme
+        theme: this.currentTheme,      // 'system' | 'light' | 'dark'
+        applied: appliedTheme,          // 'light' | 'dark'（实际渲染的主题）
+        previous: previousTheme
       }
     }));
+
+    // 可选：如果页面有 Giscus/Utterances 等 iframe，也可以通过 postMessage 通知
+    this.notifyIframeComments(appliedTheme);
+  },
+
+  /**
+   * 通过 postMessage 通知 iframe 内的评论系统（如 Giscus、Utterances）
+   */
+  notifyIframeComments(theme: 'light' | 'dark'): void {
+    // Giscus
+    const giscusFrame = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement | null;
+    if (giscusFrame) {
+      giscusFrame.contentWindow?.postMessage({
+        giscus: {
+          setConfig: {
+            theme: theme === 'dark' ? 'dark' : 'light'
+          }
+        }
+      }, 'https://giscus.app');
+    }
+
+    // Utterances
+    const utterancesFrame = document.querySelector('.utterances-frame') as HTMLIFrameElement | null;
+    if (utterancesFrame) {
+      utterancesFrame.contentWindow?.postMessage({
+        type: 'set-theme',
+        theme: theme === 'dark' ? 'github-dark' : 'github-light'
+      }, 'https://utteranc.es');
+    }
   },
 
   updateAllToggleButtons(): void {
@@ -184,9 +231,20 @@ const ThemeManager = {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       if (this.currentTheme === 'system') {
+        const appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         this.applyTheme('system');
+        // 系统主题变化时也要通知评论系统
+        document.dispatchEvent(new CustomEvent('themeChanged', {
+          detail: {
+            theme: 'system',
+            applied: appliedTheme,
+            previous: this.currentTheme
+          }
+        }));
+        this.notifyIframeComments(appliedTheme);
       }
     };
+    // 使用 addEventListener 替代弃用的 addListener
     mediaQuery.addEventListener('change', handleChange);
   }
 };
@@ -630,8 +688,10 @@ const EffectsManager = {
     const startY = Math.random() * this._h * 0.5;
     const angle = Math.PI / 3 + (Math.random() - 0.5) * 0.8;
     const speed = 6 + Math.random() * 12;
-    return { x: startX, y: startY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-      length: 50 + Math.random() * 100, life: 1, decay: 0.008 + Math.random() * 0.015, width: 1 + Math.random() * 1.5 };
+    return {
+      x: startX, y: startY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      length: 50 + Math.random() * 100, life: 1, decay: 0.008 + Math.random() * 0.015, width: 1 + Math.random() * 1.5
+    };
   },
 
   updateShootingStars(): void {
@@ -917,7 +977,7 @@ const InteractionManager = {
 
   initSmoothScroll(): void {
     document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
+      anchor.addEventListener('click', function (e) {
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
         const targetElement = document.querySelector(targetId);
@@ -952,8 +1012,8 @@ const InteractionManager = {
     if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
     document.body.classList.add('touch-device');
     document.querySelectorAll('.btn, .card, .post-card, .skill-item').forEach(el => {
-      el.addEventListener('touchstart', function() { this.classList.add('touch-active'); }, { passive: true });
-      el.addEventListener('touchend', function() { this.classList.remove('touch-active'); }, { passive: true });
+      el.addEventListener('touchstart', function () { this.classList.add('touch-active'); }, { passive: true });
+      el.addEventListener('touchend', function () { this.classList.remove('touch-active'); }, { passive: true });
     });
   },
 
@@ -1277,7 +1337,11 @@ const FontFallback = {
 // ==========================================================================
 
 const FooterManager = {
-  siteTime: '', siteUrl: '', author: '',
+  siteTime: '',
+  siteUrl: '',
+  siteName: '',
+  pageLoadTime: 0,
+  renderTime: 0,
   uptimeColors: ['#E06050', '#E09040', '#E0A070', '#50C878', '#60A8D0', '#D08090'],
   _timer: null as ReturnType<typeof setInterval> | null,
 
@@ -1287,7 +1351,9 @@ const FooterManager = {
     if (!cfg) return;
     this.siteTime = cfg.siteTime || '';
     this.siteUrl = cfg.baseURL || '';
-    this.author = cfg.author || '';
+    this.siteName = cfg.siteName || '';
+    this.pageLoadTime = (window as any).pageLoadTime || performance.now();
+    this.renderTime = performance.now() - this.pageLoadTime;
     this.updateFooter();
     this._timer = setInterval(() => this.updateFooter(), 1000);
   },
@@ -1296,18 +1362,37 @@ const FooterManager = {
     const now = new Date();
     const siteStart = new Date(this.siteTime);
     const currentYear = now.getFullYear();
-    const siteUrl = this.siteUrl || '/';
+    const startYear = siteStart.getFullYear();
 
+    // 版权信息
     const copyrightEl = document.getElementById('footer-copyright');
     if (copyrightEl) {
-      copyrightEl.innerHTML = `\u00A9 ${currentYear} <a href="${siteUrl}">${this.author}</a> \u535A\u5BA2 \u00B7 \u535A\u5BA2\u6240\u6709\u6743\u5F52\u4E8E <a href="${siteUrl}">${this.author}</a>`;
+      const prefix = I18n.t('footer_copyright_prefix');
+      const separator = I18n.t('footer_copyright_separator');
+      const webmaster = I18n.t('footer_copyright_webmaster');
+      const reserved = I18n.t('footer_copyright_reserved');
+      const rights = I18n.t('footer_copyright_rights');
+
+      const yearPart = startYear === currentYear
+        ? `${currentYear}`
+        : `${startYear}${separator}${currentYear}`;
+
+      copyrightEl.innerHTML = `${prefix} ${yearPart} <a href="${this.siteUrl}">${this.siteName}</a> ${webmaster} · ${reserved} <a href="${this.siteUrl}">${this.siteName}</a> ${rights}`;
     }
 
+    // 驱动信息
     const poweredEl = document.getElementById('footer-powered');
     if (poweredEl) {
-      poweredEl.innerHTML = `\u7531 <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a> \u5F3A\u529B\u9A71\u52A8 \u00B7 \u4E3B\u9898\uFF1A<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">\u5E7B\u68A6 Illusion</a> \u00B7 \u4F5C\u8005\uFF1A<a href="https://github.com/aizexintong" target="_blank" rel="noopener">${this.author}</a>`;
+      const prefix = I18n.t('footer_powered_prefix');
+      const hugo = I18n.t('footer_powered_hugo');
+      const sep = I18n.t('footer_powered_separator');
+      const theme = I18n.t('footer_powered_theme');
+      const authorLabel = I18n.t('footer_powered_author');
+
+      poweredEl.innerHTML = `${prefix} <a href="https://gohugo.io" target="_blank" rel="noopener">${hugo}</a> ${sep} ${theme}<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">幻梦 Illusion</a> ${sep} ${authorLabel}<a href="https://github.com/aizexintong" target="_blank" rel="noopener">爱则心痛</a>`;
     }
 
+    // 运行时长
     const displayEl = document.getElementById('uptime-display');
     if (!displayEl) return;
 
@@ -1324,7 +1409,8 @@ const FooterManager = {
     if (days < 0) { months--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
     if (months < 0) { years--; months += 12; }
 
-    const nums = [this.pad4(years), this.pad2(months), this.pad2(days), this.pad2(hours), this.pad2(minutes), this.pad2(seconds)];
+    const dateNums = [this.pad4(years), this.pad2(months), this.pad2(days), this.pad2(hours), this.pad2(minutes), this.pad2(seconds)];
+
     const seps = [
       '<span style="color:var(--c-text-subtle);margin:0 1px;">-</span>',
       '<span style="color:var(--c-text-subtle);margin:0 1px;">-</span>',
@@ -1333,11 +1419,18 @@ const FooterManager = {
       '<span style="color:var(--c-text-subtle);margin:0 1px;">:</span>'
     ];
 
-    let html = `${I18n.t('js_uptime_label')} `;
-    for (let i = 0; i < nums.length; i++) {
+    const label = I18n.t('footer_uptime_label');
+    let html = `${label} `;
+    for (let i = 0; i < dateNums.length; i++) {
       if (i > 0) html += seps[i - 1];
-      html += `<span style="color:${this.uptimeColors[i]};font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${nums[i]}</span>`;
+      html += `<span style="color:${this.uptimeColors[i]};font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${dateNums[i]}</span>`;
     }
+
+    // 页面渲染耗时（固定值，保留两位小数）
+    const renderLabel = I18n.t('footer_render_time');
+    const renderMs = this.renderTime.toFixed(2);
+    html += ` · ${renderLabel} <span style="color:#90C080;font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${renderMs}ms</span>`;
+
     displayEl.innerHTML = html;
   },
 
@@ -1774,4 +1867,4 @@ initIllusionTheme();
 
 console.log('Illusion Theme v1.0.0 ready');
 
-export {};
+export { };
