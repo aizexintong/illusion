@@ -1,0 +1,33 @@
+{{- $content := .Content | plainify -}}
+
+{{- /* 统计方块字（中文字符）使用 \x{} 格式 */ -}}
+{{- $chineseCount := len (findRE `[\x{4e00}-\x{9fff}]` $content) -}}
+
+{{- /* 统计英文单词数 */ -}}
+{{- $noChinese := replaceRE `[\x{4e00}-\x{9fff}]` " " $content -}}
+{{- $words := split $noChinese " " -}}
+{{- $englishCount := 0 -}}
+{{- range $words -}}
+  {{- if ne . "" }}{{ $englishCount = add $englishCount 1 }}{{ end -}}
+{{- end -}}
+
+{{- /* 总字数 */ -}}
+{{- $totalWords := add $chineseCount $englishCount -}}
+{{- if lt $totalWords 1 }}{{ $totalWords = 1 }}{{ end -}}
+
+{{- /* 阅读速度：根据中英文比例调整 */ -}}
+{{- $totalChars := len $content -}}
+{{- $chineseRatio := 0.0 -}}
+{{- if gt $totalChars 0 -}}
+  {{- $chineseRatio = div (float $chineseCount) (float $totalChars) -}}
+{{- end -}}
+
+{{- $speed := add 200 (mul $chineseRatio 200) -}}
+{{- if lt $speed 200 }}{{ $speed = 200 }}{{ end -}}
+{{- if gt $speed 400 }}{{ $speed = 400 }}{{ end -}}
+
+{{- $minutes := div (float $totalWords) (float $speed) -}}
+{{- $readingTime := math.Ceil $minutes -}}
+{{- if lt $readingTime 1 }}{{ $readingTime = 1 }}{{ end -}}
+
+{{- return $readingTime -}}

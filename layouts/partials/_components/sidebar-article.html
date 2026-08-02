@@ -42,17 +42,21 @@
     </div>
     {{ end }}
 
-    {{ if .WordCount }}
+    {{- /* 自定义字数统计 */ -}}
+    {{- $wordCount := partial "_utils/word-count.html" . -}}
+    {{ if gt $wordCount 0 }}
     <div class="side-info-row">
       <span class="side-info-label">{{ i18n "post_word_count_label" }}</span>
-      <span class="side-info-value">{{ .WordCount }} {{ i18n "post_word_count" }}</span>
+      <span class="side-info-value">{{ $wordCount }} {{ i18n "post_word_count" }}</span>
     </div>
     {{ end }}
 
-    {{ if .ReadingTime }}
+    {{- /* 自定义阅读时间 */ -}}
+    {{- $readingTime := partial "_utils/reading-time.html" . -}}
+    {{ if gt $readingTime 0 }}
     <div class="side-info-row">
       <span class="side-info-label">{{ i18n "post_read_label" }}</span>
-      <span class="side-info-value">{{ .ReadingTime }} {{ i18n "post_read_time" }}</span>
+      <span class="side-info-value">{{ $readingTime }} {{ i18n "post_read_time" }}</span>
     </div>
     {{ end }}
   </div>

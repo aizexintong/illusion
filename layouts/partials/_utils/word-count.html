@@ -1,0 +1,13 @@
+{{- $content := .Content | plainify -}}
+{{- /* 统计方块字（中文字符）使用 \x{} 格式 */ -}}
+{{- $chineseCount := len (findRE `[\x{4e00}-\x{9fff}]` $content) -}}
+{{- /* 移除中文后，按空格分割统计拼音单词 */ -}}
+{{- $noChinese := replaceRE `[\x{4e00}-\x{9fff}]` " " $content -}}
+{{- $words := split $noChinese " " -}}
+{{- $englishCount := 0 -}}
+{{- range $words -}}
+  {{- if ne . "" }}{{ $englishCount = add $englishCount 1 }}{{ end -}}
+{{- end -}}
+{{- $total := add $chineseCount $englishCount -}}
+{{- if lt $total 1 }}{{ $total = 1 }}{{ end -}}
+{{- return $total -}}

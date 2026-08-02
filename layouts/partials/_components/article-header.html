@@ -29,8 +29,14 @@
       {{ if and .Date (le (int (div (sub now.Unix .Date.Unix) 86400)) 7) }}
       <span class="meta-status meta-status-new"><i class="fas fa-star"></i> {{ i18n "post_new_published" }}</span>
       {{ end }}
-      {{ if .ReadingTime }}<span><i class="far fa-clock"></i> {{ .ReadingTime }} {{ i18n "post_read_time" }}</span>{{ end }}
-      {{ if .WordCount }}<span><i class="far fa-file-alt"></i> {{ .WordCount }} {{ i18n "post_word_count" }}</span>{{ end }}
+
+      {{- /* 自定义阅读时间 */ -}}
+      {{- $readingTime := partial "_utils/reading-time.html" . -}}
+      {{ if gt $readingTime 0 }}<span><i class="far fa-clock"></i> {{ $readingTime }} {{ i18n "post_read_time" }}</span>{{ end }}
+
+      {{- /* 自定义字数统计 */ -}}
+      {{- $wordCount := partial "_utils/word-count.html" . -}}
+      {{ if gt $wordCount 0 }}<span><i class="far fa-file-alt"></i> {{ $wordCount }} {{ i18n "post_word_count" }}</span>{{ end }}
     </div>
     {{ if .Params.tags }}
     <div class="article-tag-list">
