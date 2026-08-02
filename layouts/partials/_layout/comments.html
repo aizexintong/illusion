@@ -13,7 +13,6 @@
           <div id="disqus_thread"></div>
           <script>
             (function() {
-              // 如果页面有 Disqus 实例，先重置
               if (window.DISQUS) {
                 window.DISQUS.reset({
                   reload: true,
@@ -56,7 +55,6 @@
             async>
           </script>
           <script>
-            // 监听主题切换，重新加载 Utterances
             document.addEventListener('themeChanged', function(e) {
               const isDark = e.detail.applied === 'dark';
               const theme = isDark ? 'github-dark' : 'github-light';
@@ -84,17 +82,16 @@
             data-category="{{ .Site.Params.giscusCategory }}"
             data-category-id="{{ .Site.Params.giscusCategoryId }}"
             data-mapping="{{ .Site.Params.giscusMapping | default "pathname" }}"
-            data-strict="0"
+            data-strict="{{ .Site.Params.giscusStrict | default "0" }}"
             data-reactions-enabled="{{ .Site.Params.giscusReactions | default "1" }}"
             data-emit-metadata="{{ .Site.Params.giscusEmitMetadata | default "0" }}"
             data-input-position="{{ .Site.Params.giscusInputPosition | default "bottom" }}"
             data-theme="{{ .Site.Params.giscusTheme | default "preferred-color-scheme" }}"
-            data-lang="{{ .Site.Language.Lang | default "zh-CN" }}"
+            data-lang="{{ .Site.Params.giscusLang | default .Site.Language.Lang | default "zh-CN" }}"
             crossorigin="anonymous"
             async>
           </script>
           <script>
-            // 监听主题切换，Giscus 通过 data-theme 属性自动适配
             document.addEventListener('themeChanged', function(e) {
               const isDark = e.detail.applied === 'dark';
               const giscusIframe = document.querySelector('iframe.giscus-frame');
@@ -140,14 +137,12 @@
 
             document.addEventListener('DOMContentLoaded', initTwikoo);
 
-            // 监听主题切换
             document.addEventListener('themeChanged', function(e) {
               const isDark = e.detail.applied === 'dark';
               const container = document.querySelector('#twikoo-comments .tk-comments');
               if (container) {
                 container.setAttribute('data-theme', isDark ? 'dark' : 'light');
               }
-              // Twikoo 会自动检测系统主题，无需额外操作
             });
           </script>
         {{- else -}}
@@ -180,14 +175,12 @@
 
             document.addEventListener('DOMContentLoaded', initWaline);
 
-            // 监听主题切换
             document.addEventListener('themeChanged', function(e) {
               const isDark = e.detail.applied === 'dark';
               const walineEl = document.querySelector('#waline-comments');
               if (walineEl) {
                 walineEl.setAttribute('data-dark', isDark ? 'true' : 'false');
               }
-              // Waline 的 dark: 'auto' 会自动适配
             });
           </script>
         {{- else -}}
@@ -224,7 +217,6 @@
 
             document.addEventListener('DOMContentLoaded', initArtalk);
 
-            // 监听主题切换
             document.addEventListener('themeChanged', function(e) {
               if (artalkInstance && typeof artalkInstance.setDarkMode === 'function') {
                 artalkInstance.setDarkMode(e.detail.applied === 'dark');

@@ -63,11 +63,13 @@ enableGitInfo = true
   giscusRepoId = ""
   giscusCategory = ""
   giscusCategoryId = ""
-  giscusMapping = "pathname"         # pathname | url | title | og:title | specific
+  giscusMapping = "pathname"           # pathname | url | title | og:title | specific
+  giscusStrict = "0"
   giscusReactions = "1"
   giscusEmitMetadata = "0"
-  giscusInputPosition = "bottom"     # bottom | top
+  giscusInputPosition = "bottom"       # bottom | top
   giscusTheme = "preferred-color-scheme"  # light | dark | preferred-color-scheme
+  giscusLang = "zh-CN"                 # 界面语言
 
   # ----- Twikoo -----
   twikooEnvId = ""                   # 腾讯云环境ID 或 自部署地址
