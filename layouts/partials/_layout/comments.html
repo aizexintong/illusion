@@ -120,7 +120,7 @@
           <div id="giscus-comments"></div>
 
           <style>
-            /* ===== 容器透明 ===== */
+            /* 父页面容器透明 */
             #giscus-comments,
             .giscus,
             .giscus-frame,
@@ -128,83 +128,18 @@
               background: transparent !important;
               background-color: transparent !important;
             }
-
-            /* ===== 日间模式：反转 transparent_dark 颜色 ===== */
-            :root:not([data-theme="dark"]) #giscus-comments {
-              filter: invert(1) hue-rotate(180deg);
-            }
-
-            /* 日间模式下，图片/头像/图标再反转回来 */
-            :root:not([data-theme="dark"]) #giscus-comments img,
-            :root:not([data-theme="dark"]) #giscus-comments .gsc-avatar,
-            :root:not([data-theme="dark"]) #giscus-comments .gsc-reaction-icon,
-            :root:not([data-theme="dark"]) #giscus-comments .gsc-social-reaction-icon,
-            :root:not([data-theme="dark"]) #giscus-comments svg:not(.gsc-emoji) {
-              filter: invert(1) hue-rotate(180deg);
-            }
-
-            /* 日间模式下，代码块中的图片特殊处理 */
-            :root:not([data-theme="dark"]) #giscus-comments .gsc-markdown img {
-              filter: invert(1) hue-rotate(180deg);
-            }
-
-            /* 日间模式下，emoji 保持原样 */
-            :root:not([data-theme="dark"]) #giscus-comments .gsc-emoji,
-            :root:not([data-theme="dark"]) #giscus-comments img.gsc-emoji {
-              filter: none !important;
-            }
-
-            /* 日间模式下，链接颜色优化 */
-            :root:not([data-theme="dark"]) #giscus-comments a {
-              color: #0366d6 !important;
-            }
-
-            :root:not([data-theme="dark"]) #giscus-comments a:visited {
-              color: #6f42c1 !important;
-            }
-
-            /* ===== 系统模式适配 ===== */
-            @media (prefers-color-scheme: light) {
-              :root[data-theme="system"] #giscus-comments {
-                filter: invert(1) hue-rotate(180deg);
-              }
-              :root[data-theme="system"] #giscus-comments img,
-              :root[data-theme="system"] #giscus-comments .gsc-avatar,
-              :root[data-theme="system"] #giscus-comments .gsc-reaction-icon,
-              :root[data-theme="system"] #giscus-comments .gsc-social-reaction-icon,
-              :root[data-theme="system"] #giscus-comments svg:not(.gsc-emoji) {
-                filter: invert(1) hue-rotate(180deg);
-              }
-              :root[data-theme="system"] #giscus-comments .gsc-emoji,
-              :root[data-theme="system"] #giscus-comments img.gsc-emoji {
-                filter: none !important;
-              }
-              :root[data-theme="system"] #giscus-comments a {
-                color: #0366d6 !important;
-              }
-              :root[data-theme="system"] #giscus-comments a:visited {
-                color: #6f42c1 !important;
-              }
-            }
-
-            @media (prefers-color-scheme: dark) {
-              :root[data-theme="system"] #giscus-comments {
-                filter: none !important;
-              }
-              :root[data-theme="system"] #giscus-comments img,
-              :root[data-theme="system"] #giscus-comments .gsc-avatar,
-              :root[data-theme="system"] #giscus-comments .gsc-reaction-icon,
-              :root[data-theme="system"] #giscus-comments .gsc-social-reaction-icon,
-              :root[data-theme="system"] #giscus-comments svg:not(.gsc-emoji) {
-                filter: none !important;
-              }
-            }
           </style>
 
           <script>
             function getGiscusTheme() {
-              // 统一使用 transparent_dark，日间通过 CSS invert 反转
-              return 'transparent_dark';
+              var theme = document.documentElement.getAttribute('data-theme');
+              var isDark;
+              if (theme === 'system' || !theme) {
+                isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              } else {
+                isDark = theme === 'dark';
+              }
+              return isDark ? 'noborder_dark' : 'noborder_light';
             }
 
             function loadGiscus() {
@@ -235,11 +170,9 @@
             }
 
             function updateGiscusTheme() {
-              // 重新加载 Giscus 以应用新的 CSS 规则
               setTimeout(loadGiscus, 300);
             }
 
-            // 初始化加载
             if (document.readyState === 'loading') {
               document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(loadGiscus, 200);
@@ -248,12 +181,10 @@
               setTimeout(loadGiscus, 200);
             }
 
-            // 监听主题切换
             document.addEventListener('themeChanged', function() {
               setTimeout(loadGiscus, 300);
             });
 
-            // 监听系统主题变化
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
               var theme = document.documentElement.getAttribute('data-theme');
               if (theme === 'system' || !theme) {
