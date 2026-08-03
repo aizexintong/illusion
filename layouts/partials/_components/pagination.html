@@ -41,7 +41,7 @@
         {{ if $targetURL }}
           <a href="{{ $targetURL }}" class="page-link">{{ . }}</a>
         {{ else }}
-          <a href="?page={{ . }}" class="page-link">{{ . }}</a>
+          <a href="{{ $.First.URL | relURL }}page/{{ . }}/" class="page-link">{{ . }}</a>
         {{ end }}
       {{ end }}
     {{ end }}
