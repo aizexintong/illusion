@@ -211,7 +211,10 @@ const ThemeManager = {
   },
 
   updateAllToggleButtons(): void {
+    // 更新头部主题按钮
     document.querySelectorAll('#theme-toggle').forEach(btn => this.updateToggleButton(btn as HTMLElement));
+    // 更新滚动区主题按钮
+    document.querySelectorAll('.scroll-theme').forEach(btn => this.updateToggleButton(btn as HTMLElement));
   },
 
   updateToggleButton(button: HTMLElement): void {
@@ -1209,25 +1212,81 @@ const UtilsManager = {
   initScrollButtons(): void {
     const buttons = document.getElementById('scroll-buttons');
     if (!buttons) return;
+
     const topBtn = buttons.querySelector('.scroll-to-top') as HTMLElement;
     const bottomBtn = buttons.querySelector('.scroll-to-bottom') as HTMLElement;
-    if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    if (bottomBtn) bottomBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
+    const searchBtn = buttons.querySelector('.scroll-search') as HTMLElement;
+    const themeBtn = buttons.querySelector('.scroll-theme') as HTMLElement;
+
+    // ---- 滚动功能 ----
+    if (topBtn) {
+      topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+    if (bottomBtn) {
+      bottomBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
+    }
+
+    // ---- 搜索 ----
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => {
+        const searchToggle = document.querySelector('.search-toggle') as HTMLElement;
+        if (searchToggle) searchToggle.click();
+      });
+    }
+
+    // ---- 主题切换 ----
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const themeToggle = document.getElementById('theme-toggle') as HTMLElement;
+        if (themeToggle) themeToggle.click();
+      });
+    }
+
+    // ---- 滚动显隐逻辑 ----
     let ticking = false;
     const updateButtons = (): void => {
       const scrollY = window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const threshold = 300;
-      if (scrollY > threshold) { buttons.classList.add('visible'); if (topBtn) topBtn.style.display = 'flex'; }
-      else { if (topBtn) topBtn.style.display = 'none'; }
-      if (scrollY < maxScroll - threshold) { buttons.classList.add('visible'); if (bottomBtn) bottomBtn.style.display = 'flex'; }
-      else { if (bottomBtn) bottomBtn.style.display = 'none'; }
-      if (scrollY <= threshold && scrollY >= maxScroll - threshold) buttons.classList.remove('visible');
+      const centerGroup = buttons.querySelector('.scroll-center-group') as HTMLElement;
+
+      // 顶部按钮：滚动超过阈值显示
+      if (scrollY > threshold) {
+        buttons.classList.add('visible');
+        if (topBtn) topBtn.style.display = 'flex';
+      } else {
+        if (topBtn) topBtn.style.display = 'none';
+      }
+
+      // 底部按钮：未到达底部显示
+      if (scrollY < maxScroll - threshold) {
+        buttons.classList.add('visible');
+        if (bottomBtn) bottomBtn.style.display = 'flex';
+      } else {
+        if (bottomBtn) bottomBtn.style.display = 'none';
+      }
+
+      // 中间按钮组：跟随顶部或底部按钮的显示状态
+      const hasVisible = (topBtn?.style.display === 'flex') || (bottomBtn?.style.display === 'flex');
+      if (centerGroup) {
+        centerGroup.style.display = hasVisible ? 'flex' : 'none';
+      }
+
+      // 如果没有任何按钮显示，隐藏整个容器
+      if (!hasVisible) {
+        buttons.classList.remove('visible');
+      }
+
       ticking = false;
     };
+
     window.addEventListener('scroll', () => {
-      if (!ticking) { window.requestAnimationFrame(updateButtons); ticking = true; }
+      if (!ticking) {
+        window.requestAnimationFrame(updateButtons);
+        ticking = true;
+      }
     }, { passive: true });
+
     updateButtons();
   },
 
@@ -1758,7 +1817,10 @@ const TagsPagination = {
     this.perPage = parseInt(grid.dataset.perPage || '25');
     const total = parseInt(grid.dataset.total || '0');
     this.totalPages = Math.ceil(total / this.perPage);
-    if (this.totalPages <= 1) return;
+    if (this.totalPages <= 1) {
+      pagination.style.display = 'none'; // 只有一页时不显示分页
+      return;
+    }
     pagination.style.display = 'flex';
     this.wrappers = Array.from(grid.querySelectorAll('.tags-card-wrapper')) as HTMLElement[];
     const prevBtn = document.getElementById('page-prev') as HTMLElement;
@@ -1788,33 +1850,96 @@ const TagsPagination = {
     const pageNumbers = document.getElementById('page-numbers');
     if (!pageNumbers) return;
     pageNumbers.innerHTML = '';
-    const startPage = Math.max(1, this.currentPage - 3);
-    const endPage = Math.min(this.totalPages, this.currentPage + 3);
-    if (startPage > 1) {
+
+    const current = this.currentPage;
+    const total = this.totalPages;
+    const showPages = 7;
+    const half = Math.floor(showPages / 2);
+
+    // 总页数 <= 7：全部显示
+    if (total <= showPages) {
+      for (let i = 1; i <= total; i++) {
+        this.addPageLink(pageNumbers, i);
+      }
+      return;
+    }
+
+    // 首页：1 2 3 4 ... 末页
+    if (current <= half) {
+      for (let i = 1; i <= 4; i++) {
+        this.addPageLink(pageNumbers, i);
+      }
+      this.addDots(pageNumbers);
+      this.addPageLink(pageNumbers, total);
+      return;
+    }
+
+    // 尾页：首页 ... 倒数第4页 ... 末页
+    if (current > total - half) {
       this.addPageLink(pageNumbers, 1);
-      if (startPage > 2) { const dots = document.createElement('span'); dots.className = 'page-link dots'; dots.textContent = '\u2026'; pageNumbers.appendChild(dots); }
+      this.addDots(pageNumbers);
+      for (let i = total - 3; i <= total; i++) {
+        this.addPageLink(pageNumbers, i);
+      }
+      return;
     }
-    for (let i = startPage; i <= endPage; i++) this.addPageLink(pageNumbers, i);
-    if (endPage < this.totalPages) {
-      if (endPage < this.totalPages - 1) { const dots = document.createElement('span'); dots.className = 'page-link dots'; dots.textContent = '\u2026'; pageNumbers.appendChild(dots); }
-      this.addPageLink(pageNumbers, this.totalPages);
+
+    // 中间：首页 ... 当前页-1 当前页 当前页+1 ... 末页
+    this.addPageLink(pageNumbers, 1);
+    this.addDots(pageNumbers);
+    for (let i = current - 1; i <= current + 1; i++) {
+      this.addPageLink(pageNumbers, i);
     }
+    this.addDots(pageNumbers);
+    this.addPageLink(pageNumbers, total);
+  },
+
+  addDots(container: HTMLElement): void {
+    const dots = document.createElement('span');
+    dots.className = 'page-link dots';
+    dots.textContent = '…';
+    container.appendChild(dots);
   },
 
   addPageLink(container: HTMLElement, pageNum: number): void {
     const link = document.createElement('a');
-    link.href = '#'; link.className = 'page-link';
+    link.href = '#';
+    link.className = 'page-link';
     if (pageNum === this.currentPage) link.classList.add('current');
     link.textContent = String(pageNum);
-    link.addEventListener('click', (e) => { e.preventDefault(); this.showPage(pageNum); });
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.showPage(pageNum);
+    });
     container.appendChild(link);
   },
 
+  // ============================================================
+  // 关键修改：首页隐藏"上一页"，尾页隐藏"下一页"
+  // ============================================================
   updateNavButtons(): void {
     const prevBtn = document.getElementById('page-prev') as HTMLElement;
     const nextBtn = document.getElementById('page-next') as HTMLElement;
-    if (prevBtn) { prevBtn.style.pointerEvents = this.currentPage <= 1 ? 'none' : 'auto'; prevBtn.style.opacity = this.currentPage <= 1 ? '0.4' : '1'; }
-    if (nextBtn) { nextBtn.style.pointerEvents = this.currentPage >= this.totalPages ? 'none' : 'auto'; nextBtn.style.opacity = this.currentPage >= this.totalPages ? '0.4' : '1'; }
+
+    if (prevBtn) {
+      if (this.currentPage <= 1) {
+        prevBtn.style.display = 'none'; // 首页隐藏
+      } else {
+        prevBtn.style.display = 'inline-flex';
+        prevBtn.style.pointerEvents = 'auto';
+        prevBtn.style.opacity = '1';
+      }
+    }
+
+    if (nextBtn) {
+      if (this.currentPage >= this.totalPages) {
+        nextBtn.style.display = 'none'; // 尾页隐藏
+      } else {
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.style.pointerEvents = 'auto';
+        nextBtn.style.opacity = '1';
+      }
+    }
   }
 };
 

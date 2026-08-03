@@ -1,15 +1,53 @@
 {{- /* 分页导航组件，接收 Paginator 对象 */ -}}
 {{ if gt .TotalPages 1 }}
 <nav class="pagination" aria-label="{{ i18n "page_nav" }}">
+  {{ $currentPage := .PageNumber }}
+  {{ $totalPages := .TotalPages }}
+  {{ $showPages := 7 }}
+  {{ $half := div $showPages 2 }}
+
+  {{/* 上一页 - 首页时不显示 */}}
   {{ if .HasPrev }}
   <a href="{{ .Prev.URL }}" class="page-link prev"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
   {{ end }}
+
   <div class="page-numbers">
-    {{ range .Pagers }}
-      {{ if eq . $ }}<span class="page-link current" aria-current="page">{{ .PageNumber }}</span>
-      {{ else }}<a href="{{ .URL }}" class="page-link">{{ .PageNumber }}</a>{{ end }}
+    {{ $displayPages := slice }}
+
+    {{ if le $totalPages $showPages }}
+      {{ range seq 1 $totalPages }}
+        {{ $displayPages = $displayPages | append . }}
+      {{ end }}
+    {{ else if le $currentPage $half }}
+      {{ $displayPages = slice 1 2 3 4 "dots" $totalPages }}
+    {{ else if gt $currentPage (sub $totalPages $half) }}
+      {{ $displayPages = slice 1 "dots" (sub $totalPages 3) (sub $totalPages 2) (sub $totalPages 1) $totalPages }}
+    {{ else }}
+      {{ $displayPages = slice 1 "dots" (sub $currentPage 1) $currentPage (add $currentPage 1) "dots" $totalPages }}
+    {{ end }}
+
+    {{ range $displayPages }}
+      {{ if eq . "dots" }}
+        <span class="page-link dots">…</span>
+      {{ else if eq . $currentPage }}
+        <span class="page-link current" aria-current="page">{{ . }}</span>
+      {{ else }}
+        {{ $targetURL := "" }}
+        {{ range $.Pagers }}
+          {{ if eq .PageNumber . }}
+            {{ $targetURL = .URL }}
+          {{ end }}
+        {{ end }}
+        {{ if $targetURL }}
+          <a href="{{ $targetURL }}" class="page-link">{{ . }}</a>
+        {{ else }}
+          <a href="?page={{ . }}" class="page-link">{{ . }}</a>
+        {{ end }}
+      {{ end }}
     {{ end }}
   </div>
+
+  {{/* 下一页 - 尾页时不显示 */}}
   {{ if .HasNext }}
   <a href="{{ .Next.URL }}" class="page-link next">{{ i18n "page_next" }}<i class="fas fa-chevron-right"></i></a>
   {{ end }}

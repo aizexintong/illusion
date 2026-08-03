@@ -1,6 +1,6 @@
 {{- /* 文章底部导航：上一篇 / 推荐阅读 / 下一篇 */ -}}
-{{ $relCount := 4 }}
-{{ if or (not .PrevInSection) (not .NextInSection) }}{{ $relCount = 5 }}{{ end }}
+{{ $relCount := 2 }}
+{{ if or (not .PrevInSection) (not .NextInSection) }}{{ $relCount = 3 }}{{ end }}
 {{ $related := where (.Site.RegularPages.Related .) "Type" "posts" | first $relCount }}
 
 <div class="post-footer-nav">
@@ -13,7 +13,7 @@
     {{ end }}
 
     {{ range $related }}
-    <a href="{{ .RelPermalink }}" class="nav-card nav-rel">
+    <a href="{{ .RelPermalink }}" class="nav-card nav-prev">
       {{ if .Params.image }}<div class="nav-rel-img"><img src="{{ .Params.image }}" alt="" loading="lazy"/></div>{{ end }}
       <span class="nav-card-title">{{ .Title }}</span>
     </a>

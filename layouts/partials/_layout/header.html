@@ -11,17 +11,6 @@
       </nav>
 
       <div class="header-actions">
-        {{- $params := .Site.Params -}}
-        {{- if $params.enableDarkMode }}
-        <button class="theme-toggle" id="theme-toggle" aria-label="{{ i18n "theme_label" }}" title="{{ i18n "a11y_header_title_toggle" }}">
-          <i class="fas fa-moon"></i>
-        </button>
-        {{ end }}
-        {{- if $params.enableSearch }}
-        <button class="search-toggle" id="search-toggle" aria-label="{{ i18n "nav_search" }}" title="{{ i18n "nav_search" }}">
-          <i class="fas fa-search"></i>
-        </button>
-        {{ end }}
         <button class="mobile-menu-toggle" aria-label="{{ i18n "btn_open_menu" }}" aria-expanded="false" aria-controls="mobile-menu">
           <i class="fas fa-bars"></i>
         </button>
