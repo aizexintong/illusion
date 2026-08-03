@@ -4,37 +4,38 @@
     <h2 class="section-title">{{ i18n "comments_title" }}</h2>
     <div class="comments-container">
 
-      {{- /* ===== 根据配置选择评论系统 ===== */ -}}
       {{- $provider := .Site.Params.commentsProvider | default "disqus" -}}
 
-      {{- /* ----- Disqus ----- */ -}}
       {{- if eq $provider "disqus" -}}
         {{- if .Site.Params.disqusShortname -}}
           <div id="disqus_thread"></div>
           <script>
             (function() {
-              if (window.DISQUS) {
-                window.DISQUS.reset({
-                  reload: true,
-                  config: function() {
-                    this.page.url = '{{ .Permalink }}';
-                    this.page.identifier = '{{ .File.UniqueID }}';
-                    this.page.title = '{{ .Title }}';
-                  }
-                });
-                return;
+              function reloadDisqus() {
+                if (window.DISQUS) {
+                  window.DISQUS.reset({
+                    reload: true,
+                    config: function() {
+                      this.page.url = '{{ .Permalink }}';
+                      this.page.identifier = '{{ .File.UniqueID }}';
+                      this.page.title = '{{ .Title }}';
+                    }
+                  });
+                }
               }
-
               var disqus_config = function() {
                 this.page.url = '{{ .Permalink }}';
                 this.page.identifier = '{{ .File.UniqueID }}';
                 this.page.title = '{{ .Title }}';
               };
-
-              var d = document, s = d.createElement('script');
+              var d = document,
+                s = d.createElement('script');
               s.src = 'https://{{ .Site.Params.disqusShortname }}.disqus.com/embed.js';
               s.setAttribute('data-timestamp', +new Date());
               (d.head || d.body).appendChild(s);
+              document.addEventListener('themeChanged', function() {
+                setTimeout(reloadDisqus, 400);
+              });
             })();
           </script>
           <noscript>{{ i18n "comments_enable_js" }}</noscript>
@@ -44,26 +45,67 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- Utterances ----- */ -}}
       {{- else if eq $provider "utterances" -}}
         {{- if .Site.Params.utterancesRepo -}}
-          <script src="https://utteranc.es/client.js"
-            repo="{{ .Site.Params.utterancesRepo }}"
-            issue-term="{{ .Site.Params.utterancesIssueTerm | default "pathname" }}"
-            theme="{{ .Site.Params.utterancesTheme | default "github-light" }}"
-            crossorigin="anonymous"
-            async>
-          </script>
+          <div id="utterances-comments"></div>
           <script>
-            document.addEventListener('themeChanged', function(e) {
-              const isDark = e.detail.applied === 'dark';
-              const theme = isDark ? 'github-dark' : 'github-light';
-              const iframe = document.querySelector('.utterances-frame');
+            function getUtterancesTheme() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'github-dark' : 'github-light';
+              }
+              return theme === 'dark' ? 'github-dark' : 'github-light';
+            }
+
+            function loadUtterances() {
+              var container = document.getElementById('utterances-comments');
+              if (!container) return;
+              var oldScript = container.querySelector('script');
+              if (oldScript) oldScript.remove();
+              var script = document.createElement('script');
+              script.src = 'https://utteranc.es/client.js';
+              script.setAttribute('repo', '{{ .Site.Params.utterancesRepo }}');
+              script.setAttribute('issue-term', '{{ .Site.Params.utterancesIssueTerm | default "pathname" }}');
+              script.setAttribute('theme', getUtterancesTheme());
+              script.setAttribute('crossorigin', 'anonymous');
+              script.async = true;
+              container.appendChild(script);
+            }
+
+            function updateUtterancesTheme(isDark) {
+              var iframe = document.querySelector('.utterances-frame');
               if (iframe) {
                 iframe.contentWindow.postMessage({
                   type: 'set-theme',
-                  theme: theme
+                  theme: isDark ? 'github-dark' : 'github-light'
                 }, 'https://utteranc.es');
+              } else {
+                loadUtterances();
+              }
+            }
+
+            function onThemeChanged(e) {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                updateUtterancesTheme(isDark);
+              } else {
+                updateUtterancesTheme(e.detail.applied === 'dark');
+              }
+            }
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(loadUtterances, 200);
+              });
+            } else {
+              setTimeout(loadUtterances, 200);
+            }
+            document.addEventListener('themeChanged', onThemeChanged);
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                updateUtterancesTheme(this.matches);
               }
             });
           </script>
@@ -73,36 +115,149 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- Giscus ----- */ -}}
       {{- else if eq $provider "giscus" -}}
         {{- if and .Site.Params.giscusRepo .Site.Params.giscusRepoId .Site.Params.giscusCategory .Site.Params.giscusCategoryId -}}
-          <script src="https://giscus.app/client.js"
-            data-repo="{{ .Site.Params.giscusRepo }}"
-            data-repo-id="{{ .Site.Params.giscusRepoId }}"
-            data-category="{{ .Site.Params.giscusCategory }}"
-            data-category-id="{{ .Site.Params.giscusCategoryId }}"
-            data-mapping="{{ .Site.Params.giscusMapping | default "pathname" }}"
-            data-strict="{{ .Site.Params.giscusStrict | default "0" }}"
-            data-reactions-enabled="{{ .Site.Params.giscusReactions | default "1" }}"
-            data-emit-metadata="{{ .Site.Params.giscusEmitMetadata | default "0" }}"
-            data-input-position="{{ .Site.Params.giscusInputPosition | default "bottom" }}"
-            data-theme="{{ .Site.Params.giscusTheme | default "preferred-color-scheme" }}"
-            data-lang="{{ .Site.Params.giscusLang | default .Site.Language.Lang | default "zh-CN" }}"
-            crossorigin="anonymous"
-            async>
-          </script>
+          <div id="giscus-comments"></div>
+
+          <style>
+            /* ===== 容器透明 ===== */
+            #giscus-comments,
+            .giscus,
+            .giscus-frame,
+            iframe.giscus-frame {
+              background: transparent !important;
+              background-color: transparent !important;
+            }
+
+            /* ===== 日间模式：反转 transparent_dark 颜色 ===== */
+            :root:not([data-theme="dark"]) #giscus-comments {
+              filter: invert(1) hue-rotate(180deg);
+            }
+
+            /* 日间模式下，图片/头像/图标再反转回来 */
+            :root:not([data-theme="dark"]) #giscus-comments img,
+            :root:not([data-theme="dark"]) #giscus-comments .gsc-avatar,
+            :root:not([data-theme="dark"]) #giscus-comments .gsc-reaction-icon,
+            :root:not([data-theme="dark"]) #giscus-comments .gsc-social-reaction-icon,
+            :root:not([data-theme="dark"]) #giscus-comments svg:not(.gsc-emoji) {
+              filter: invert(1) hue-rotate(180deg);
+            }
+
+            /* 日间模式下，代码块中的图片特殊处理 */
+            :root:not([data-theme="dark"]) #giscus-comments .gsc-markdown img {
+              filter: invert(1) hue-rotate(180deg);
+            }
+
+            /* 日间模式下，emoji 保持原样 */
+            :root:not([data-theme="dark"]) #giscus-comments .gsc-emoji,
+            :root:not([data-theme="dark"]) #giscus-comments img.gsc-emoji {
+              filter: none !important;
+            }
+
+            /* 日间模式下，链接颜色优化 */
+            :root:not([data-theme="dark"]) #giscus-comments a {
+              color: #0366d6 !important;
+            }
+
+            :root:not([data-theme="dark"]) #giscus-comments a:visited {
+              color: #6f42c1 !important;
+            }
+
+            /* ===== 系统模式适配 ===== */
+            @media (prefers-color-scheme: light) {
+              :root[data-theme="system"] #giscus-comments {
+                filter: invert(1) hue-rotate(180deg);
+              }
+              :root[data-theme="system"] #giscus-comments img,
+              :root[data-theme="system"] #giscus-comments .gsc-avatar,
+              :root[data-theme="system"] #giscus-comments .gsc-reaction-icon,
+              :root[data-theme="system"] #giscus-comments .gsc-social-reaction-icon,
+              :root[data-theme="system"] #giscus-comments svg:not(.gsc-emoji) {
+                filter: invert(1) hue-rotate(180deg);
+              }
+              :root[data-theme="system"] #giscus-comments .gsc-emoji,
+              :root[data-theme="system"] #giscus-comments img.gsc-emoji {
+                filter: none !important;
+              }
+              :root[data-theme="system"] #giscus-comments a {
+                color: #0366d6 !important;
+              }
+              :root[data-theme="system"] #giscus-comments a:visited {
+                color: #6f42c1 !important;
+              }
+            }
+
+            @media (prefers-color-scheme: dark) {
+              :root[data-theme="system"] #giscus-comments {
+                filter: none !important;
+              }
+              :root[data-theme="system"] #giscus-comments img,
+              :root[data-theme="system"] #giscus-comments .gsc-avatar,
+              :root[data-theme="system"] #giscus-comments .gsc-reaction-icon,
+              :root[data-theme="system"] #giscus-comments .gsc-social-reaction-icon,
+              :root[data-theme="system"] #giscus-comments svg:not(.gsc-emoji) {
+                filter: none !important;
+              }
+            }
+          </style>
+
           <script>
-            document.addEventListener('themeChanged', function(e) {
-              const isDark = e.detail.applied === 'dark';
-              const giscusIframe = document.querySelector('iframe.giscus-frame');
-              if (giscusIframe) {
-                giscusIframe.contentWindow.postMessage({
-                  giscus: {
-                    setConfig: {
-                      theme: isDark ? 'dark' : 'light'
-                    }
-                  }
-                }, 'https://giscus.app');
+            function getGiscusTheme() {
+              // 统一使用 transparent_dark，日间通过 CSS invert 反转
+              return 'transparent_dark';
+            }
+
+            function loadGiscus() {
+              var container = document.getElementById('giscus-comments');
+              if (!container) return;
+
+              var oldScript = container.querySelector('script');
+              if (oldScript) oldScript.remove();
+              var oldIframe = container.querySelector('iframe');
+              if (oldIframe) oldIframe.remove();
+
+              var script = document.createElement('script');
+              script.src = 'https://giscus.app/client.js';
+              script.setAttribute('data-repo', '{{ .Site.Params.giscusRepo }}');
+              script.setAttribute('data-repo-id', '{{ .Site.Params.giscusRepoId }}');
+              script.setAttribute('data-category', '{{ .Site.Params.giscusCategory }}');
+              script.setAttribute('data-category-id', '{{ .Site.Params.giscusCategoryId }}');
+              script.setAttribute('data-mapping', '{{ .Site.Params.giscusMapping | default "pathname" }}');
+              script.setAttribute('data-strict', '{{ .Site.Params.giscusStrict | default "0" }}');
+              script.setAttribute('data-reactions-enabled', '{{ .Site.Params.giscusReactions | default "1" }}');
+              script.setAttribute('data-emit-metadata', '{{ .Site.Params.giscusEmitMetadata | default "0" }}');
+              script.setAttribute('data-input-position', '{{ .Site.Params.giscusInputPosition | default "bottom" }}');
+              script.setAttribute('data-theme', getGiscusTheme());
+              script.setAttribute('data-lang', '{{ .Site.Params.giscusLang | default .Site.Language.Lang | default "zh-CN" }}');
+              script.setAttribute('crossorigin', 'anonymous');
+              script.async = true;
+              container.appendChild(script);
+            }
+
+            function updateGiscusTheme() {
+              // 重新加载 Giscus 以应用新的 CSS 规则
+              setTimeout(loadGiscus, 300);
+            }
+
+            // 初始化加载
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(loadGiscus, 200);
+              });
+            } else {
+              setTimeout(loadGiscus, 200);
+            }
+
+            // 监听主题切换
+            document.addEventListener('themeChanged', function() {
+              setTimeout(loadGiscus, 300);
+            });
+
+            // 监听系统主题变化
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                setTimeout(loadGiscus, 300);
               }
             });
           </script>
@@ -112,13 +267,20 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- Twikoo ----- */ -}}
       {{- else if eq $provider "twikoo" -}}
         {{- if .Site.Params.twikooEnvId -}}
           <div id="twikoo-comments"></div>
           <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.all.min.js" crossorigin="anonymous"></script>
           <script>
-            let twikooInstance = null;
+            var twikooInstance = null;
+
+            function getAppliedTheme() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+              }
+              return theme;
+            }
 
             function initTwikoo() {
               if (typeof twikoo === 'undefined') {
@@ -133,15 +295,29 @@
                 region: '{{ . }}',
                 {{- end }}
               });
+              setTimeout(updateTwikooTheme, 300);
             }
 
-            document.addEventListener('DOMContentLoaded', initTwikoo);
-
-            document.addEventListener('themeChanged', function(e) {
-              const isDark = e.detail.applied === 'dark';
-              const container = document.querySelector('#twikoo-comments .tk-comments');
+            function updateTwikooTheme() {
+              var isDark = getAppliedTheme() === 'dark';
+              var container = document.querySelector('#twikoo-comments .tk-comments');
               if (container) {
                 container.setAttribute('data-theme', isDark ? 'dark' : 'light');
+              }
+            }
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initTwikoo, 100);
+              });
+            } else {
+              setTimeout(initTwikoo, 100);
+            }
+            document.addEventListener('themeChanged', updateTwikooTheme);
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                updateTwikooTheme();
               }
             });
           </script>
@@ -151,35 +327,60 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- Waline ----- */ -}}
       {{- else if eq $provider "waline" -}}
         {{- if .Site.Params.walineServerURL -}}
           <div id="waline-comments"></div>
-          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@waline/client@3/dist/waline.css" crossorigin="anonymous" />
+          <link rel="stylesheet" href="https://unpkg.com/@waline/client/dist/waline.css" crossorigin="anonymous" />
+          <link rel="stylesheet" href="https://unpkg.com/@waline/client/dist/waline-meta.css" crossorigin="anonymous" />
           <script type="module">
-            import { init } from 'https://cdn.jsdelivr.net/npm/@waline/client@3/dist/waline.mjs';
+            import { init } from 'https://unpkg.com/@waline/client/dist/waline.js';
 
-            let walineInstance = null;
+            var walineInstance = null;
+            var walineInitialized = false;
+
+            function getWalineDark() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                return 'auto';
+              }
+              return 'html[data-theme="dark"]';
+            }
 
             function initWaline() {
+              if (walineInitialized) return;
               walineInstance = init({
                 el: '#waline-comments',
                 serverURL: '{{ .Site.Params.walineServerURL }}',
                 lang: '{{ .Site.Params.walineLang | default "zh-CN" }}',
-                dark: 'auto',
+                dark: getWalineDark(),
                 meta: {{ .Site.Params.walineMeta | default (slice "nick" "mail" "link") | jsonify | safeJS }},
                 requiredMeta: {{ .Site.Params.walineRequiredMeta | default (slice "nick" "mail") | jsonify | safeJS }},
                 pageSize: {{ .Site.Params.walinePageSize | default 10 }},
+                path: '{{ .Permalink }}',
               });
+              walineInitialized = true;
+              window.walineInstance = walineInstance;
             }
 
-            document.addEventListener('DOMContentLoaded', initWaline);
+            function updateWalineTheme() {
+              var dark = getWalineDark();
+              if (walineInstance && typeof walineInstance.update === 'function') {
+                walineInstance.update({ dark: dark });
+              }
+            }
 
-            document.addEventListener('themeChanged', function(e) {
-              const isDark = e.detail.applied === 'dark';
-              const walineEl = document.querySelector('#waline-comments');
-              if (walineEl) {
-                walineEl.setAttribute('data-dark', isDark ? 'true' : 'false');
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initWaline, 100);
+              });
+            } else {
+              setTimeout(initWaline, 100);
+            }
+            document.addEventListener('themeChanged', updateWalineTheme);
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                updateWalineTheme();
               }
             });
           </script>
@@ -189,37 +390,89 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- Artalk ----- */ -}}
       {{- else if eq $provider "artalk" -}}
         {{- if .Site.Params.artalkServer -}}
           <link rel="stylesheet" href="{{ .Site.Params.artalkServer }}/dist/Artalk.css" crossorigin="anonymous">
           <div id="ArtalkComments"></div>
           <script src="{{ .Site.Params.artalkServer }}/dist/Artalk.js" crossorigin="anonymous"></script>
           <script>
-            let artalkInstance = null;
+            var artalkInstance = null;
+            var artalkInitialized = false;
+
+            function getAppliedTheme() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+              }
+              return theme;
+            }
 
             function initArtalk() {
+              if (artalkInitialized) return;
               if (typeof Artalk === 'undefined') {
                 setTimeout(initArtalk, 500);
                 return;
               }
+              var isDark = getAppliedTheme() === 'dark';
+              try {
+                artalkInstance = Artalk.init({
+                  el: '#ArtalkComments',
+                  server: '{{ .Site.Params.artalkServer }}',
+                  site: '{{ .Site.Params.artalkSite }}',
+                  pageKey: '{{ .Permalink }}',
+                  placeholder: '{{ .Site.Params.artalkPlaceholder | default "说点什么吧..." }}',
+                  darkMode: isDark,
+                });
+                artalkInitialized = true;
+                window.artalkInstance = artalkInstance;
+              } catch (err) {
+                console.error('[Artalk] Init failed:', err);
+              }
+            }
 
-              const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-              artalkInstance = Artalk.init({
-                el: '#ArtalkComments',
-                server: '{{ .Site.Params.artalkServer }}',
-                site: '{{ .Site.Params.artalkSite }}',
-                pageKey: '{{ .Permalink }}',
-                placeholder: '{{ .Site.Params.artalkPlaceholder | default "说点什么吧..." }}',
-                darkMode: isDark ? 'dark' : 'light',
+            function updateArtalkTheme() {
+              var isDark = getAppliedTheme() === 'dark';
+              if (artalkInstance && typeof artalkInstance.setDarkMode === 'function') {
+                artalkInstance.setDarkMode(isDark);
+              } else if (artalkInstance && typeof artalkInstance.update === 'function') {
+                artalkInstance.update({ darkMode: isDark });
+              } else {
+                artalkInitialized = false;
+                artalkInstance = null;
+                var container = document.querySelector('#ArtalkComments');
+                if (container) container.innerHTML = '';
+                setTimeout(initArtalk, 200);
+              }
+            }
+
+            function safeInit() {
+              requestAnimationFrame(function() {
+                setTimeout(initArtalk, 150);
               });
             }
 
-            document.addEventListener('DOMContentLoaded', initArtalk);
-
-            document.addEventListener('themeChanged', function(e) {
-              if (artalkInstance && typeof artalkInstance.setDarkMode === 'function') {
-                artalkInstance.setDarkMode(e.detail.applied === 'dark');
+            if (document.readyState === 'complete') {
+              safeInit();
+            } else if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', safeInit);
+            } else {
+              safeInit();
+            }
+            document.addEventListener('themeChanged', updateArtalkTheme);
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'system' || !theme) {
+                updateArtalkTheme();
+              }
+            });
+            window.addEventListener('load', function() {
+              if (artalkInitialized) {
+                var isDark = getAppliedTheme() === 'dark';
+                if (artalkInstance && typeof artalkInstance.setDarkMode === 'function') {
+                  artalkInstance.setDarkMode(isDark);
+                }
+              } else {
+                setTimeout(initArtalk, 300);
               }
             });
           </script>
@@ -229,7 +482,6 @@
           </div>
         {{- end -}}
 
-      {{- /* ----- 未配置或未知 Provider ----- */ -}}
       {{- else -}}
         <div class="comments-disabled" role="status">
           <p><i class="fas fa-comment-slash"></i> {{ i18n "comments_disabled" }}</p>

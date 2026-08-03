@@ -56,7 +56,6 @@ enableGitInfo = true
   # ----- Utterances -----
   utterancesRepo = ""                # 格式: owner/repo
   utterancesIssueTerm = "pathname"   # pathname | url | title | og:title
-  utterancesTheme = "github-light"   # github-light | github-dark | preferred-color-scheme
 
   # ----- Giscus -----
   giscusRepo = ""
@@ -68,7 +67,6 @@ enableGitInfo = true
   giscusReactions = "1"
   giscusEmitMetadata = "0"
   giscusInputPosition = "bottom"       # bottom | top
-  giscusTheme = "preferred-color-scheme"  # light | dark | preferred-color-scheme
   giscusLang = "zh-CN"                 # 界面语言
 
   # ----- Twikoo -----
