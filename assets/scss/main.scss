@@ -1,74 +1,67 @@
 /* ============================================================================
-   Illusion Theme v2.0.0 - SCSS (Mobile-First)
+   Illusion Theme v2.0.0 - SCSS (Mobile-First) - 零硬编码版本
    重构核心：
    1. 默认样式 = 最小屏幕 (单列/堆叠/隐藏桌面元素)
    2. @mixin respond-to($bp) 增量覆盖
    3. 阶梯式变量体系，零硬编码
    4. 所有颜色变量在根级别声明，主题中完整覆盖
-   5. 头部、尾部、侧边栏使用实色背景（无毛玻璃）
+   5. 头部、尾部、侧边栏使用半透明背景（建议配合 backdrop-filter 实现毛玻璃）
+   6. 所有动画、尺寸、间距均使用变量，零 px 硬编码
    ============================================================================ */
 
 @use "sass:map";
-@use "sass:math";
-@use "sass:list";
-@use "sass:meta";
-@use "sass:color";
 
 // ============================================================================
 // 第一部分：变量系统 (阶梯式语义变量)
 // ============================================================================
 
 // ----- 1.1 断点 (Breakpoints) -----
-// 响应式断点，用于媒体查询
 $bp: (
-  'sm': 576px,   // 手机横屏
-  'md': 768px,   // 平板竖屏
-  'lg': 992px,   // 平板横屏/小桌面
-  'xl': 1200px,  // 桌面
-  'xxl': 1440px  // 大桌面
+  'sm': 576px,
+  'md': 768px,
+  'lg': 992px,
+  'xl': 1200px,
+  'xxl': 1440px
 );
 
-// ----- 1.2 间距 (Spacing) -----
-// 所有间距值，基于 4px 网格系统
+// ----- 1.2 间距 (Spacing) - 基于 4px 网格 -----
 $sp: (
-  'min': 1px,           // 最小间距
-  '1': 0.25rem,         // 4px
-  '2': 0.5rem,          // 8px
-  '3': 0.75rem,         // 12px
-  '4': 1rem,            // 16px (基准)
-  '5': 1.25rem,         // 20px
-  '6': 1.5rem,          // 24px
-  '8': 2rem,            // 32px
-  '10': 2.5rem,         // 40px
-  '12': 3rem,           // 48px
-  '16': 4rem,           // 64px
-  '20': 5rem,           // 80px
-  '24': 6rem            // 96px
+  'min': 1px,
+  '1': 0.25rem,
+  '2': 0.5rem,
+  '3': 0.75rem,
+  '4': 1rem,
+  '5': 1.25rem,
+  '6': 1.5rem,
+  '8': 2rem,
+  '10': 2.5rem,
+  '12': 3rem,
+  '16': 4rem,
+  '20': 5rem,
+  '24': 6rem
 );
 
-// ----- 1.3 字号 (Font Sizes) -----
-// 基于黄金比例 1.25 的字体系统
+// ----- 1.3 字号 (Font Sizes) - 黄金比例 1.25 -----
 $fs: (
-  'xs': 0.75rem,    // 12px
-  'sm': 0.875rem,   // 14px
-  'base': 1rem,     // 16px
-  'md': 1.25rem,    // 20px
-  'lg': 1.563rem,   // 25px
-  'xl': 1.953rem,   // 31px
-  '2xl': 2.441rem,  // 39px
-  '3xl': 3.052rem,  // 49px
-  '4xl': 3.815rem,  // 61px
-  '5xl': 4.768rem   // 76px
+  'xs': 0.75rem,
+  'sm': 0.875rem,
+  'base': 1rem,
+  'md': 1.25rem,
+  'lg': 1.563rem,
+  'xl': 1.953rem,
+  '2xl': 2.441rem,
+  '3xl': 3.052rem,
+  '4xl': 3.815rem,
+  '5xl': 4.768rem
 );
 
 // ----- 1.4 行高 (Line Heights) -----
-// 行高比例，影响文本可读性
 $lh: (
-  'tight': 1.2,      // 标题紧凑
-  'snug': 1.375,     // 标题舒适
-  'normal': 1.6,     // 正文标准
-  'relaxed': 1.75,   // 正文宽松
-  'loose': 2         // 特殊场景
+  'tight': 1.2,
+  'snug': 1.375,
+  'normal': 1.6,
+  'relaxed': 1.75,
+  'loose': 2
 );
 
 // ----- 1.5 字重 (Font Weights) -----
@@ -82,17 +75,17 @@ $fw: (
 
 // ----- 1.6 圆角 (Border Radius) -----
 $rd: (
-  'xs': 0.25rem,    // 4px
-  'sm': 0.5rem,     // 8px
-  'md': 0.75rem,    // 12px
-  'lg': 1rem,       // 16px
-  'xl': 1.5rem,     // 24px
-  '2xl': 2rem,      // 32px
-  '3xl': 3rem,      // 48px
-  'full': 9999px    // 圆形
+  'xs': 0.25rem,
+  'sm': 0.5rem,
+  'md': 0.75rem,
+  'lg': 1rem,
+  'xl': 1.5rem,
+  '2xl': 2rem,
+  '3xl': 3rem,
+  'full': 9999px
 );
 
-// ----- 1.7 过渡 (Transitions) -----
+// ----- 1.7 动画时长 (Duration) —— 统一 Transition / Animation -----
 $tr: (
   'fast': 150ms,
   'base': 300ms,
@@ -119,43 +112,175 @@ $cw: (
 
 // ----- 1.10 组件尺寸 (Component Sizes) -----
 $sz: (
-  'header': 70px,          // 头部高度 - 移动端
-  'header-md': 76px,       // 头部高度 - 平板
-  'header-lg': 82px,       // 头部高度 - 桌面
-  'icon-sm': 48px,         // 小图标
-  'icon-md': 56px,         // 中图标
-  'btn': 34px,             // 按钮尺寸
-  'btn-close': 38px,       // 关闭按钮
-  'scroll': 44px,          // 滚动按钮
-  'post-img': 200px,       // 文章图片高度 - 移动端
-  'post-img-md': 220px,    // 文章图片高度 - 平板
-  'article-hdr': 300px,    // 文章头部最小高度 - 移动端
-  'article-hdr-md': 350px, // 文章头部最小高度 - 平板
-  'toc': 320px,            // 目录最大宽度
-  'search': 500px,         // 搜索最大宽度
-  'search-modal': 600px,   // 搜索弹窗最大宽度
-  'hero-right': 360px,     // Hero 右侧区域宽度
-  'readable': 800px,       // 可读内容最大宽度
-  'timeline': 700px,       // 时间线最大宽度
-  'posts-grid': 1400px,    // 文章网格最大宽度
-  'sidebar': 200px,        // 侧边栏宽度 - 移动端
-  'sidebar-md': 240px,     // 侧边栏宽度 - 平板
-  'sidebar-lg': 280px,     // 侧边栏宽度 - 桌面
-  'sidebar-xl': 320px      // 侧边栏宽度 - 大桌面
+  'header': 70px,
+  'header-md': 76px,
+  'header-lg': 82px,
+  'icon-sm': 48px,
+  'icon-md': 56px,
+  'btn': 34px,
+  'btn-close': 38px,
+  'scroll': 44px,
+  'post-img': 200px,
+  'post-img-md': 220px,
+  'article-hdr': 300px,
+  'article-hdr-md': 350px,
+  'toc': 320px,
+  'search': 500px,
+  'search-modal': 600px,
+  'hero-right': 360px,
+  'readable': 800px,
+  'timeline': 700px,
+  'posts-grid': 1400px,
+  'sidebar': 200px,
+  'sidebar-md': 240px,
+  'sidebar-lg': 280px,
+  'sidebar-xl': 320px
 );
+
+// ----- 1.11 模糊度 (Blur) -----
+$blur: (
+  'sm': 4px,
+  'md': 8px,
+  'lg': 16px,
+  'xl': 32px
+);
+
+// ----- 1.12 动画时长 (Animation Durations) -----
+$duration: (
+  'instant': 0ms,
+  'fastest': 50ms,
+  'faster': 100ms,
+  'fast': 150ms,
+  'base': 300ms,
+  'slow': 500ms,
+  'slower': 600ms,
+  'slowest': 1s,
+  'bounce': 2s,
+  'float': 3s,
+  'pulse': 3s,
+  'shimmer': 8s,
+  'gradient': 8s,
+  'sparkle': 2s,
+  'scroll-wheel': 2s,
+  'star-twinkle': 8s
+);
+
+// ----- 1.12 动画位移 (Motion Distance) -----
+$ao: (
+  'min': 4px,
+  'sm': 8px,
+  'md': 16px,
+  'lg': 20px,
+  'xl': 30px,
+  '2xl': 40px
+);
+
+// ----- 1.13 变换比例 (Motion Scale) -----
+$ts: (
+  'min': 0.5,
+  'sm': 0.8,
+  'md': 0.95,
+  'base': 1,
+  'lg': 1.05,
+  'xl': 1.1,
+  '2xl': 1.15,
+  '3xl': 1.2
+);
+
+
+// --------------------------------------------------------------------------
+// Sass Token 命名兼容层
+// 原项目已有大量 $bp/$sp/$fs... 引用；新架构提供语义化别名。
+// --------------------------------------------------------------------------
+$breakpoints: $bp;
+$space: $sp;
+$font-size: $fs;
+$line-height: $lh;
+$font-weight: $fw;
+$radius: $rd;
+$easing: $ez;
+$container: $cw;
+$component-size: $sz;
+$motion-distance: $ao;
+$motion-scale: $ts;
+
+@function token-space($key) {
+  @return map.get($space, $key);
+}
+
+@function token-font-size($key) {
+  @return map.get($font-size, $key);
+}
+
+@function token-duration($key) {
+  @return map.get($duration, $key);
+}
+
+@function token-motion-distance($key) {
+  @return map.get($motion-distance, $key);
+}
+
+@function token-motion-scale($key) {
+  @return map.get($motion-scale, $key);
+}
+
+// --------------------------------------------------------------------------
+// 语义 Token Map：表达“用途”，而不是“数值”
+// --------------------------------------------------------------------------
+$semantic-spacing: (
+  'page-gutter': map.get($space, '4'),
+  'section-sm': map.get($space, '8'),
+  'section-md': map.get($space, '12'),
+  'section-lg': map.get($space, '16'),
+  'component-sm': map.get($space, '2'),
+  'component-md': map.get($space, '4'),
+  'component-lg': map.get($space, '6')
+);
+
+$semantic-type: (
+  'body-size': map.get($font-size, 'base'),
+  'body-line-height': map.get($line-height, 'normal'),
+  'heading-line-height': map.get($line-height, 'tight'),
+  'body-weight': map.get($font-weight, 'normal'),
+  'heading-weight': map.get($font-weight, 'bold')
+);
+
+$semantic-motion: (
+  'fast': map.get($duration, 'fast'),
+  'base': map.get($duration, 'base'),
+  'slow': map.get($duration, 'slow'),
+  'standard': map.get($easing, 'smooth'),
+  'emphasis': map.get($easing, 'spring')
+);
+
+
+// --------------------------------------------------------------------------
+// 旧 getter 兼容层
+// --------------------------------------------------------------------------
+@function get-sp($key) {
+  @return token-space($key);
+}
+
+@function get-fs($key) {
+  @return token-font-size($key);
+}
+
+@function get-ad($key) {
+  @return token-duration($key);
+}
+
+@function get-ao($key) {
+  @return token-motion-distance($key);
+}
+
+@function get-ts($key) {
+  @return token-motion-scale($key);
+}
 
 // ============================================================================
 // 第二部分：响应式 Mixin (增量覆盖管道)
 // ============================================================================
 
-/**
- * 响应式断点混合
- * 使用方式: @include respond-to('md') { ... }
- * 生成的媒体查询: @media (min-width: 768px) { ... }
- * 
- * @param {string} $breakpoint - 断点名称 (sm, md, lg, xl, xxl)
- * @warn 如果断点未定义，会输出警告
- */
 @mixin respond-to($breakpoint) {
   @if map.has-key($bp, $breakpoint) {
     @media (min-width: map.get($bp, $breakpoint)) {
@@ -167,21 +292,63 @@ $sz: (
 }
 
 // ============================================================================
-// 第三部分：全局样式 (默认 = 移动端)
+// 第三部分：辅助函数
 // ============================================================================
 
-// ----- 3.1 CSS 变量定义 (阶梯式语义体系) -----
-// 所有 CSS 变量在根级别声明，确保始终有值
-// 颜色变量默认 transparent，由主题变体覆盖
+@function token-space($key) {
+  @if map.has-key($sp, $key) {
+    @return map.get($sp, $key);
+  }
+  @warn "间距 '#{$key}' 未在 \$sp 中定义";
+  @return map.get($sp, '4');
+}
+
+@function token-font-size($key) {
+  @if map.has-key($fs, $key) {
+    @return map.get($fs, $key);
+  }
+  @warn "字号 '#{$key}' 未在 \$fs 中定义";
+  @return map.get($fs, 'base');
+}
+
+@function token-motion-distance($key) {
+  @if map.has-key($ao, $key) {
+    @return map.get($ao, $key);
+  }
+  @warn "动画偏移 '#{$key}' 未在 \$ao 中定义";
+  @return map.get($ao, 'md');
+}
+
+@function token-motion-scale($key) {
+  @if map.has-key($ts, $key) {
+    @return map.get($ts, $key);
+  }
+  @warn "变换比例 '#{$key}' 未在 \$ts 中定义";
+  @return map.get($ts, 'base');
+}
+
+@function token-duration($key) {
+  @if map.has-key($duration, $key) {
+    @return map.get($duration, $key);
+  }
+  @warn "动画时长 '#{$key}' 未在 \$duration 中定义";
+  @return map.get($duration, 'base');
+}
+
+// ============================================================================
+// 第四部分：全局样式 (默认 = 移动端)
+// ============================================================================
+
+// ----- 4.1 CSS 变量定义 -----
 :root {
-  // ===== 断点 =====
+  // 断点
   --bp-sm: #{map.get($bp, 'sm')};
   --bp-md: #{map.get($bp, 'md')};
   --bp-lg: #{map.get($bp, 'lg')};
   --bp-xl: #{map.get($bp, 'xl')};
   --bp-xxl: #{map.get($bp, 'xxl')};
 
-  // ===== 间距 =====
+  // 间距
   --sp-min: #{map.get($sp, 'min')};
   --sp-1: #{map.get($sp, '1')};
   --sp-2: #{map.get($sp, '2')};
@@ -196,7 +363,7 @@ $sz: (
   --sp-20: #{map.get($sp, '20')};
   --sp-24: #{map.get($sp, '24')};
 
-  // ===== 字号 =====
+  // 字号
   --fs-xs: #{map.get($fs, 'xs')};
   --fs-sm: #{map.get($fs, 'sm')};
   --fs-base: #{map.get($fs, 'base')};
@@ -208,21 +375,21 @@ $sz: (
   --fs-4xl: #{map.get($fs, '4xl')};
   --fs-5xl: #{map.get($fs, '5xl')};
 
-  // ===== 行高 =====
+  // 行高
   --lh-tight: #{map.get($lh, 'tight')};
   --lh-snug: #{map.get($lh, 'snug')};
   --lh-normal: #{map.get($lh, 'normal')};
   --lh-relaxed: #{map.get($lh, 'relaxed')};
   --lh-loose: #{map.get($lh, 'loose')};
 
-  // ===== 字重 =====
+  // 字重
   --fw-normal: #{map.get($fw, 'normal')};
   --fw-medium: #{map.get($fw, 'medium')};
   --fw-semibold: #{map.get($fw, 'semibold')};
   --fw-bold: #{map.get($fw, 'bold')};
   --fw-extrabold: #{map.get($fw, 'extrabold')};
 
-  // ===== 圆角 =====
+  // 圆角
   --rd-xs: #{map.get($rd, 'xs')};
   --rd-sm: #{map.get($rd, 'sm')};
   --rd-md: #{map.get($rd, 'md')};
@@ -232,19 +399,19 @@ $sz: (
   --rd-3xl: #{map.get($rd, '3xl')};
   --rd-full: #{map.get($rd, 'full')};
 
-  // ===== 过渡 =====
+  // 过渡
   --tr-fast: #{map.get($tr, 'fast')};
   --tr-base: #{map.get($tr, 'base')};
   --tr-slow: #{map.get($tr, 'slow')};
   --tr-slower: #{map.get($tr, 'slower')};
   --tr-slowest: #{map.get($tr, 'slowest')};
 
-  // ===== 缓动 =====
+  // 缓动
   --ez-default: #{map.get($ez, 'default')};
   --ez-spring: #{map.get($ez, 'spring')};
   --ez-smooth: #{map.get($ez, 'smooth')};
 
-  // ===== 容器 =====
+  // 容器
   --cw: 100%;
   --cw-sm: #{map.get($cw, 'sm')};
   --cw-md: #{map.get($cw, 'md')};
@@ -252,7 +419,7 @@ $sz: (
   --cw-xl: #{map.get($cw, 'xl')};
   --cw-xxl: #{map.get($cw, 'xxl')};
 
-  // ===== 组件尺寸 =====
+  // 组件尺寸
   --sz-header: #{map.get($sz, 'header')};
   --sz-header-md: #{map.get($sz, 'header-md')};
   --sz-header-lg: #{map.get($sz, 'header-lg')};
@@ -277,120 +444,49 @@ $sz: (
   --sz-sidebar-lg: #{map.get($sz, 'sidebar-lg')};
   --sz-sidebar-xl: #{map.get($sz, 'sidebar-xl')};
 
-  // ===== 颜色系统 (阶梯式) =====
-  // 基础色板 - 由主题变体覆盖
-  // 主色: 暖橙珊瑚系
-  --c-primary-100: transparent;
-  --c-primary-200: transparent;
-  --c-primary-300: transparent;
-  --c-primary-400: transparent;
-  --c-primary-500: transparent;
-  --c-primary-600: transparent;
-  --c-primary-700: transparent;
-  --c-primary-800: transparent;
-  --c-primary-900: transparent;
+  // 模糊度
+  --blur-sm: #{map.get($blur, 'sm')};
+  --blur-md: #{map.get($blur, 'md')};
+  --blur-lg: #{map.get($blur, 'lg')};
+  --blur-xl: #{map.get($blur, 'xl')};
 
-  // 辅助色: 同色系变体
-  --c-secondary-100: transparent;
-  --c-secondary-200: transparent;
-  --c-secondary-300: transparent;
-  --c-secondary-400: transparent;
-  --c-secondary-500: transparent;
-  --c-secondary-600: transparent;
-  --c-secondary-700: transparent;
-  --c-secondary-800: transparent;
-  --c-secondary-900: transparent;
+  // 动画时长
+  --ad-instant: #{map.get($duration, 'instant')};
+  --ad-fastest: #{map.get($duration, 'fastest')};
+  --ad-faster: #{map.get($duration, 'faster')};
+  --ad-fast: #{map.get($duration, 'fast')};
+  --ad-base: #{map.get($duration, 'base')};
+  --ad-slow: #{map.get($duration, 'slow')};
+  --ad-slower: #{map.get($duration, 'slower')};
+  --ad-slowest: #{map.get($duration, 'slowest')};
+  --ad-bounce: #{map.get($duration, 'bounce')};
+  --ad-float: #{map.get($duration, 'float')};
+  --ad-pulse: #{map.get($duration, 'pulse')};
+  --ad-shimmer: #{map.get($duration, 'shimmer')};
+  --ad-gradient: #{map.get($duration, 'gradient')};
+  --ad-sparkle: #{map.get($duration, 'sparkle')};
+  --ad-scroll-wheel: #{map.get($duration, 'scroll-wheel')};
+  --ad-star-twinkle: #{map.get($duration, 'star-twinkle')};
 
-  // 强调色: 暖黄系
-  --c-accent-100: transparent;
-  --c-accent-200: transparent;
-  --c-accent-300: transparent;
-  --c-accent-400: transparent;
-  --c-accent-500: transparent;
-  --c-accent-600: transparent;
-  --c-accent-700: transparent;
-  --c-accent-800: transparent;
-  --c-accent-900: transparent;
+  // 动画偏移
+  --ao-min: #{map.get($ao, 'min')};
+  --ao-sm: #{map.get($ao, 'sm')};
+  --ao-md: #{map.get($ao, 'md')};
+  --ao-lg: #{map.get($ao, 'lg')};
+  --ao-xl: #{map.get($ao, 'xl')};
+  --ao-2xl: #{map.get($ao, '2xl')};
 
-  // 金色: 暖金系
-  --c-gold-100: transparent;
-  --c-gold-200: transparent;
-  --c-gold-300: transparent;
-  --c-gold-400: transparent;
-  --c-gold-500: transparent;
-  --c-gold-600: transparent;
-  --c-gold-700: transparent;
-  --c-gold-800: transparent;
-  --c-gold-900: transparent;
+  // 变换比例
+  --ts-min: #{map.get($ts, 'min')};
+  --ts-sm: #{map.get($ts, 'sm')};
+  --ts-md: #{map.get($ts, 'md')};
+  --ts-base: #{map.get($ts, 'base')};
+  --ts-lg: #{map.get($ts, 'lg')};
+  --ts-xl: #{map.get($ts, 'xl')};
+  --ts-2xl: #{map.get($ts, '2xl')};
+  --ts-3xl: #{map.get($ts, '3xl')};
 
-  // ===== 语义颜色 =====
-  // 背景色 - 页面主背景、提升背景、表面色
-  --c-bg: transparent;              // 主背景
-  --c-bg-elevated: transparent;     // 提升背景 (比主背景略深)
-  --c-bg-elevated-2: transparent;   // 二次提升背景
-  --c-surface: transparent;         // 卡片/表面背景
-  --c-surface-elevated: transparent; // 提升表面
-  --c-surface-overlay: transparent; // 覆盖层表面 (毛玻璃)
-
-  // 文本色 - 主要、次要、三级、禁用
-  --c-text-primary: transparent;    // 主要文本 (高对比)
-  --c-text-secondary: transparent;  // 次要文本 (中等对比)
-  --c-text-tertiary: transparent;   // 三级文本 (低对比)
-  --c-text-disabled: transparent;   // 禁用文本 (最低对比)
-
-  // 边框色 - 主要、浅色、细微
-  --c-border: transparent;          // 主边框
-  --c-border-light: transparent;    // 浅边框
-  --c-border-subtle: transparent;   // 细微边框
-
-  // ===== 功能色 (始终有值，不依赖主题) =====
-  --c-success: #4A8;               // 成功绿
-  --c-success-bg: rgba(100, 180, 100, 0.12); // 成功背景
-  --c-warning: #FFD700;            // 警告黄
-  --c-warning-bg: rgba(255, 215, 0, 0.1); // 警告背景
-  --c-error: #D06060;              // 错误红
-  --c-info: #6090C0;               // 信息蓝
-
-  // ===== 阴影 (由主题变体覆盖) =====
-  --shadow-xs: none;    // 极细阴影
-  --shadow-sm: none;    // 小阴影
-  --shadow-md: none;    // 中阴影
-  --shadow-lg: none;    // 大阴影
-  --shadow-xl: none;    // 超大阴影
-  --shadow-glow: none;  // 发光阴影
-
-  // ===== 渐变 (由主题变体覆盖) =====
-  --gradient-primary: none;  // 主渐变
-  --gradient-subtle: none;   // 细微渐变
-  --gradient-surface: none;  // 表面渐变
-
-  // ===== 覆盖层 =====
-  --overlay: transparent;    // 覆盖层颜色
-
-  // ===== 交互状态 (由主题变体覆盖) =====
-  --hover-bg: transparent;     // 悬停背景
-  --active-bg: transparent;    // 激活背景
-  --selection-bg: transparent; // 选中背景
-
-  // ===== 头部专用背景 (实色) =====
-  --c-header-bg: transparent;         // 头部背景 - 实色
-  --c-header-scrolled-bg: transparent; // 头部滚动后背景 - 实色
-
-  // ===== 侧边栏专用背景 (实色) =====
-  --c-sidebar-bg: transparent;        // 侧边栏背景 - 实色
-
-  // ===== 页脚专用背景 (实色) =====
-  --c-footer-bg: transparent;         // 页脚背景 - 实色
-
-  // ===== 字体族 =====
-  --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-}
-
-// ----- 3.2 浅色主题变体 -----
-// 浅色主题: 温暖、柔和、高可读性
-[data-theme='light'] {
-  // 主色 (暖橙珊瑚)
+  // 颜色系统 - 由主题变体覆盖
   --c-primary-100: #FDF3EE;
   --c-primary-200: #FCE6DC;
   --c-primary-300: #F0C4B8;
@@ -401,7 +497,6 @@ $sz: (
   --c-primary-800: #702C18;
   --c-primary-900: #501C0C;
 
-  // 辅助色
   --c-secondary-100: #FFF5F0;
   --c-secondary-200: #FCE8DC;
   --c-secondary-300: #F5CCB8;
@@ -412,7 +507,6 @@ $sz: (
   --c-secondary-800: #903818;
   --c-secondary-900: #70280C;
 
-  // 强调色 (暖黄)
   --c-accent-100: #FFF8F0;
   --c-accent-200: #FFEED5;
   --c-accent-300: #F5D4A0;
@@ -423,7 +517,6 @@ $sz: (
   --c-accent-800: #785820;
   --c-accent-900: #584018;
 
-  // 金色
   --c-gold-100: #FFFAF0;
   --c-gold-200: #FFF0D5;
   --c-gold-300: #F5D8A8;
@@ -435,23 +528,31 @@ $sz: (
   --c-gold-900: #584018;
 
   // 语义颜色
-  --c-bg: #FDF8F5;                    // 暖白背景
-  --c-bg-elevated: #F8F0EC;           // 略深暖白
-  --c-bg-elevated-2: #F0E8E2;         // 更深暖白
-  --c-surface: #FFFCFA;               // 纯白卡片
-  --c-surface-elevated: #FAF5F0;      // 略暖卡片
-  --c-surface-overlay: rgba(255, 252, 250, 0.72); // 毛玻璃覆盖层
+  --c-bg: #FDF8F5;
+  --c-bg-elevated: #F8F0EC;
+  --c-bg-elevated-2: #F0E8E2;
+  --c-surface: #FFFCFA;
+  --c-surface-elevated: #FAF5F0;
+  --c-surface-overlay: rgba(255, 252, 250, 0.72);
 
-  --c-text-primary: #2E2825;          // 深棕黑
-  --c-text-secondary: #5E524C;        // 中棕
-  --c-text-tertiary: #7E6E66;         // 浅棕
-  --c-text-disabled: #7E6E66;         // 同三级
+  --c-text-primary: #2E2825;
+  --c-text-secondary: #5E524C;
+  --c-text-tertiary: #7E6E66;
+  --c-text-disabled: #7E6E66;
 
-  --c-border: #E8DED6;                // 暖灰边框
-  --c-border-light: #F0E8E0;          // 浅暖灰
-  --c-border-subtle: var(--c-primary-300); // 主色细微边框
+  --c-border: #E8DED6;
+  --c-border-light: #F0E8E0;
+  --c-border-subtle: var(--c-primary-300);
 
-  // 阴影 (暖色透明)
+  // 功能色
+  --c-success: #4A8;
+  --c-success-bg: rgba(100, 180, 100, 0.12);
+  --c-warning: #FFD700;
+  --c-warning-bg: rgba(255, 215, 0, 0.1);
+  --c-error: #D06060;
+  --c-info: #6090C0;
+
+  // 阴影
   --shadow-xs: 0 1px 2px rgba(208, 112, 88, 0.04);
   --shadow-sm: 0 1px 3px rgba(208, 112, 88, 0.06);
   --shadow-md: 0 4px 14px rgba(208, 112, 88, 0.08);
@@ -459,7 +560,7 @@ $sz: (
   --shadow-xl: 0 0 40px rgba(240, 196, 184, 0.12);
   --shadow-glow: 0 0 20px rgba(240, 196, 184, 0.18);
 
-  // 渐变 (暖色系)
+  // 渐变
   --gradient-primary: linear-gradient(135deg, #E8927C 0%, #F0A888 50%, #E8B870 100%);
   --gradient-subtle: linear-gradient(135deg, rgba(232, 146, 124, 0.1) 0%, rgba(240, 168, 136, 0.06) 100%);
   --gradient-surface: linear-gradient(180deg, rgba(255, 252, 250, 0.88) 0%, rgba(253, 248, 245, 0.95) 100%);
@@ -472,21 +573,151 @@ $sz: (
   --active-bg: rgba(208, 112, 88, 0.12);
   --selection-bg: rgba(232, 146, 124, 0.3);
 
-  // ===== 头部专用背景 (实色) =====
-  --c-header-bg: #F8F0EC;              // 与主背景一致
-  --c-header-scrolled-bg: #FFFCFA;     // 滚动后变为表面色
+  // 专用背景
+  --c-header-bg: rgba(248, 240, 236, 0.75);
+  --c-header-scrolled-bg: rgba(255, 252, 250, 0.92);
+  --c-sidebar-bg: rgba(248, 240, 236, 0.85);
+  --c-footer-bg: rgba(248, 240, 236, 0.90);
 
-  // ===== 侧边栏专用背景 (实色) =====
-  --c-sidebar-bg: #F8F0EC;             // 使用提升背景色
+  // 字体族
+  --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  // ===== 页脚专用背景 (实色) =====
-  --c-footer-bg: #F8F0EC;              // 使用更深一点的背景
+  // --------------------------------------------------------------------------
+  // 语义 CSS Token：新组件优先使用这一层；旧 --sp/--fs/--c-* 保持兼容
+  // --------------------------------------------------------------------------
+
+  // Layout
+  --layout-content-width: var(--cw-xxl);
+  --layout-readable-width: var(--sz-readable);
+  --layout-sidebar-width: var(--sz-sidebar);
+  --layout-page-gutter: clamp(var(--sp-4), 4vw, var(--sp-10));
+
+  // Typography
+  --text-body-size: var(--fs-base);
+  --text-body-line-height: var(--lh-normal);
+  --text-title-size: clamp(var(--fs-xl), 3vw, var(--fs-3xl));
+  --text-display-size: clamp(var(--fs-2xl), 5vw, var(--fs-5xl));
+  --text-body-weight: var(--fw-normal);
+  --text-heading-weight: var(--fw-bold);
+
+  // Surface / color
+  --color-page-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-elevated: var(--c-surface-elevated);
+  --color-text: var(--c-text-primary);
+  --color-text-muted: var(--c-text-secondary);
+  --color-text-subtle: var(--c-text-tertiary);
+  --color-border: var(--c-border);
+  --color-border-subtle: var(--c-border-subtle);
+  --color-brand: var(--c-primary-500);
+  --color-brand-hover: var(--c-primary-600);
+  --color-success: var(--c-success);
+  --color-warning: var(--c-warning);
+  --color-error: var(--c-error);
+  --color-info: var(--c-info);
+
+  // Motion
+  --motion-duration-fast: var(--tr-fast);
+  --motion-duration-base: var(--tr-base);
+  --motion-duration-slow: var(--tr-slow);
+  --motion-easing-standard: var(--ez-smooth);
+  --motion-easing-emphasis: var(--ez-spring);
+  --motion-distance-sm: var(--ao-sm);
+  --motion-distance-md: var(--ao-md);
+  --motion-distance-lg: var(--ao-lg);
+
+  // Components
+  --component-header-height: var(--sz-header);
+  --component-sidebar-width: var(--sz-sidebar);
+  --component-card-radius: var(--rd-lg);
+  --component-button-height: var(--sz-btn);
+  --component-control-radius: var(--rd-md);
 }
 
-// ----- 3.3 暗色主题变体 -----
-// 暗色主题: 深邃、温暖、护眼
+// ----- 4.2 浅色主题 -----
+[data-theme='light'] {
+  --c-primary-100: #FDF3EE;
+  --c-primary-200: #FCE6DC;
+  --c-primary-300: #F0C4B8;
+  --c-primary-400: #E8927C;
+  --c-primary-500: #D07058;
+  --c-primary-600: #B05840;
+  --c-primary-700: #904028;
+  --c-primary-800: #702C18;
+  --c-primary-900: #501C0C;
+
+  --c-secondary-100: #FFF5F0;
+  --c-secondary-200: #FCE8DC;
+  --c-secondary-300: #F5CCB8;
+  --c-secondary-400: #F0A888;
+  --c-secondary-500: #E88860;
+  --c-secondary-600: #D06840;
+  --c-secondary-700: #B05028;
+  --c-secondary-800: #903818;
+  --c-secondary-900: #70280C;
+
+  --c-accent-100: #FFF8F0;
+  --c-accent-200: #FFEED5;
+  --c-accent-300: #F5D4A0;
+  --c-accent-400: #E8B870;
+  --c-accent-500: #D4A050;
+  --c-accent-600: #B88838;
+  --c-accent-700: #987028;
+  --c-accent-800: #785820;
+  --c-accent-900: #584018;
+
+  --c-gold-100: #FFFAF0;
+  --c-gold-200: #FFF0D5;
+  --c-gold-300: #F5D8A8;
+  --c-gold-400: #E8C080;
+  --c-gold-500: #D4A860;
+  --c-gold-600: #B89048;
+  --c-gold-700: #987838;
+  --c-gold-800: #785828;
+  --c-gold-900: #584018;
+
+  --c-bg: #FDF8F5;
+  --c-bg-elevated: #F8F0EC;
+  --c-bg-elevated-2: #F0E8E2;
+  --c-surface: #FFFCFA;
+  --c-surface-elevated: #FAF5F0;
+  --c-surface-overlay: rgba(255, 252, 250, 0.72);
+
+  --c-text-primary: #2E2825;
+  --c-text-secondary: #5E524C;
+  --c-text-tertiary: #7E6E66;
+  --c-text-disabled: #7E6E66;
+
+  --c-border: #E8DED6;
+  --c-border-light: #F0E8E0;
+  --c-border-subtle: var(--c-primary-300);
+
+  --shadow-xs: 0 1px 2px rgba(208, 112, 88, 0.04);
+  --shadow-sm: 0 1px 3px rgba(208, 112, 88, 0.06);
+  --shadow-md: 0 4px 14px rgba(208, 112, 88, 0.08);
+  --shadow-lg: 0 10px 30px rgba(208, 112, 88, 0.10);
+  --shadow-xl: 0 0 40px rgba(240, 196, 184, 0.12);
+  --shadow-glow: 0 0 20px rgba(240, 196, 184, 0.18);
+
+  --gradient-primary: linear-gradient(135deg, #E8927C 0%, #F0A888 50%, #E8B870 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(232, 146, 124, 0.1) 0%, rgba(240, 168, 136, 0.06) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(255, 252, 250, 0.88) 0%, rgba(253, 248, 245, 0.95) 100%);
+
+  --overlay: rgba(253, 248, 245, 0.6);
+
+  --hover-bg: rgba(208, 112, 88, 0.06);
+  --active-bg: rgba(208, 112, 88, 0.12);
+  --selection-bg: rgba(232, 146, 124, 0.3);
+
+  --c-header-bg: rgba(248, 240, 236, 0.75);
+  --c-header-scrolled-bg: rgba(255, 252, 250, 0.92);
+  --c-sidebar-bg: rgba(248, 240, 236, 0.85);
+  --c-footer-bg: rgba(248, 240, 236, 0.90);
+}
+
+// ----- 4.3 暗色主题 -----
 [data-theme='dark'] {
-  // 主色 (暖橙珊瑚 - 暗色调整)
   --c-primary-100: #1C1210;
   --c-primary-200: #2E1A14;
   --c-primary-300: #583830;
@@ -497,7 +728,6 @@ $sz: (
   --c-primary-800: #FCE6DC;
   --c-primary-900: #FDF3EE;
 
-  // 辅助色
   --c-secondary-100: #1A100C;
   --c-secondary-200: #2E1C14;
   --c-secondary-300: #583828;
@@ -508,7 +738,6 @@ $sz: (
   --c-secondary-800: #FCE8DC;
   --c-secondary-900: #FFF5F0;
 
-  // 强调色
   --c-accent-100: #1A1410;
   --c-accent-200: #2E2218;
   --c-accent-300: #584030;
@@ -519,7 +748,6 @@ $sz: (
   --c-accent-800: #FFEED5;
   --c-accent-900: #FFF8F0;
 
-  // 金色
   --c-gold-100: #1A1410;
   --c-gold-200: #2E2018;
   --c-gold-300: #483828;
@@ -530,24 +758,22 @@ $sz: (
   --c-gold-800: #FFF0D5;
   --c-gold-900: #FFFAF0;
 
-  // 语义颜色
-  --c-bg: #0E0A08;                    // 深黑棕背景
-  --c-bg-elevated: #161210;           // 略深
-  --c-bg-elevated-2: #1E1816;         // 更深
-  --c-surface: #1A1412;               // 深色卡片
-  --c-surface-elevated: #221C18;      // 提升卡片
-  --c-surface-overlay: rgba(26, 20, 18, 0.72); // 毛玻璃
+  --c-bg: #0E0A08;
+  --c-bg-elevated: #161210;
+  --c-bg-elevated-2: #1E1816;
+  --c-surface: #1A1412;
+  --c-surface-elevated: #221C18;
+  --c-surface-overlay: rgba(26, 20, 18, 0.72);
 
-  --c-text-primary: #EDE0D8;          // 暖白文本
-  --c-text-secondary: #B8A89E;        // 暖灰
-  --c-text-tertiary: #8A7A6E;         // 深暖灰
-  --c-text-disabled: #8A7A6E;         // 同三级
+  --c-text-primary: #EDE0D8;
+  --c-text-secondary: #B8A89E;
+  --c-text-tertiary: #8A7A6E;
+  --c-text-disabled: #8A7A6E;
 
-  --c-border: #302822;                // 深边框
-  --c-border-light: #261E1A;          // 浅深边框
-  --c-border-subtle: var(--c-primary-500); // 主色细微边框
+  --c-border: #302822;
+  --c-border-light: #261E1A;
+  --c-border-subtle: var(--c-primary-500);
 
-  // 阴影 (暗色下更深)
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.15);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
   --shadow-md: 0 4px 14px rgba(88, 48, 40, 0.22);
@@ -555,46 +781,37 @@ $sz: (
   --shadow-xl: 0 0 40px rgba(232, 146, 124, 0.15);
   --shadow-glow: 0 0 20px rgba(232, 184, 112, 0.20);
 
-  // 渐变 (暖色亮)
   --gradient-primary: linear-gradient(135deg, #F0A890 0%, #F5B898 50%, #E8B870 100%);
   --gradient-subtle: linear-gradient(135deg, rgba(240, 168, 136, 0.12) 0%, rgba(245, 184, 152, 0.08) 100%);
   --gradient-surface: linear-gradient(180deg, rgba(26, 20, 18, 0.88) 0%, rgba(14, 10, 8, 0.95) 100%);
 
-  // 覆盖层
   --overlay: rgba(14, 10, 8, 0.65);
 
-  // 交互状态
   --hover-bg: rgba(240, 168, 136, 0.12);
   --active-bg: rgba(240, 168, 136, 0.20);
   --selection-bg: rgba(240, 168, 136, 0.35);
 
-  // ===== 头部专用背景 (实色) =====
-  --c-header-bg: #1E1816;              // 与主背景一致
-  --c-header-scrolled-bg: #1A1412;     // 滚动后变为表面色
-
-  // ===== 侧边栏专用背景 (实色) =====
-  --c-sidebar-bg: #1E1816;             // 使用提升背景色
-
-  // ===== 页脚专用背景 (实色) =====
-  --c-footer-bg: #1E1816;              // 使用更深一点的背景
+  --c-header-bg: rgba(30, 24, 22, 0.80);
+  --c-header-scrolled-bg: rgba(26, 20, 18, 0.95);
+  --c-sidebar-bg: rgba(30, 24, 22, 0.85);
+  --c-footer-bg: rgba(30, 24, 22, 0.92);
 }
 
-// ----- 3.4 重置与基础 -----
-// 全局重置，消除浏览器默认样式差异
+// ----- 4.4 重置与基础 -----
 *,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; // 边框盒模型，避免尺寸计算混乱
+  box-sizing: border-box;
 }
 
 html {
-  font-size: var(--fs-base);    // 基准字号 16px
-  -webkit-text-size-adjust: 100%; // 防止 iOS 自动放大
+  font-size: var(--fs-base);
+  -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-behavior: smooth;      // 平滑滚动
-  -webkit-tap-highlight-color: transparent; // 移除移动端点击高亮
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -604,12 +821,12 @@ body {
   color: var(--c-text-primary);
   background: var(--c-bg);
   min-height: 100vh;
-  overflow-x: hidden;           // 防止水平滚动
-  -webkit-font-smoothing: antialiased; // 字体平滑
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-// 链接样式
+// ----- 4.5 基础元素 -----
 a {
   color: var(--c-primary-400);
   text-decoration: none;
@@ -620,20 +837,17 @@ a {
   }
 }
 
-// 图片默认块级，自适应
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-// 列表重置
 ul,
 ol {
   list-style: none;
 }
 
-// 按钮继承字体
 button {
   font-family: inherit;
   font-size: inherit;
@@ -643,7 +857,6 @@ button {
   color: inherit;
 }
 
-// 表单元素继承字体
 input,
 textarea,
 select {
@@ -652,7 +865,6 @@ select {
   color: inherit;
 }
 
-// 标题样式
 h1,
 h2,
 h3,
@@ -662,7 +874,7 @@ h6 {
   font-weight: var(--fw-semibold);
   line-height: var(--lh-tight);
   color: var(--c-text-primary);
-  letter-spacing: -0.01em; // 标题略微紧凑
+  letter-spacing: -0.01em;
 }
 
 h1 {
@@ -686,7 +898,6 @@ h6 {
   font-size: var(--fs-base);
 }
 
-// 段落间距
 p {
   margin-bottom: var(--sp-4);
   &:last-child {
@@ -694,13 +905,11 @@ p {
   }
 }
 
-// 选中样式
 ::selection {
   background: var(--selection-bg);
 }
 
-// ----- 3.5 滚动条 -----
-// Webkit 滚动条样式
+// ----- 4.6 滚动条 -----
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -721,21 +930,18 @@ p {
   }
 }
 
-// Firefox 滚动条
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--c-primary-300) var(--c-border-light);
 }
 
-// ----- 3.6 辅助功能 -----
-// 键盘焦点指示器
+// ----- 4.7 辅助功能 -----
 :focus-visible {
   outline: 2px solid var(--c-primary-400);
   outline-offset: 2px;
   border-radius: var(--rd-xs);
 }
 
-// 跳过导航链接 (键盘用户)
 .skip-link {
   position: absolute;
   top: -100%;
@@ -754,7 +960,6 @@ p {
   }
 }
 
-// 屏幕阅读器专用
 .sr-only {
   position: absolute;
   width: 1px;
@@ -767,15 +972,13 @@ p {
   border: 0;
 }
 
-// ----- 3.7 工具类 -----
-// 单行截断
+// ----- 4.8 工具类 -----
 .text-ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-// 两行截断
 .text-ellipsis-2 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -784,7 +987,6 @@ p {
   overflow: hidden;
 }
 
-// 三行截断
 .text-ellipsis-3 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -793,7 +995,6 @@ p {
   overflow: hidden;
 }
 
-// 渐变文字 (需配合 background-clip)
 .gradient-text {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
@@ -801,13 +1002,11 @@ p {
   background-clip: text;
 }
 
-// 居中文本
 .text-center {
   text-align: center;
 }
 
-// ----- 3.8 容器 -----
-// 主容器 - 限制最大宽度，居中
+// ----- 4.9 容器 -----
 .container {
   width: var(--cw);
   max-width: var(--cw-xl);
@@ -815,7 +1014,6 @@ p {
   padding: 0 var(--sp-5);
 }
 
-// 内容包装器 - 用于页面布局
 .content-wrapper {
   position: relative;
   z-index: 1;
@@ -824,17 +1022,15 @@ p {
   flex-direction: column;
 
   main {
-    flex: 1; // 将 footer 推到底部
+    flex: 1;
   }
 }
 
-// 区块内容
 .section-content {
   padding: var(--sp-12) 0 var(--sp-16);
   min-height: calc(100vh - var(--sz-header) - 200px);
 }
 
-// 区块头部
 .section-header {
   text-align: center;
   margin-bottom: var(--sp-12);
@@ -880,7 +1076,6 @@ p {
   box-shadow: var(--shadow-md);
 }
 
-// 页面头部
 .page-header {
   text-align: center;
   padding: var(--sp-10) 0 var(--sp-6);
@@ -904,14 +1099,14 @@ p {
   line-height: var(--lh-relaxed);
 }
 
-// ----- 3.9 背景层 -----
+// ----- 4.10 背景层 -----
 .bg-layer {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; // 允许点击穿透
+  pointer-events: none;
 }
 
 .bg-image {
@@ -930,12 +1125,11 @@ p {
   background: var(--overlay);
 }
 
-// ----- 3.10 卡片系统 (核心复用) -----
-// 基础卡片 - 毛玻璃效果 (主要用于内容卡片)
+// ----- 4.11 卡片系统 -----
 .card {
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   border-radius: var(--rd-xl);
   padding: var(--sp-5);
   box-shadow: var(--shadow-md);
@@ -947,7 +1141,6 @@ p {
     background var(--tr-base) var(--ez-default);
   will-change: transform;
 
-  // 顶部渐变条
   &::before {
     content: '';
     position: absolute;
@@ -963,7 +1156,7 @@ p {
   }
 
   &:hover {
-    transform: translateY(-8px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-lg);
 
     &::before {
@@ -972,7 +1165,6 @@ p {
   }
 }
 
-// 侧边栏卡片 - 使用实色背景 (无毛玻璃)
 .sidebar-card {
   background: var(--c-sidebar-bg) !important;
   backdrop-filter: none !important;
@@ -985,17 +1177,15 @@ p {
     box-shadow var(--tr-base) var(--ez-default);
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-md);
   }
 
-  // 移除顶部渐变条
   &::before {
     display: none;
   }
 }
 
-// 侧边栏小部件 - 使用实色背景
 .sidebar-widget {
   margin-bottom: var(--sp-5);
   border-radius: var(--rd-lg);
@@ -1014,7 +1204,6 @@ p {
   }
 }
 
-// 侧边栏标题
 .sidebar-title {
   display: flex;
   align-items: center;
@@ -1032,14 +1221,12 @@ p {
   }
 }
 
-// 内容卡片
 .content-card {
   padding: var(--sp-8);
   margin: var(--sp-8) 0;
 }
 
-// ----- 3.11 按钮系统 -----
-// 基础按钮
+// ----- 4.12 按钮系统 -----
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1061,7 +1248,6 @@ p {
     color var(--tr-fast) var(--ez-default),
     box-shadow var(--tr-fast) var(--ez-default);
 
-  // 点击涟漪效果
   &::before {
     content: '';
     position: absolute;
@@ -1081,7 +1267,6 @@ p {
   }
 }
 
-// 主按钮 - 渐变背景
 .btn-primary {
   background: var(--gradient-primary);
   color: #fff;
@@ -1089,29 +1274,27 @@ p {
 
   &:hover {
     color: #fff;
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     box-shadow: var(--shadow-lg);
   }
 }
 
-// 次级按钮 - 边框
 .btn-secondary {
   background: var(--c-surface-overlay);
   color: var(--c-text-primary);
   border: 1.5px solid var(--c-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &:hover {
     background: var(--c-primary-100);
     border-color: var(--c-primary-400);
     color: var(--c-primary-400);
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     box-shadow: var(--shadow-md);
   }
 }
 
-// 轮廓按钮
 .btn-outline {
   background: transparent;
   color: var(--c-text-primary);
@@ -1124,7 +1307,6 @@ p {
   }
 }
 
-// 幽灵按钮
 .btn-ghost {
   background: transparent;
   color: var(--c-text-secondary);
@@ -1135,7 +1317,6 @@ p {
   }
 }
 
-// 按钮尺寸变体
 .btn-sm {
   padding: var(--sp-2) var(--sp-4);
   font-size: var(--fs-xs);
@@ -1148,7 +1329,6 @@ p {
   min-height: var(--sz-icon-sm);
 }
 
-// 动画按钮 - 涟漪扩展
 .btn-anime {
   position: relative;
   overflow: hidden;
@@ -1174,19 +1354,14 @@ p {
 }
 
 // ============================================================================
-// 第四部分：组件样式 (默认 = 移动端)
+// 第五部分：组件样式
 // ============================================================================
 
-// ----- 4.1 头部导航 (移动优先: 堆叠布局) -----
-/**
- * 移动端: 汉堡菜单
- * 平板+: 显示完整导航
- * 背景: 使用实色 (无毛玻璃)
- */
+// ----- 5.1 头部导航 -----
 .site-header {
   background: var(--c-header-bg);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   box-shadow: 0 1px 0 var(--c-border), var(--shadow-sm);
   position: sticky;
   top: 0;
@@ -1202,7 +1377,6 @@ p {
     padding: 0;
   }
 
-  // 滚动时使用更深的实色背景
   &.scrolled {
     background: var(--c-header-scrolled-bg);
     box-shadow: var(--shadow-md);
@@ -1245,7 +1419,7 @@ p {
 }
 
 .site-subtitle {
-  display: none; // 移动端隐藏
+  display: none;
   font-size: var(--fs-xs);
   color: var(--c-text-secondary);
   font-weight: var(--fw-normal);
@@ -1253,7 +1427,6 @@ p {
   white-space: nowrap;
 }
 
-// 桌面导航 (移动端隐藏)
 .main-nav {
   display: none;
   flex: 1;
@@ -1308,7 +1481,6 @@ p {
   flex-shrink: 0;
 }
 
-// 移动端菜单按钮 (汉堡)
 .mobile-menu-toggle {
   width: var(--sz-btn);
   height: var(--sz-btn);
@@ -1324,12 +1496,11 @@ p {
   &:hover {
     background: var(--gradient-primary);
     color: #fff;
-    transform: scale(1.08);
+    transform: scale(var(--ts-lg));
     box-shadow: var(--shadow-sm);
   }
 }
 
-// 移动端菜单遮罩
 .mobile-menu-overlay {
   display: none;
   position: fixed;
@@ -1338,8 +1509,8 @@ p {
   width: 100%;
   height: 100%;
   background: var(--overlay);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
   z-index: 999;
   opacity: 0;
   transition: opacity var(--tr-base) var(--ez-default);
@@ -1350,7 +1521,6 @@ p {
   }
 }
 
-// 移动端菜单抽屉 - 使用实色背景
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -1419,8 +1589,7 @@ p {
   }
 }
 
-// ----- 4.2 页脚 (移动优先: 单列) -----
-// 页脚使用实色背景
+// ----- 5.2 页脚 -----
 .site-footer {
   background: var(--c-footer-bg);
   backdrop-filter: none;
@@ -1431,7 +1600,6 @@ p {
   position: relative;
   overflow: hidden;
 
-  // 顶部渐变条
   &::before {
     content: '';
     position: absolute;
@@ -1508,7 +1676,7 @@ p {
 
     &:hover {
       color: var(--c-primary-500);
-      transform: translateX(6px);
+      transform: translateX(var(--ao-sm));
 
       i {
         opacity: 1;
@@ -1545,7 +1713,7 @@ p {
   &:hover {
     background: var(--gradient-primary);
     color: #fff;
-    transform: translateY(-3px) scale(1.05);
+    transform: translateY(calc(var(--ao-min) * -3)) scale(var(--ts-lg));
     box-shadow: var(--shadow-glow);
   }
 }
@@ -1635,7 +1803,7 @@ p {
     &:hover {
       color: var(--c-primary-700);
       background: var(--hover-bg);
-      transform: translateY(-1px);
+      transform: translateY(calc(var(--ao-min) * -1));
     }
   }
 }
@@ -1690,7 +1858,7 @@ p {
   }
 }
 
-// ----- 4.3 Hero (移动优先: 居中单列) -----
+// ----- 5.3 Hero -----
 .hero {
   padding: var(--sp-16) 0 var(--sp-8);
   text-align: left;
@@ -1729,7 +1897,6 @@ p {
   max-width: var(--sz-search);
   margin: 0 auto;
 
-  // Hero 右侧卡片使用实色背景
   .card {
     background: var(--c-surface);
     backdrop-filter: none;
@@ -1748,10 +1915,10 @@ p {
   font-size: var(--fs-sm);
   color: var(--c-primary-400);
   margin-bottom: var(--sp-8);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-md));
 
   i {
-    animation: sparkle 2s ease-in-out infinite;
+    animation: sparkle var(--ad-sparkle) ease-in-out infinite;
   }
 }
 
@@ -1780,7 +1947,7 @@ p {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradientFlow 8s ease infinite;
+  animation: gradientFlow var(--ad-gradient) ease infinite;
   will-change: background-position;
 }
 
@@ -1825,7 +1992,7 @@ p {
   gap: var(--sp-3);
   color: var(--c-text-primary);
   font-size: var(--fs-sm);
-  animation: bounceDown 2.5s ease-in-out infinite;
+  animation: bounceDown var(--ad-bounce) ease-in-out infinite;
 }
 
 .scroll-mouse {
@@ -1845,7 +2012,7 @@ p {
   top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  animation: scrollWheel 2s ease-in-out infinite;
+  animation: scrollWheel var(--ad-scroll-wheel) ease-in-out infinite;
 }
 
 .fancy-quote {
@@ -1855,7 +2022,7 @@ p {
   background: var(--gradient-subtle);
   border-radius: var(--rd-3xl);
   border: 1px solid var(--c-border);
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(var(--blur-lg));
   max-width: 100%;
   margin: 0;
 }
@@ -1881,7 +2048,7 @@ p {
   font-weight: var(--fw-semibold);
 }
 
-// ----- 4.4 文章卡片 (移动优先: 单列) -----
+// ----- 5.4 文章卡片 -----
 .posts-section {
   padding: var(--sp-16) 0;
 }
@@ -1905,16 +2072,16 @@ p {
   flex-direction: column;
   height: 100%;
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &:hover {
-    transform: translateY(-8px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-lg);
     border-color: var(--c-primary-300);
 
     .post-image img {
-      transform: scale(1.06);
+      transform: scale(var(--ts-lg));
     }
   }
 }
@@ -2055,7 +2222,7 @@ p {
     color: var(--c-primary-600);
 
     i {
-      transform: translateX(4px);
+      transform: translateX(var(--ao-min));
     }
   }
 
@@ -2065,7 +2232,7 @@ p {
   }
 }
 
-// ----- 4.5 关于板块 (移动优先: 居中单列) -----
+// ----- 5.5 关于板块 -----
 .about-section {
   padding: var(--sp-16) 0;
 }
@@ -2081,8 +2248,8 @@ p {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--c-border);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   .about-content {
     flex: 1;
@@ -2121,7 +2288,7 @@ p {
   justify-content: center;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     box-shadow: var(--shadow-md);
   }
 
@@ -2184,7 +2351,7 @@ p {
   opacity: 0.5;
 }
 
-// ----- 4.6 技能板块 (移动优先: 单列) -----
+// ----- 5.6 技能板块 -----
 .skills-section {
   padding: var(--sp-16) 0;
 }
@@ -2205,11 +2372,11 @@ p {
   transition: all var(--tr-base) var(--ez-spring);
   box-shadow: var(--shadow-sm);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-md);
   }
 }
@@ -2260,7 +2427,7 @@ p {
   transition: width var(--tr-slowest) var(--ez-spring);
 }
 
-// ----- 4.7 关于页面组件 -----
+// ----- 5.7 关于页面 -----
 .about-intro {
   margin: var(--sp-6) 0;
 }
@@ -2276,8 +2443,8 @@ p {
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--c-border);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 }
 
 .intro-content {
@@ -2308,8 +2475,8 @@ p {
 
 .intro-quote {
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--blur-xl));
+  -webkit-backdrop-filter: blur(var(--blur-xl));
   border-left: 3px solid var(--c-primary-400);
   padding: var(--sp-5);
   border-radius: 0 var(--rd-lg) var(--rd-lg) 0;
@@ -2368,7 +2535,7 @@ p {
   background: var(--gradient-primary);
   border-radius: var(--rd-full);
   opacity: 0.15;
-  animation: pulse 3s ease-in-out infinite;
+  animation: pulse var(--ad-pulse) ease-in-out infinite;
 }
 
 .about-philosophy {
@@ -2386,15 +2553,15 @@ p {
   text-align: center;
   padding: var(--sp-6);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   border-radius: var(--rd-xl);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--c-border);
   transition: all var(--tr-base) var(--ez-spring);
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     box-shadow: var(--shadow-lg);
   }
 
@@ -2455,8 +2622,8 @@ p {
   gap: var(--sp-4);
   padding: var(--sp-4);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
   border-radius: var(--rd-lg);
   text-decoration: none;
   transition: all var(--tr-fast) var(--ez-spring);
@@ -2464,7 +2631,7 @@ p {
 
   &:hover {
     border-color: var(--c-primary-300);
-    transform: translateY(-2px);
+    transform: translateY(calc(var(--ao-min) * -2));
   }
 }
 
@@ -2499,7 +2666,7 @@ p {
   }
 }
 
-// ----- 4.8 技能页面 -----
+// ----- 5.8 技能页面 -----
 .skills-overview,
 .detailed-skills,
 .skill-development {
@@ -2542,13 +2709,13 @@ p {
   padding: var(--sp-6);
   border-radius: var(--rd-lg);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(var(--blur-xl));
+  -webkit-backdrop-filter: blur(var(--blur-xl));
   border: 1px solid var(--c-border);
   transition: all var(--tr-base) var(--ez-spring);
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     background: var(--c-surface);
     box-shadow: var(--shadow-lg);
   }
@@ -2736,7 +2903,7 @@ p {
   }
 }
 
-// ----- 4.9 友链页面 -----
+// ----- 5.9 友链页面 -----
 .friends-links {
   margin: var(--sp-10) 0;
 }
@@ -2761,12 +2928,12 @@ p {
     box-shadow var(--tr-base) var(--ez-spring),
     background var(--tr-base) var(--ez-spring);
   box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   background: var(--c-surface-overlay);
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-lg);
     border-color: var(--c-primary-300);
 
@@ -2774,7 +2941,7 @@ p {
       border-color: var(--c-primary-400);
 
       img {
-        transform: scale(1.1);
+        transform: scale(var(--ts-xl));
       }
     }
   }
@@ -2851,7 +3018,7 @@ p {
     gap: var(--sp-2);
 
     i {
-      transform: translateX(2px);
+      transform: translateX(var(--ao-min));
     }
   }
 
@@ -2953,8 +3120,8 @@ p {
 
 .site-info {
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
   border-radius: var(--rd-lg);
   padding: var(--sp-5);
   border: 1px solid var(--c-border);
@@ -3011,13 +3178,13 @@ p {
   box-shadow: var(--shadow-sm);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(calc(var(--ao-min) * -2));
     box-shadow: var(--shadow-glow);
     color: #fff;
   }
 }
 
-// ----- 4.10 工具页面 -----
+// ----- 5.10 工具页面 -----
 .tools-section {
   margin: var(--sp-8) 0;
 }
@@ -3081,8 +3248,8 @@ p {
   gap: var(--sp-4);
   padding: var(--sp-4) var(--sp-5);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   border: 1px solid var(--c-border);
   border-radius: var(--rd-lg);
   text-decoration: none;
@@ -3103,7 +3270,7 @@ p {
   }
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--ao-min) * -4));
     box-shadow: var(--shadow-lg);
     border-color: var(--c-primary-300);
 
@@ -3169,11 +3336,11 @@ p {
   color: var(--c-text-tertiary);
   font-size: var(--fs-sm);
   opacity: 0;
-  transform: translateX(-4px);
+  transform: translateX(calc(var(--ao-min) * -4));
   transition: all var(--tr-fast) var(--ez-default);
 }
 
-// ----- 4.11 归档页面 (移动优先: 侧边栏隐藏) -----
+// ----- 5.11 归档页面 -----
 .archives-layout {
   display: flex;
   flex-direction: column;
@@ -3279,7 +3446,7 @@ p {
   gap: var(--sp-4);
   padding: var(--sp-3) var(--sp-4);
   background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
   border-radius: var(--rd-lg);
   text-decoration: none;
   transition: all var(--tr-fast) var(--ez-spring);
@@ -3288,7 +3455,7 @@ p {
   &:hover {
     background: var(--c-primary-100);
     border-color: var(--c-primary-300);
-    transform: translateX(4px);
+    transform: translateX(var(--ao-min));
 
     .archive-title {
       color: var(--c-primary-400);
@@ -3361,7 +3528,7 @@ p {
     background: var(--gradient-primary);
     color: #fff;
     border-color: transparent;
-    transform: scale(1.05);
+    transform: scale(var(--ts-lg));
   }
 
   &:disabled {
@@ -3413,7 +3580,7 @@ p {
     background: var(--c-primary-100);
     border-color: var(--c-primary-300);
     color: var(--c-text-primary);
-    transform: translateX(2px);
+    transform: translateX(var(--ao-min));
   }
 
   &.has-posts {
@@ -3472,7 +3639,7 @@ p {
   }
 }
 
-// ----- 4.12 标签页面 -----
+// ----- 5.12 标签页面 -----
 .tags-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -3498,8 +3665,8 @@ p {
   overflow: hidden;
   height: 100%;
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &::before {
     content: '';
@@ -3514,7 +3681,7 @@ p {
   }
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-lg);
     border-color: var(--c-primary-300);
 
@@ -3559,8 +3726,8 @@ p {
   padding: var(--sp-16) var(--sp-6);
   color: var(--c-text-secondary);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
   border-radius: var(--rd-xl);
   border: 1px solid var(--c-border);
 
@@ -3587,8 +3754,8 @@ p {
   font-size: var(--fs-base);
   font-weight: var(--fw-medium);
   border: 1px solid var(--c-border);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
 
   i {
     font-size: var(--fs-base);
@@ -3604,7 +3771,7 @@ p {
   margin: 0 auto;
 }
 
-// ----- 4.13 文章列表 & 列表项 -----
+// ----- 5.13 文章列表 -----
 .posts-list {
   display: flex;
   flex-direction: column;
@@ -3620,16 +3787,16 @@ p {
   transition: all var(--tr-base) var(--ez-spring);
   box-shadow: var(--shadow-sm);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(calc(var(--ao-sm) * -1));
     box-shadow: var(--shadow-lg);
     border-color: var(--c-primary-300);
 
     .post-item-image img {
-      transform: scale(1.05);
+      transform: scale(var(--ts-lg));
     }
   }
 
@@ -3691,7 +3858,7 @@ p {
   margin-bottom: var(--sp-min);
 }
 
-// ----- 4.14 分页 -----
+// ----- 5.14 分页 -----
 .pagination {
   display: flex;
   align-items: center;
@@ -3728,7 +3895,7 @@ p {
     background: var(--c-primary-100);
     border-color: var(--c-primary-300);
     color: var(--c-primary-500);
-    transform: translateY(-2px);
+    transform: translateY(calc(var(--ao-min) * -2));
     box-shadow: var(--shadow-sm);
   }
 
@@ -3784,7 +3951,7 @@ p {
   }
 }
 
-// ----- 4.15 文章列表侧边栏 (移动优先: 隐藏) -----
+// ----- 5.15 文章列表侧边栏 -----
 .posts-layout {
   display: flex;
   flex-direction: column;
@@ -3948,7 +4115,7 @@ p {
   }
 }
 
-// ----- 4.16 文章详情页 -----
+// ----- 5.16 文章详情页 -----
 .article-page {
   padding-bottom: var(--sp-8);
 }
@@ -4433,14 +4600,14 @@ p {
   border-radius: var(--rd-xl);
   border: 1px solid var(--c-border);
   background: var(--c-surface-overlay);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
   text-decoration: none;
   transition: all var(--tr-base) var(--ez-default);
 
   &:hover {
     border-color: var(--c-primary-300);
     box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(calc(var(--ao-min) * -2));
   }
 
   &-label {
@@ -4492,7 +4659,7 @@ p {
   }
 }
 
-// ----- 4.17 评论 -----
+// ----- 5.17 评论 -----
 .comments-section {
   padding: var(--sp-12) 0;
   margin-top: var(--sp-12);
@@ -4527,7 +4694,7 @@ p {
   }
 }
 
-// ----- 4.18 搜索 -----
+// ----- 5.18 搜索 -----
 .search-component {
   width: 100%;
 }
@@ -4576,7 +4743,7 @@ p {
 
   &:hover,
   &:focus {
-    transform: scale(1.02);
+    transform: scale(var(--ts-lg));
     box-shadow: var(--shadow-glow);
   }
 }
@@ -4713,8 +4880,8 @@ p {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
   z-index: 9998;
   opacity: 0;
   transition: opacity var(--tr-base) var(--ez-default);
@@ -4795,12 +4962,12 @@ p {
   }
 }
 
-// ----- 4.19 404页面 -----
+// ----- 5.19 404页面 -----
 .error-icon {
   font-size: 5rem;
   color: var(--c-primary-400);
   margin-bottom: var(--sp-4);
-  animation: float 3s ease-in-out infinite;
+  animation: float var(--ad-float) ease-in-out infinite;
 }
 
 .error-message {
@@ -4816,7 +4983,7 @@ p {
   flex-wrap: wrap;
 }
 
-// ----- 4.20 法律页面 -----
+// ----- 5.20 法律页面 -----
 .legal-content {
   max-width: var(--sz-readable);
   margin: 0 auto;
@@ -4872,7 +5039,7 @@ p {
   }
 }
 
-// ----- 4.21 滚动按钮 -----
+// ----- 5.21 滚动按钮 -----
 .scroll-buttons {
   position: fixed;
   right: var(--sp-2);
@@ -4883,7 +5050,7 @@ p {
   gap: var(--sp-min);
   z-index: 999;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(var(--ao-md));
   transition: all var(--tr-base) var(--ez-default);
   pointer-events: none;
 
@@ -4908,19 +5075,19 @@ p {
   cursor: pointer;
   transition: all var(--tr-fast) var(--ez-default);
   background: var(--c-surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
 
   &:hover {
     background: var(--gradient-primary);
     border-color: transparent;
     color: #fff;
-    transform: scale(1.1);
+    transform: scale(var(--ts-xl));
     box-shadow: var(--shadow-lg);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(var(--ts-sm));
   }
 }
 
@@ -4930,7 +5097,7 @@ p {
   gap: var(--sp-min);
 }
 
-// ----- 4.22 代码高亮 -----
+// ----- 5.22 代码高亮 -----
 .highlight {
   position: relative;
   border-radius: var(--rd-lg);
@@ -5038,7 +5205,7 @@ p {
   border: 1px solid rgba(167, 139, 250, 0.25);
 }
 
-// ----- 4.23 Chroma 语法高亮 -----
+// ----- 5.23 Chroma 语法高亮 -----
 .chroma {
   color: var(--c-text-primary);
 
@@ -5173,48 +5340,390 @@ p {
   }
 }
 
-// ----- 4.24 动画关键帧 -----
-@keyframes sparkle {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.15);
+// ----- 5.24 装饰动画元素 -----
+.card-anime-decoration {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+      45deg,
+      transparent 42%,
+      rgba(250, 224, 236, 0.06) 46%,
+      rgba(250, 224, 236, 0.12) 50%,
+      rgba(250, 224, 236, 0.06) 54%,
+      transparent 58%
+    );
+    animation: cardShine var(--ad-shimmer) ease-in-out infinite;
+    pointer-events: none;
+    will-change: transform;
   }
 }
 
-@keyframes scrollWheel {
-  0%,
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    opacity: 0.3;
-    transform: translateX(-50%) translateY(12px);
+.title-anime {
+  position: relative;
+  display: inline-block;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: var(--rd-full);
+    opacity: 0.7;
   }
 }
 
-@keyframes bounceDown {
+.divider-anime {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--c-primary-300) 20%,
+    var(--c-secondary-300) 50%,
+    var(--c-accent-200) 80%,
+    transparent 100%
+  );
+  border: none;
+  margin: var(--sp-10) 0;
+  position: relative;
+  opacity: 0.8;
+
+  &::before {
+    content: '\2740';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--c-bg);
+    padding: 0 var(--sp-5);
+    color: var(--c-primary-400);
+    font-size: var(--fs-md);
+    line-height: 1;
+  }
+}
+
+.floating-element {
+  position: absolute;
+  width: var(--sz-icon-sm);
+  height: var(--sz-icon-sm);
+  background: var(--c-primary-400);
+  border-radius: var(--rd-full);
+  opacity: 0.04;
+  filter: blur(var(--blur-lg));
+  animation: floatAround var(--ad-shimmer) linear infinite;
+  pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gradient-primary);
+  z-index: 1001;
+  transform-origin: left;
+  transform: scaleX(0);
+  will-change: transform;
+  box-shadow: 0 0 12px rgba(232, 160, 191, 0.35);
+}
+
+// ----- 5.25 动画通用类 -----
+.animate-fade-in {
+  animation: fadeIn var(--ad-base) var(--ez-spring) forwards;
+  will-change: opacity;
+}
+.animate-fade-in-up {
+  animation: fadeInUp var(--ad-base) var(--ez-spring) forwards;
+  will-change: opacity, transform;
+}
+.animate-fade-in-down {
+  animation: fadeInDown var(--ad-base) var(--ez-spring) forwards;
+  will-change: opacity, transform;
+}
+.animate-scale-in {
+  animation: scaleIn var(--ad-base) var(--ez-spring) forwards;
+  will-change: opacity, transform;
+}
+.animate-bounce {
+  animation: bounce var(--ad-bounce) var(--ez-default) infinite;
+  will-change: transform;
+}
+.animate-float {
+  animation: float var(--ad-float) var(--ez-default) infinite;
+  will-change: transform;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-300 {
+  animation-delay: 0.3s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+// ----- 5.26 点击特效 & 灯箱 -----
+.click-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  animation: clickStarPop var(--ad-slower) ease-out forwards;
+
+  i {
+    color: var(--c-gold-500);
+    font-size: 20px;
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
+  }
+}
+
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: transparent;
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--tr-base) var(--ez-default),
+    visibility var(--tr-base) var(--ez-default);
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+
+    img {
+      transform: scale(1);
+    }
+  }
+
+  img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--rd-lg);
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform var(--tr-base) var(--ez-spring);
+    cursor: default;
+  }
+
+  &-close {
+    position: absolute;
+    top: var(--sp-6);
+    right: var(--sp-6);
+    width: var(--sz-scroll);
+    height: var(--sz-scroll);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-radius: var(--rd-full);
+    font-size: var(--fs-lg);
+    cursor: pointer;
+    border: none;
+    transition: all var(--tr-fast) var(--ez-default);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+#effects-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+// ----- 5.27 Shortcode 技能组件 -----
+.skills-shortcode {
+  margin: var(--sp-8) 0;
+
+  h3 {
+    margin-bottom: var(--sp-6);
+    color: var(--c-text-primary);
+    font-size: var(--fs-md);
+  }
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.skill-shortcode-item {
+  background: var(--c-primary-100);
+  padding: var(--sp-4);
+  border-radius: var(--rd-lg);
+}
+
+.skill-shortcode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-2);
+}
+
+.skill-shortcode-name {
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-primary);
+}
+
+.skill-shortcode-level {
+  background: var(--gradient-primary);
+  color: #fff;
+  padding: var(--sp-min) var(--sp-3);
+  border-radius: var(--rd-full);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.skill-shortcode-bar {
+  height: 8px;
+  background: var(--c-primary-100);
+  border-radius: var(--rd-full);
+  overflow: hidden;
+}
+
+.skill-shortcode-progress {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--rd-full);
+  transition: width var(--tr-slowest) ease-in-out;
+}
+
+// ============================================================================
+// 第六部分：动画关键帧 (全部使用变量)
+// ============================================================================
+
+@keyframes cardShine {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  }
+  50% {
+    transform: translateX(20%) translateY(20%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  }
+}
+
+@keyframes clickStarPop {
+  0% {
+    opacity: 1;
+    transform: scale(var(--ts-min)) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(var(--ts-2xl)) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(var(--ts-sm)) rotate(360deg) translateY(var(--ao-xl));
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ao-md));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--ao-md) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(var(--ao-md));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--ao-md) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(var(--ts-md));
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--ts-base));
+  }
+}
+
+@keyframes bounce {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(10px);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
+    transform: translateY(calc(var(--ao-sm) * -1));
   }
 }
 
@@ -5224,17 +5733,43 @@ p {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(calc(var(--ao-md) * -1));
   }
 }
 
-@keyframes starTwinkle {
+@keyframes floatAround {
   0%,
   100% {
-    opacity: 0.5;
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(var(--ao-xl), calc(var(--ao-xl) * -1));
   }
   50% {
-    opacity: 0.8;
+    transform: translate(calc(var(--ao-xl) * -1), var(--ao-2xl));
+  }
+  75% {
+    transform: translate(var(--ao-sm), calc(var(--ao-2xl) * -1));
+  }
+}
+
+@keyframes bounceDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--ao-sm));
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(var(--ts-base));
+  }
+  50% {
+    transform: scale(var(--ts-lg));
   }
 }
 
@@ -5250,22 +5785,99 @@ p {
   }
 }
 
-// ----- 4.25 无障碍：减少动画 -----
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@keyframes starTwinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(var(--ts-base));
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(var(--ts-2xl));
+  }
+}
+
+@keyframes scrollWheel {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateX(-50%) translateY(calc(var(--ao-md) * 0.75));
   }
 }
 
 // ============================================================================
-// 第五部分：响应式增量覆盖 (Mobile-First 管道)
+// 第七部分：暗色主题特有装饰
 // ============================================================================
 
-// ----- 5.1 大手机 (≥576px) -----
+[data-theme='dark'] {
+  .star {
+    background: radial-gradient(circle, var(--c-text-primary) 0%, var(--c-gold-500) 50%, transparent 100%);
+    box-shadow: 0 0 8px var(--c-gold-400);
+  }
+
+  .light-particle {
+    background: radial-gradient(circle, var(--c-secondary-200) 0%, var(--c-primary-300) 50%, var(--c-accent-200) 80%, transparent 100%);
+  }
+
+  .firefly {
+    background: radial-gradient(circle, var(--c-accent-400) 0%, var(--c-accent-300) 50%, transparent 100%);
+    box-shadow: 0 0 20px var(--c-accent-300);
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(240, 168, 136, 0.15) 0%, transparent 40%),
+      radial-gradient(ellipse at 85% 85%, rgba(245, 184, 152, 0.1) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(232, 184, 112, 0.06) 0%, transparent 50%);
+    animation: starTwinkle var(--ad-star-twinkle) ease-in-out infinite;
+  }
+}
+
+[data-theme='light'] {
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(240, 196, 184, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(245, 204, 184, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(245, 212, 160, 0.08) 0%, transparent 60%);
+    animation: pulse var(--ad-pulse) ease-in-out infinite alternate;
+  }
+}
+
+// ============================================================================
+// 第八部分：响应式增量覆盖 (Mobile-First)
+// ============================================================================
+
+// ----- 8.1 大手机 (≥576px) -----
 @include respond-to('sm') {
   .site-title {
     font-size: var(--sp-4);
@@ -5306,9 +5918,8 @@ p {
   }
 }
 
-// ----- 5.2 平板竖屏 (≥768px) 核心增量 -----
+// ----- 8.2 平板竖屏 (≥768px) -----
 @include respond-to('md') {
-  // 组件尺寸覆盖
   :root {
     --sz-header: var(--sz-header-md);
   }
@@ -5325,7 +5936,6 @@ p {
     font-size: var(--sp-4);
   }
 
-  // === 导航：显示桌面导航，隐藏移动菜单 ===
   .main-nav {
     display: flex;
     margin: 0 var(--sp-6);
@@ -5349,7 +5959,6 @@ p {
     display: none;
   }
 
-  // === Hero：水平布局 ===
   .hero {
     min-height: 100vh;
   }
@@ -5386,19 +5995,16 @@ p {
     justify-content: flex-start;
   }
 
-  // === 文章网格：两列 ===
   .posts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  // === 技能网格：多列 ===
   .skills-grid,
   .skills-categories,
   .skills-detailed-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  // === 友链网格：两列 ===
   .links-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -5424,7 +6030,6 @@ p {
     flex-direction: column;
   }
 
-  // === 关于卡片：水平布局 ===
   .about-card {
     flex-direction: row;
     text-align: left;
@@ -5450,7 +6055,6 @@ p {
     justify-content: flex-start;
   }
 
-  // === 介绍内容：水平布局 ===
   .intro-card {
     padding: var(--sp-8);
   }
@@ -5482,7 +6086,6 @@ p {
     max-width: var(--sz-search);
   }
 
-  // === 哲学网格：两列 ===
   .philosophy-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -5492,7 +6095,6 @@ p {
     padding: var(--sp-8);
   }
 
-  // === 时间线：两侧交替 ===
   .timeline {
     padding-left: 0;
     max-width: var(--sz-timeline);
@@ -5526,7 +6128,6 @@ p {
     margin-bottom: var(--sp-3);
   }
 
-  // === 文章列表项：水平布局 ===
   .post-item {
     flex-direction: row;
 
@@ -5545,7 +6146,6 @@ p {
     }
   }
 
-  // === 文章列表布局：显示侧边栏 ===
   .posts-layout {
     flex-direction: row;
     gap: var(--sp-8);
@@ -5572,7 +6172,6 @@ p {
     }
   }
 
-  // === 文章头部 ===
   .article-header {
     min-height: var(--sz-article-hdr-md);
   }
@@ -5581,7 +6180,6 @@ p {
     font-size: var(--fs-3xl);
   }
 
-  // === 文章正文：双列 ===
   .article-body-wrap {
     flex-direction: row;
   }
@@ -5604,7 +6202,6 @@ p {
     }
   }
 
-  // === 归档布局：显示侧边栏 ===
   .archives-layout {
     flex-direction: row;
     align-items: flex-start;
@@ -5630,19 +6227,16 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  // === 页脚：两列 ===
   .footer-content {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--sp-8);
   }
 
-  // === 工具分类头部：水平 ===
   .category-header {
     flex-direction: row;
     text-align: left;
   }
 
-  // === 工具卡片：水平 ===
   .tool-card {
     flex-direction: row;
     text-align: left;
@@ -5652,18 +6246,15 @@ p {
     display: block;
   }
 
-  // === 联系方式：三列 ===
   .contact-methods {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  // === 归档分类标签 ===
   .archive-category {
     width: auto;
     margin-top: 0;
   }
 
-  // === 搜索弹窗 ===
   .search-modal {
     width: 90%;
     max-height: 80vh;
@@ -5675,7 +6266,6 @@ p {
   }
 }
 
-// 移动端隐藏文章侧边栏 (max-width: 767px)
 @media (max-width: 767px) {
   .article-right {
     display: none !important;
@@ -5685,7 +6275,7 @@ p {
   }
 }
 
-// ----- 5.3 平板横屏/小桌面 (≥992px) -----
+// ----- 8.3 平板横屏/小桌面 (≥992px) -----
 @include respond-to('lg') {
   :root {
     --sz-header: var(--sz-header-lg);
@@ -5803,7 +6393,7 @@ p {
   }
 }
 
-// ----- 5.4 桌面 (≥1200px) -----
+// ----- 8.4 桌面 (≥1200px) -----
 @include respond-to('xl') {
   .container {
     max-width: var(--cw-xl);
@@ -5837,7 +6427,7 @@ p {
   }
 }
 
-// ----- 5.5 大桌面 (≥1440px) -----
+// ----- 8.5 大桌面 (≥1440px) -----
 @include respond-to('xxl') {
   .container {
     max-width: var(--cw-xxl);
@@ -5863,464 +6453,15 @@ p {
 }
 
 // ============================================================================
-// 第六部分：装饰动画元素 & 扩展组件 (原样式保留)
+// 第九部分：无障碍：减少动画
 // ============================================================================
 
-// ----- 6.1 装饰动画元素 -----
-.card-anime-decoration {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 300%;
-    height: 300%;
-    background: linear-gradient(
-      45deg,
-      transparent 42%,
-      rgba(250, 224, 236, 0.06) 46%,
-      rgba(250, 224, 236, 0.12) 50%,
-      rgba(250, 224, 236, 0.06) 54%,
-      transparent 58%
-    );
-    animation: cardShine 8s ease-in-out infinite;
-    pointer-events: none;
-    will-change: transform;
-  }
-}
-
-.title-anime {
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -6px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--gradient-primary);
-    border-radius: var(--rd-full);
-    opacity: 0.7;
-  }
-}
-
-.divider-anime {
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--c-primary-300) 20%,
-    var(--c-secondary-300) 50%,
-    var(--c-accent-200) 80%,
-    transparent 100%
-  );
-  border: none;
-  margin: var(--sp-10) 0;
-  position: relative;
-  opacity: 0.8;
-
-  &::before {
-    content: '\2740';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--c-bg);
-    padding: 0 var(--sp-5);
-    color: var(--c-primary-400);
-    font-size: var(--fs-md);
-    line-height: 1;
-  }
-}
-
-.floating-element {
-  position: absolute;
-  width: var(--sz-icon-sm);
-  height: var(--sz-icon-sm);
-  background: var(--c-primary-400);
-  border-radius: var(--rd-full);
-  opacity: 0.04;
-  filter: blur(16px);
-  animation: floatAround 40s linear infinite;
-  pointer-events: none;
-  will-change: transform;
-  transform: translateZ(0);
-}
-
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--gradient-primary);
-  z-index: 1001;
-  transform-origin: left;
-  transform: scaleX(0);
-  will-change: transform;
-  box-shadow: 0 0 12px rgba(232, 160, 191, 0.35);
-}
-
-// ----- 6.2 动画通用类 -----
-.animate-fade-in {
-  animation: fadeIn var(--tr-base) var(--ez-spring) forwards;
-  will-change: opacity;
-}
-.animate-fade-in-up {
-  animation: fadeInUp var(--tr-base) var(--ez-spring) forwards;
-  will-change: opacity, transform;
-}
-.animate-fade-in-down {
-  animation: fadeInDown var(--tr-base) var(--ez-spring) forwards;
-  will-change: opacity, transform;
-}
-.animate-scale-in {
-  animation: scaleIn var(--tr-base) var(--ez-spring) forwards;
-  will-change: opacity, transform;
-}
-.animate-bounce {
-  animation: bounce 2s var(--ez-default) infinite;
-  will-change: transform;
-}
-.animate-float {
-  animation: float 3s var(--ez-default) infinite;
-  will-change: transform;
-}
-
-.delay-100 {
-  animation-delay: 0.1s;
-}
-.delay-200 {
-  animation-delay: 0.2s;
-}
-.delay-300 {
-  animation-delay: 0.3s;
-}
-.delay-400 {
-  animation-delay: 0.4s;
-}
-.delay-500 {
-  animation-delay: 0.5s;
-}
-
-// ----- 6.3 点击特效 & 灯箱 -----
-.click-star {
-  position: fixed;
-  pointer-events: none;
-  z-index: 10000;
-  animation: clickStarPop var(--tr-slower) ease-out forwards;
-
-  i {
-    color: var(--c-gold-500);
-    font-size: 20px;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8));
-  }
-}
-
-.img-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 10001;
-  background: transparent;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--tr-base) var(--ez-default),
-    visibility var(--tr-base) var(--ez-default);
-
-  &.active {
-    opacity: 1;
-    visibility: visible;
-
-    img {
-      transform: scale(1);
-    }
-  }
-
-  img {
-    max-width: 90vw;
-    max-height: 85vh;
-    border-radius: var(--rd-lg);
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-    transform: scale(0.9);
-    transition: transform var(--tr-base) var(--ez-spring);
-    cursor: default;
-  }
-
-  &-close {
-    position: absolute;
-    top: var(--sp-6);
-    right: var(--sp-6);
-    width: var(--sz-scroll);
-    height: var(--sz-scroll);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    border-radius: var(--rd-full);
-    font-size: var(--fs-lg);
-    cursor: pointer;
-    border: none;
-    transition: all var(--tr-fast) var(--ez-default);
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: rotate(90deg);
-    }
-  }
-}
-
-#effects-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-// ----- 6.4 Shortcode 技能组件 -----
-.skills-shortcode {
-  margin: var(--sp-8) 0;
-
-  h3 {
-    margin-bottom: var(--sp-6);
-    color: var(--c-text-primary);
-    font-size: var(--fs-md);
-  }
-}
-
-.skills-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-
-.skill-shortcode-item {
-  background: var(--c-primary-100);
-  padding: var(--sp-4);
-  border-radius: var(--rd-lg);
-}
-
-.skill-shortcode-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--sp-2);
-}
-
-.skill-shortcode-name {
-  font-weight: var(--fw-semibold);
-  color: var(--c-text-primary);
-}
-
-.skill-shortcode-level {
-  background: var(--gradient-primary);
-  color: #fff;
-  padding: var(--sp-min) var(--sp-3);
-  border-radius: var(--rd-full);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-}
-
-.skill-shortcode-bar {
-  height: 8px;
-  background: var(--c-primary-100);
-  border-radius: var(--rd-full);
-  overflow: hidden;
-}
-
-.skill-shortcode-progress {
-  height: 100%;
-  background: var(--gradient-primary);
-  border-radius: var(--rd-full);
-  transition: width var(--tr-slowest) ease-in-out;
-}
-
-// ============================================================================
-// 第七部分：额外动画关键帧 (补充)
-// ============================================================================
-
-@keyframes cardShine {
-  0% {
-    transform: translateX(-50%) translateY(-50%) rotate(45deg);
-  }
-  50% {
-    transform: translateX(20%) translateY(20%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(-50%) translateY(-50%) rotate(45deg);
-  }
-}
-
-@keyframes clickStarPop {
-  0% {
-    opacity: 1;
-    transform: scale(0.5) rotate(0);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2) rotate(180deg);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8) rotate(360deg) translateY(-30px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes floatAround {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(30px, -20px);
-  }
-  50% {
-    transform: translate(-20px, 30px);
-  }
-  75% {
-    transform: translate(10px, -40px);
-  }
-}
-
-// ============================================================================
-// 第八部分：暗色主题特有装饰
-// ============================================================================
-
-[data-theme='dark'] {
-  .star {
-    background: radial-gradient(circle, var(--c-text-primary) 0%, var(--c-gold-500) 50%, transparent 100%);
-    box-shadow: 0 0 8px var(--c-gold-400);
-  }
-
-  .light-particle {
-    background: radial-gradient(circle, var(--c-secondary-200) 0%, var(--c-primary-300) 50%, var(--c-accent-200) 80%, transparent 100%);
-  }
-
-  .firefly {
-    background: radial-gradient(circle, var(--c-accent-400) 0%, var(--c-accent-300) 50%, transparent 100%);
-    box-shadow: 0 0 20px var(--c-accent-300);
-  }
-
-  // 暗色背景装饰
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -2;
-    background:
-      radial-gradient(ellipse at 15% 15%, rgba(240, 168, 136, 0.15) 0%, transparent 40%),
-      radial-gradient(ellipse at 85% 85%, rgba(245, 184, 152, 0.1) 0%, transparent 40%),
-      radial-gradient(ellipse at 50% 50%, rgba(232, 184, 112, 0.06) 0%, transparent 50%);
-    animation: starTwinkle 8s ease-in-out infinite;
-  }
-}
-
-[data-theme='light'] {
-  // 浅色背景装饰
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -2;
-    background:
-      radial-gradient(ellipse at 20% 20%, rgba(240, 196, 184, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(245, 204, 184, 0.12) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(245, 212, 160, 0.08) 0%, transparent 60%);
-    animation: pulse 15s ease-in-out infinite alternate;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
