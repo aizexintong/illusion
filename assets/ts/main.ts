@@ -2015,7 +2015,7 @@ function initIllusionTheme(): void {
     setTimeout(() => AnimationManager.initSkillBars(), 500);
   });
 
-  console.log('Illusion Theme v1.0.0 initialized');
+  console.log('Illusion Theme v1.1.0 initialized');
 }
 
 // ========== 自动启动 ==========
@@ -2032,6 +2032,6 @@ initIllusionTheme();
   CalendarWidget, ArchivesNavigator, NavClickEffect, TagsPagination
 };
 
-console.log('Illusion Theme v1.0.0 ready');
+console.log('Illusion Theme v1.1.0 ready');
 
 export { };
