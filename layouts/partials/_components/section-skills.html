@@ -1,5 +1,6 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 首页"技术栈"板块 */ -}}
+{{- /* 首页"技术栈"板块组件：展示指定的技能列表（默认 6 项），含技能图标、名称和进度条 */ -}}
+{{- /* 从主题数据获取技能配置 */ -}}
 {{- $homeData := hugo.Data.theme.home | default dict -}}
 {{- $skillsData := $homeData.skills | default dict -}}
 {{- $skillCount := $skillsData.count | default 6 -}}
@@ -16,6 +17,7 @@
       {{ range $index, $skill := first $skillCount $skillsList }}
       <div class="skill-item" data-aos="zoom-in" data-aos-delay="{{ mul $index 80 }}" role="listitem">
         <div class="skill-icon">
+          {{- /* 根据技能名称映射对应图标 */ -}}
           {{ if eq $skill.name "JavaScript" }}<i class="fab fa-js-square"></i>
           {{ else if eq $skill.name "HTML5" }}<i class="fab fa-html5"></i>
           {{ else if eq $skill.name "CSS3" }}<i class="fab fa-css3-alt"></i>

@@ -1,118 +1,132 @@
 # ============================================================================
-# 幻梦 Illusion v1.1.0 - 统一主题数据配置
+# 幻梦 Illusion v1.1.0 - 统一主题数据配置文件
 # 正式预览版
 # ============================================================================
-# 使命: 页面内容数据、布局策略、视觉效果开关与个性化配置
+# 使命: 统一管理页面内容数据、布局策略、视觉效果开关与个性化配置项。
+#       本文件是主题的核心配置入口，所有面向用户的数据展示与视觉行为
+#       均在此文件中进行声明和控制。
 #
 # 配置原则:
-#   1. UI 文案统一在 i18n/zh-CN.yaml 中管理
-#   2. 视觉具体数值由 SCSS Token 管理
-#   3. 复杂交互逻辑由 TypeScript 管理
-#   4. 本文件只描述“是否启用 / 使用什么模式 / 展示什么内容”
-#   5. 单文件架构，不拆分，易于维护
+#   1. UI 文案统一在 i18n/zh-CN.yaml 中管理，本文件不出现用户可见文本
+#   2. 视觉具体数值（颜色、间距、圆角等）由 SCSS Token 管理，不在此定义
+#   3. 复杂交互逻辑（动画序列、事件处理等）由 TypeScript 管理
+#   4. 本文件只描述“是否启用某个功能 / 使用什么布局模式 / 展示什么内容”
+#   5. 采用单文件架构，所有主题配置集中于此，不拆分，便于查找与维护
+#   6. 修改本文件后需要重新构建站点（hugo --gc）才能生效
 # ============================================================================
 
 
 # ============================================================================
-# 首页配置
+# 首页（Home）配置
+# 控制网站首页的各个区块：首屏大标题、文章列表、个人简介、技能展示
 # ============================================================================
 home:
 
   # --------------------------------------------------------------------------
-  # Hero 首屏
+  # Hero 首屏大标题区域
+  # 控制首页第一屏的核心内容：主标题、轮播副标题、描述文案、按钮、徽章等
   # --------------------------------------------------------------------------
   hero:
-    title: "爱则心痛"
+    title: "爱则心痛"                       # 主标题，显示在首屏最显著位置
 
-    subtitles:
+    subtitles:                               # 副标题轮播列表，按顺序循环显示
       - "技术开发者"
       - "代码艺术家"
       - "终身学习者"
       - "梦想追逐者"
 
-    description: "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。"
+    description: "欢迎来到我的个人空间，这里记录着我的技术探索、生活感悟和成长历程。"  # 描述段落，展示在主标题下方
 
-    primaryBtn:
-      text: "阅读文章"
-      url: "/posts"
+    primaryBtn:                              # 主按钮（强调色按钮）
+      text: "阅读文章"                       # 按钮文字
+      url: "/posts"                          # 点击后跳转的路径
 
-    secondaryBtn:
-      text: "关于我们"
-      url: "/about"
+    secondaryBtn:                            # 次按钮（轮廓样式按钮）
+      text: "关于我们"                       # 按钮文字
+      url: "/about"                          # 点击后跳转的路径
 
-    badgeText: "欢迎来到我的世界"
-    greeting: "你好，我是"
+    badgeText: "欢迎来到我的世界"            # 首屏顶部小徽章文字
+    greeting: "你好，我是"                   # 主标题前的问候语
 
-    quote:
+    quote:                                   # 首屏底部引用语
       text: "代码是诗，键盘是笔，屏幕是画布，让我们一起书写数字世界的篇章。"
-      author: "爱则心痛"
+      author: "爱则心痛"                     # 引用语署名
 
 
   # --------------------------------------------------------------------------
-  # 首页文章
+  # 首页文章列表区块
+  # 控制首页展示的最新文章数量、标题文字和“查看更多”按钮
   # --------------------------------------------------------------------------
   posts:
-    title: "最新文章"
-    subtitle: "分享思考，记录成长"
-    count: 6
+    title: "最新文章"                        # 区块标题
+    subtitle: "分享思考，记录成长"           # 区块副标题（描述性文案）
+    count: 6                                 # 首页展示的文章数量，接受正整数，建议 3-6
 
-    showMore:
-      text: "查看所有文章"
-      url: "/posts"
+    showMore:                                # “查看更多”按钮配置
+      text: "查看所有文章"                   # 按钮文字
+      url: "/posts"                          # 按钮跳转路径，通常指向文章列表页
 
 
   # --------------------------------------------------------------------------
-  # 首页关于
+  # 首页“关于我”简介区块
+  # 控制首页个人简介卡片的内容和“了解更多”按钮
   # --------------------------------------------------------------------------
   about:
-    title: "关于爱则心痛"
-    description: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。相信代码可以改变世界，享受解决问题的过程，热爱分享知识。"
-    btnText: "了解更多"
-    btnUrl: "/about"
+    title: "关于爱则心痛"                    # 简介区块标题
+    description: "一名热爱技术的开发者，专注于前端开发、移动应用和新兴技术。相信代码可以改变世界，享受解决问题的过程，热爱分享知识。"  # 个人简介段落
+    btnText: "了解更多"                      # “了解更多”按钮文字
+    btnUrl: "/about"                         # 按钮跳转路径，指向关于页面
 
 
   # --------------------------------------------------------------------------
-  # 首页技能
+  # 首页技能展示区块
+  # 控制首页展示的技能数量、标题和副标题
   # --------------------------------------------------------------------------
   skills:
-    title: "技术栈"
-    subtitle: "不断学习，持续进步"
-    count: 6
+    title: "技术栈"                          # 区块标题
+    subtitle: "不断学习，持续进步"           # 区块副标题
+    count: 6                                 # 首页展示的技能条目数量，接受正整数
 
 
 # ============================================================================
-# 关于页面配置
+# 关于（About）页面配置
+# 控制独立的“关于”页面内容：个人信息、数据统计、技术理念、联系方式
 # ============================================================================
 about:
 
+  # ----- 个人信息头部 -----
   intro:
-    name: "爱则心痛 (azxt)"
-    title: "全栈开发者 · 技术爱好者 · 开源贡献者"
-    quote: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"
+    name: "爱则心痛 (azxt)"                  # 你的名字 / 昵称
+    title: "全栈开发者 · 技术爱好者 · 开源贡献者"  # 个人头衔 / 一句话简介
+    quote: "代码如诗，技术如画。在0和1的世界里，创造无限可能。"  # 个人座右铭
 
+  # ----- 数据统计卡片 -----
+  # 每项配置一个统计卡片，展示图标、数量和标签文字
+  # number 设为 "auto" 时，主题会自动从 Hugo 数据中计算对应数值
   stats:
-    - icon: "fas fa-code"
-      number: "auto"
-      label: "技术文章"
+    - icon: "fas fa-code"                    # Font Awesome 图标类名
+      number: "auto"                         # 显示数量，"auto" = 主题自动统计，或手动填写如 "100"
+      label: "技术文章"                      # 统计项标签文字
 
     - icon: "fas fa-project-diagram"
-      number: "auto"
+      number: "auto"                         # "auto" = 根据技能数据自动统计
       label: "技术技能"
 
     - icon: "fas fa-calendar-alt"
-      number: "8+"
+      number: "8+"                           # 手动填写固定数值（或 "auto"）
       label: "开发经验"
 
     - icon: "fas fa-heart"
-      number: "∞"
+      number: "∞"                            # 特殊值，直接展示
       label: "热爱程度"
 
+  # ----- 技术理念区块 -----
   philosophy:
-    title: "技术理念"
+    title: "技术理念"                        # 理念区块标题
 
-    items:
-      - icon: "fas fa-feather-alt"
-        title: "优雅简洁"
+    items:                                   # 理念条目列表，每项包含图标、标题、描述
+      - icon: "fas fa-feather-alt"           # Font Awesome 图标
+        title: "优雅简洁"                    # 理念关键词
         description: "追求代码的简洁性和可维护性，相信好的代码本身就是最好的文档"
 
       - icon: "fas fa-graduation-cap"
@@ -127,82 +141,98 @@ about:
         title: "用户体验"
         description: "技术服务于人，优秀的用户体验是产品的灵魂"
 
+  # ----- 联系方式区块 -----
   contact:
-    title: "保持联系"
-    subtitle: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"
+    title: "保持联系"                        # 联系方式区块标题
+    subtitle: "如果你对我的工作感兴趣，或者有任何技术问题想要讨论"  # 区块副标题
 
-    methods:
-      - type: "email"
-        icon: "fas fa-envelope"
-        label: "邮箱"
-        value: "admin@azxt.org"
-        link: "mailto:admin@azxt.org"
+    methods:                                 # 联系方式列表，每个方法包含类型、图标、标签、值和链接
+      - type: "email"                        # 联系方式类型标识
+        icon: "fas fa-envelope"              # 显示图标
+        label: "邮箱"                        # 显示标签
+        value: "admin@azxt.org"              # 显示的值（如邮箱地址）
+        link: "mailto:admin@azxt.org"        # 点击跳转链接（mailto: 表示邮件）
 
       - type: "github"
         icon: "fab fa-github"
         label: "GitHub"
-        value: "aizexintong"
+        value: "aizexintong"                 # GitHub 用户名
         link: "https://github.com/aizexintong"
 
       - type: "website"
         icon: "fas fa-globe"
         label: "网站"
-        value: "azxt.org"
+        value: "azxt.org"                    # 网站域名
         link: "https://azxt.org"
 
-    note: "欢迎交流技术问题、项目合作或开源贡献！"
+    note: "欢迎交流技术问题、项目合作或开源贡献！"  # 联系方式底部备注文字
 
 
 # ============================================================================
-# 图片资源管理
+# 图片资源（Assets）管理
+# 统一管理站点所有图片的 URL 路径、替代文本和默认值，包括头像、
+# 背景图、开放图谱（OpenGraph）分享图以及各类默认占位图
 # ============================================================================
 assets:
 
+  # ----- 站点头像 -----
   avatar:
-    url: "/headimg.jpg"
-    alt: "站点头像"
+    url: "/headimg.jpg"                      # 头像图片的 URL 路径，支持本地路径或完整 URL
+    alt: "站点头像"                           # 图片加载失败或无障碍访问时显示的替代文本
 
+  # ----- 背景图片 -----
+  # 支持三种模式：移动端专用、桌面端专用、自适应背景，主题会根据设备类型自动选择
   background:
 
+    # 移动端背景图（屏幕宽度 ≤ 768px 时使用）
     mobile:
-      url: "https://t.alcy.cc/mp"
-      alt: "移动端背景"
+      url: "https://t.alcy.cc/mp"            # 背景图 URL，建议使用竖屏比例图片
+      alt: "移动端背景"                       # 图片替代文本
 
+    # 桌面端背景图（屏幕宽度 > 768px 时使用）
     desktop:
-      url: "https://t.alcy.cc/pc"
+      url: "https://t.alcy.cc/pc"            # 背景图 URL，建议使用横屏比例图片
       alt: "桌面端背景"
 
+    # 自适应背景图（推荐使用，自动适配不同设备和分辨率）
     adaptive:
-      url: "https://t.alcy.cc/ycy"
+      url: "https://t.alcy.cc/ycy"           # 背景图 URL，不区分移动端和桌面端
       alt: "自适应背景"
-      description: "推荐使用，自动适配不同设备"
+      description: "推荐使用，自动适配不同设备"  # 对该模式的简要说明文字
 
+  # ----- 开放图谱（OpenGraph）分享图 -----
+  # 当用户在社交媒体（微信、Twitter、Facebook 等）分享链接时展示的图片
   openGraph:
 
     default:
-      url: "https://t.alcy.cc/og"
-      alt: "分享配图"
-      width: 1200
-      height: 630
+      url: "https://t.alcy.cc/og"            # OG 图片 URL
+      alt: "分享配图"                         # 图片替代文本
+      width: 1200                            # 图片宽度（像素），OpenGraph 标准推荐 1200
+      height: 630                            # 图片高度（像素），标准比例 1.91:1
 
+  # ----- 默认占位图 -----
+  # 当某篇文章没有指定封面、友链没有上传头像、技能没有定义图标时，
+  # 使用此处定义的默认值作为回退显示
   defaults:
-    postCover: "https://t.alcy.cc/ycy"
-    friendAvatar: "https://t.alcy.cc/tx"
-    skillIcon: "fas fa-code"
+    postCover: "https://t.alcy.cc/ycy"       # 文章默认封面图 URL
+    friendAvatar: "https://t.alcy.cc/tx"     # 友链默认头像 URL
+    skillIcon: "fas fa-code"                 # 技能默认图标（Font Awesome 类名）
 
 
 # ============================================================================
-# 社交链接
+# 社交链接（Social）配置
+# 控制网站各位置（首页、关于页、侧边栏、页脚等）显示的社交平台链接图标
+# 每个平台可单独控制是否显示（show: true/false）
 # ============================================================================
 social:
 
-  links:
+  links:                                     # 社交链接列表，顺序决定图标排列顺序
 
-    - platform: "github"
-      url: "https://github.com/aizexintong"
-      icon: "fab fa-github"
-      label: "GitHub"
-      show: true
+    - platform: "github"                     # 平台标识，内部用于逻辑判断
+      url: "https://github.com/aizexintong"  # 链接地址
+      icon: "fab fa-github"                  # Font Awesome 图标类名
+      label: "GitHub"                        # 悬停提示文字和辅助标签
+      show: true                             # 是否启用并显示该社交图标：true=显示，false=隐藏
 
     - platform: "email"
       url: "mailto:admin@azxt.org"
@@ -211,7 +241,7 @@ social:
       show: true
 
     - platform: "rss"
-      url: "/index.xml"
+      url: "/index.xml"                      # RSS 订阅地址，通常指向 Hugo 生成的 index.xml
       icon: "fas fa-rss"
       label: "RSS 订阅"
       show: true
@@ -220,7 +250,7 @@ social:
       url: "https://twitter.com"
       icon: "fab fa-twitter"
       label: "Twitter"
-      show: false
+      show: false                            # false = 不显示，可设为 true 启用
 
     - platform: "telegram"
       url: "https://telegram.org"
@@ -229,25 +259,29 @@ social:
       show: false
 
     - platform: "wechat"
-      url: ""
+      url: ""                                # 微信暂不配置链接，可填写个人微信二维码图片 URL
       icon: "fab fa-weixin"
       label: "微信"
       show: false
 
 
 # ============================================================================
-# 技能页面
+# 技能（Skills）页面配置
+# 控制独立技能页面的内容：分类总览（带进度条）、详细技能（带项目列表）、
+# 技能发展时间线
 # ============================================================================
 skills:
 
+  # ----- 技能分类总览 -----
+  # 以卡片+进度条形式展示各技术方向的大类概况
   overview:
 
-    categories:
+    categories:                              # 技能分类列表
 
-      - icon: "fas fa-code"
-        title: "前端开发"
-        description: "HTML5、CSS3、JavaScript、React"
-        progress: 100
+      - icon: "fas fa-code"                  # 分类图标（Font Awesome）
+        title: "前端开发"                    # 分类名称
+        description: "HTML5、CSS3、JavaScript、React"  # 分类简述，展示在卡片中
+        progress: 100                        # 进度条百分比：0-100，仅作为视觉展示参考
 
       - icon: "fas fa-server"
         title: "后端开发"
@@ -265,12 +299,14 @@ skills:
         progress: 100
 
 
+  # ----- 详细技能列表 -----
+  # 以条目形式展示每项技能的掌握程度、描述和相关项目经历
   skills:
 
-    - name: "JavaScript"
-      level: 90
-      description: "掌握ES6+特性、异步编程、模块化开发，熟悉Vue.js和React框架。"
-      projects:
+    - name: "JavaScript"                     # 技能名称
+      level: 90                              # 掌握程度：0-100，数字越大越熟练
+      description: "掌握ES6+特性、异步编程、模块化开发，熟悉Vue.js和React框架。"  # 技能描述段落
+      projects:                              # 与该技能相关的项目列表，可为空数组 []
         - "个人博客系统"
         - "数据可视化平台"
         - "在线编辑器"
@@ -307,11 +343,13 @@ skills:
       projects: []
 
 
+  # ----- 技能发展时间线 -----
+  # 以时间轴形式展示技术成长历程
   timeline:
 
-    - year: "2022"
-      title: "基础学习"
-      description: "掌握HTML、CSS、JavaScript基础，完成第一个个人网站项目。"
+    - year: "2022"                           # 时间节点（年份）
+      title: "基础学习"                      # 该阶段标题
+      description: "掌握HTML、CSS、JavaScript基础，完成第一个个人网站项目。"  # 阶段描述
 
     - year: "2023"
       title: "框架掌握"
@@ -331,17 +369,19 @@ skills:
 
 
 # ============================================================================
-# 友链页面
+# 友链（Friends）页面配置
+# 控制友情链接页面的完整内容：友链列表、申请条件、本站信息、联系方式
 # ============================================================================
 friends:
 
+  # ----- 友链列表 -----
   friends:
 
-    - name: "示例友链"
-      url: "https://example.com"
-      avatar: "https://t.alcy.cc/tx"
-      description: "这是一个示例友链的描述"
-      category: "技术博客"
+    - name: "示例友链"                       # 友链站点的名称
+      url: "https://example.com"             # 友链站点的网址
+      avatar: "https://t.alcy.cc/tx"         # 友链头像 URL
+      description: "这是一个示例友链的描述"  # 友链站点的简要描述
+      category: "技术博客"                   # 所属分类，用于分组显示
 
     - name: "技术博客示例"
       url: "https://tech.example.com"
@@ -356,29 +396,31 @@ friends:
       category: "学习笔记"
 
 
+  # ----- 申请友链区块 -----
+  # 展示申请条件、本站信息和联系方式，引导访问者申请交换友链
   apply:
 
-    title: "申请友链"
+    title: "申请友链"                        # 申请区块标题
 
-    conditions:
+    conditions:                              # 申请条件列表
       - "内容优质，原创技术文章优先"
       - "定期更新，保持活跃"
       - "无不良内容，健康向上"
       - "已添加本站链接"
 
-    siteInfo:
-      name: "爱则心痛 (azxt)"
-      url: "https://azxt.org"
-      description: "爱则心痛的个人博客 - 分享技术、生活和思考"
+    siteInfo:                                # 本站信息，方便申请者填写
+      name: "爱则心痛 (azxt)"               # 本站名称
+      url: "https://azxt.org"               # 本站网址
+      description: "爱则心痛的个人博客 - 分享技术、生活和思考"  # 本站描述
 
-    contactTitle: "联系方式"
-    contactDescription: "如果你符合条件并希望交换链接，请通过以下方式联系："
+    contactTitle: "联系方式"                  # 联系方式区块标题
+    contactDescription: "如果你符合条件并希望交换链接，请通过以下方式联系："  # 联系方式引导语
 
-    contactMethods:
+    contactMethods:                          # 联系方式列表
 
-      - icon: "fas fa-envelope"
-        label: "发送邮件"
-        link: "mailto:admin@azxt.org"
+      - icon: "fas fa-envelope"              # 联系方式图标
+        label: "发送邮件"                    # 联系方式标签文字
+        link: "mailto:admin@azxt.org"        # 链接地址
 
       - icon: "fab fa-github"
         label: "GitHub Issues"
@@ -386,22 +428,23 @@ friends:
 
 
 # ============================================================================
-# 工具页面
+# 工具（Tools）页面配置
+# 控制工具推荐页面的所有内容：工具分类和每个分类下的具体工具条目
 # ============================================================================
 tools:
 
-  categories:
+  categories:                                # 工具分类列表
 
-    - name: "开发工具"
-      icon: "fas fa-code"
-      description: "编程开发相关的工具软件"
+    - name: "开发工具"                       # 分类名称
+      icon: "fas fa-code"                    # 分类图标
+      description: "编程开发相关的工具软件"  # 分类描述
 
-      tools:
+      tools:                                 # 该分类下的工具列表
 
-        - name: "Visual Studio Code"
-          url: "https://code.visualstudio.com"
-          description: "强大的代码编辑器，支持多种编程语言"
-          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visualstudiocode.svg"
+        - name: "Visual Studio Code"         # 工具名称
+          url: "https://code.visualstudio.com"  # 工具官网或下载地址
+          description: "强大的代码编辑器，支持多种编程语言"  # 工具简要描述
+          icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visualstudiocode.svg"  # 工具图标 URL，支持 SVG
 
         - name: "Git"
           url: "https://git-scm.com"
@@ -481,23 +524,29 @@ tools:
 
 
 # ============================================================================
-# 404 页面
+# 404 错误页面配置
+# 控制用户访问不存在的路径时显示的页面内容和引导按钮
 # ============================================================================
 error404:
 
+  # ----- 页面主信息 -----
   page:
-    title: "404"
-    description: "页面不存在或已被移除"
-    message: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"
-    icon: "fas fa-ghost"
+    title: "404"                             # 404 页面大标题
+    description: "页面不存在或已被移除"      # 简短错误说明
+    message: "抱歉，你访问的页面不存在。可能已被删除或链接有误。"  # 详细错误提示信息
+    icon: "fas fa-ghost"                     # 404 页面装饰图标（Font Awesome）
 
+  # ----- 引导按钮 -----
+  # 显示在错误页面底部，帮助用户快速导航到其他页面
   buttons:
 
+    # 返回首页按钮
     home:
-      text: "返回首页"
-      icon: "fas fa-home"
-      url: "/"
+      text: "返回首页"                       # 按钮文字
+      icon: "fas fa-home"                    # 按钮图标
+      url: "/"                               # 点击跳转路径
 
+    # 浏览文章按钮
     posts:
       text: "浏览文章"
       icon: "fas fa-file-alt"
@@ -505,283 +554,289 @@ error404:
 
 
 # ============================================================================
-# 标签页配置
+# 标签（Tags）页面配置
+# 控制标签聚合页面的标题、副标题和分页设置
 # ============================================================================
 tags:
 
   page:
-    title: "标签"
-    subtitle: "浏览所有文章标签"
-    perPage: 25
+    title: "标签"                            # 标签页标题
+    subtitle: "浏览所有文章标签"             # 标签页副标题
+    perPage: 25                              # 每页显示的标签数量，正整数
 
 
 # ============================================================================
-# 布局与视觉策略
-# ============================================================================
-# 注意：
-#   这里描述“开关和策略”，不要放具体 CSS 数值。
+# 布局与视觉策略（Layout）
+# 对所有页面生效的布局开关、视觉特效和性能策略进行统一配置
 #
-#   例如：
-#     glass: true
-#
-#   而不是：
-#     glassBlur: 24px
-#
-# 具体数值统一交给 main.scss Token。
+# 重要说明：
+#   - 本配置描述“开关和策略”，不包含具体 CSS 数值（如像素、颜色等）
+#   - 例如：配置 glass: true（启用毛玻璃），而不是 glassBlur: 24px
+#   - 具体数值统一在 SCSS Token（_variables.scss / _tokens.scss）中管理
+#   - 复杂交互逻辑由 TypeScript 脚本控制
+#   - 修改任一配置项后需重新构建站点才能看到效果
 # ============================================================================
 
 layout:
 
   # --------------------------------------------------------------------------
-  # 文章列表
+  # 文章列表页布局
+  # 控制文章列表的展示方式、分页数量、是否显示元信息等
   # --------------------------------------------------------------------------
   posts:
-    layout: "grid"
-    columns: 2
-    perPage: 12
-    excerptLength: 160
+    layout: "grid"                           # 列表布局模式："grid" = 网格视图，"list" = 列表视图
+    columns: 2                               # 当 layout="grid" 时每行的列数，正整数（通常 2 或 3）
+    perPage: 12                              # 每页显示的文章数量，正整数
+    excerptLength: 160                       # 文章摘要截取字符数，正整数
 
-    showDate: true
-    showCategory: true
-    showTags: true
-    showExcerpt: true
+    showDate: true                           # 是否显示文章发布日期：true=显示，false=隐藏
+    showCategory: true                       # 是否显示文章分类：true=显示，false=隐藏
+    showTags: true                           # 是否显示文章标签：true=显示，false=隐藏
+    showExcerpt: true                        # 是否显示文章摘要：true=显示，false=隐藏
 
 
   # --------------------------------------------------------------------------
-  # 技能
+  # 技能页面布局
+  # 控制技能页各区块的显示/隐藏
   # --------------------------------------------------------------------------
   skills:
-    layout: "grid"
-    showCategories: true
-    showDetailed: true
-    showTimeline: true
-    showProjects: true
+    layout: "grid"                           # 布局模式："grid" = 网格，"list" = 列表
+    showCategories: true                     # 是否显示技能分类总览区块：true=显示，false=隐藏
+    showDetailed: true                       # 是否显示详细技能列表区块：true=显示，false=隐藏
+    showTimeline: true                       # 是否显示技能发展时间线区块：true=显示，false=隐藏
+    showProjects: true                       # 是否在详细技能中显示相关项目列表：true=显示，false=隐藏
 
 
   # --------------------------------------------------------------------------
-  # 友链
+  # 友链页面布局
+  # 控制友链列表的分组显示
   # --------------------------------------------------------------------------
   links:
-    showCategory: true
+    showCategory: true                       # 是否按分类分组显示友链：true=分组显示，false=平铺显示
 
 
   # --------------------------------------------------------------------------
-  # 侧边栏
+  # 侧边栏（Sidebar）配置
+  # 控制文章详情页侧边栏的位置和显示内容
   # --------------------------------------------------------------------------
   sidebar:
-    position: "right"
-    showTOC: true
-    showInfo: true
-    showTags: true
+    position: "right"                        # 侧边栏位置："left" = 左侧，"right" = 右侧
+    showTOC: true                            # 是否显示文章目录（Table of Contents）：true=显示，false=隐藏
+    showInfo: true                           # 是否显示文章信息（作者、日期等）：true=显示，false=隐藏
+    showTags: true                           # 是否显示标签云：true=显示，false=隐藏
 
 
   # --------------------------------------------------------------------------
-  # 代码块
+  # 代码块（Code Block）配置
+  # 控制文章中代码块的功能展示
   # --------------------------------------------------------------------------
   codeblock:
-    showLang: true
-    showCopy: true
-    expandLines: 0
-    lineNumbers: false
+    showLang: true                           # 是否在代码块右上角显示编程语言名称：true=显示，false=隐藏
+    showCopy: true                           # 是否显示“复制代码”按钮：true=显示，false=隐藏
+    expandLines: 0                           # 超过多少行自动折叠代码块：0=不折叠，正整数=超过该行数则折叠
+    lineNumbers: false                       # 是否显示代码行号：true=显示，false=隐藏
 
 
   # ==========================================================================
-  # v1.1.0 视觉效果
+  # v1.1.0 全局视觉效果开关
+  # 控制整个主题各页面中各种视觉特效的显示和启用状态
   # ==========================================================================
 
   effects:
 
-    # 总开关
+    # ----- 视觉特效总开关 -----
+    # true  = 所有启用的特效全部生效（各子项 false 的特效仍不会显示）
+    # false = 无论子项如何配置，全局关闭所有视觉特效
     enabled: true
 
-    # ------------------------------------------------------------------------
-    # Glass / 毛玻璃
-    # ------------------------------------------------------------------------
-    glass: true
+    # ----- 毛玻璃效果（Glass Morphism） -----
+    # 为卡片、导航栏、侧边栏等元素添加半透明模糊背景效果
+    glass: true                              # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 背景极光
-    # CSS 优先，不依赖 Canvas
-    # ------------------------------------------------------------------------
-    aurora: true
+    # ----- 背景极光效果（Aurora） -----
+    # 在页面背景中渲染渐变流动的极光色彩效果
+    # 使用纯 CSS 实现，不依赖 Canvas，性能优秀
+    aurora: true                             # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 鼠标跟随光晕
-    # 桌面端开启，移动端由 TS 自动禁用
-    # ------------------------------------------------------------------------
-    mouseGlow: true
+    # ----- 鼠标跟随光晕（Mouse Glow） -----
+    # 鼠标移动时在光标附近产生彩色光晕
+    # 桌面端开启后生效，移动端由 TypeScript 自动检测并禁用
+    mouseGlow: true                          # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 卡片轻微 3D
-    # TS 只负责计算变量，实际 transform 由 CSS 完成
-    # ------------------------------------------------------------------------
-    card3d: true
+    # ----- 卡片 3D 倾斜效果（Card 3D Tilt） -----
+    # 鼠标悬停时卡片根据光标位置产生轻微 3D 倾斜，增强立体感
+    # TypeScript 仅负责计算 3D 变换变量，实际 CSS transform 由样式表完成
+    card3d: true                             # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 卡片流光边缘
-    # 不会默认应用到所有卡片，仅用于重点组件
-    # ------------------------------------------------------------------------
-    cardShine: true
+    # ----- 卡片流光边缘效果（Card Shine） -----
+    # 鼠标悬停时卡片边框产生动态流光高亮效果
+    # 不会默认应用到所有卡片，仅用于首页、文章页等重点组件的卡片
+    cardShine: true                          # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # Scroll Reveal
-    # ------------------------------------------------------------------------
-    scrollReveal: true
+    # ----- 滚动渐现动画（Scroll Reveal） -----
+    # 页面滚动时，元素进入可视区域后以淡入+上移动画渐显
+    scrollReveal: true                       # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # Canvas 粒子
-    # ------------------------------------------------------------------------
-    particles: true
+    # ----- Canvas 粒子背景效果（Particles） -----
+    # 在页面背景中使用 Canvas 绘制动态粒子动画
+    # 移动端和低性能设备下会自动降低粒子密度或关闭
+    particles: true                          # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 夜间星尘 / 流星 / 萤火虫
-    # ------------------------------------------------------------------------
-    nightSky: true
+    # ----- 夜间星空效果（Night Sky） -----
+    # 在暗色主题下渲染星尘、流星、萤火虫等动效
+    # 仅在深色模式下生效
+    nightSky: true                           # true=启用，false=关闭
 
-    # ------------------------------------------------------------------------
-    # 页面背景微噪点
-    # CSS 优先
-    # ------------------------------------------------------------------------
-    noise: true
+    # ----- 页面背景微噪点（Noise） -----
+    # 在页面背景添加极细微的噪点纹理，模拟纸质质感
+    # 使用纯 CSS 实现，性能友好
+    noise: true                              # true=启用，false=关闭
 
 
   # ==========================================================================
-  # v1.1.0 Hero
+  # v1.1.0 Hero 首屏视觉增强
+  # 控制首页 Hero 区域的专属视觉特效，独立于全局 effects 配置
   # ==========================================================================
 
   hero:
 
-    # Hero 是否启用高级视觉层
-    enhanced: true
+    # Hero 区域是否启用高级视觉层（所有子项的总开关）
+    enhanced: true                           # true=启用增强效果，false=关闭所有 Hero 专属特效
 
-    # Hero 背景极光
-    aurora: true
+    # Hero 背景极光效果（覆盖 Hero 区域背景）
+    aurora: true                             # true=启用，false=关闭
 
-    # Hero 玻璃内容层
-    glass: true
+    # Hero 玻璃内容层（Hero 文字区域使用毛玻璃背景）
+    glass: true                              # true=启用，false=关闭
 
-    # Hero 鼠标交互
-    mouseGlow: true
+    # Hero 鼠标交互光晕（鼠标在 Hero 区域移动时的光晕跟随）
+    mouseGlow: true                          # true=启用，false=关闭
 
-    # Hero 是否显示装饰性粒子
-    particles: true
+    # Hero 装饰性粒子（Hero 区域独立的小型粒子动画）
+    particles: true                          # true=启用，false=关闭
 
-    # Hero 是否启用轻微浮动
-    floating: true
+    # Hero 元素轻微浮动动画（头像、标题等元素的上下浮动效果）
+    floating: true                           # true=启用，false=关闭
 
 
   # ==========================================================================
-  # v1.1.0 Card
+  # v1.1.0 卡片（Card）视觉效果
+  # 控制所有页面卡片的交互效果和视觉增强
   # ==========================================================================
 
   cards:
 
-    # 普通卡片玻璃效果
-    glass: true
+    # 卡片毛玻璃效果（半透明模糊背景）
+    glass: true                              # true=启用，false=关闭
 
-    # Hover 上浮
-    lift: true
+    # 鼠标悬停时卡片微微上浮（translateY 变换）
+    lift: true                               # true=启用，false=关闭
 
-    # Hover 光晕
-    glow: true
+    # 鼠标悬停时卡片周围产生光晕
+    glow: true                               # true=启用，false=关闭
 
-    # 鼠标跟随高光
-    mouseGlow: true
+    # 卡片内部鼠标跟随高光反射
+    mouseGlow: true                          # true=启用，false=关闭
 
-    # 3D 倾斜
-    tilt: true
+    # 卡片 3D 倾斜效果（根据鼠标位置计算倾斜角度）
+    tilt: true                               # true=启用，false=关闭
 
-    # 图片 hover zoom
-    imageZoom: true
+    # 卡片内图片鼠标悬停时缩放效果（scale 放大）
+    imageZoom: true                          # true=启用，false=关闭
 
 
   # ==========================================================================
-  # v1.1.0 Article
+  # v1.1.0 文章详情页（Article）增强
+  # 控制单篇文章阅读页面的交互增强和视觉优化功能
   # ==========================================================================
 
   article:
 
-    # 阅读进度条
-    readingProgress: true
+    # 阅读进度条（固定在页面顶部，显示当前阅读进度百分比）
+    readingProgress: true                    # true=启用，false=关闭
 
-    # 标题区域增强
-    enhancedHeader: true
+    # 文章标题区域增强（标题使用毛玻璃+极光背景等视觉效果）
+    enhancedHeader: true                     # true=启用，false=关闭
 
-    # 文章封面视觉增强
-    coverEffect: true
+    # 文章封面图视觉增强（封面图加载时淡入、视差滚动等效果）
+    coverEffect: true                        # true=启用，false=关闭
 
-    # 文章正文阅读宽度优化
-    readableLayout: true
+    # 文章正文阅读宽度优化（限制文本最大宽度，提升长篇阅读体验）
+    readableLayout: true                     # true=启用，false=关闭
 
-    # 推荐文章增强
-    relatedPosts: true
+    # 文章底部推荐阅读区块增强（卡片化显示，带缩略图和动画）
+    relatedPosts: true                       # true=启用，false=关闭
 
 
   # ==========================================================================
-  # v1.1.0 Performance
-  # ==========================================================================
+  # v1.1.0 性能策略（Performance）
   #
-  # auto:
-  #   true  -> TS 根据设备能力自动选择
-  #   false -> 使用 level 强制指定
+  # 控制主题如何根据设备能力和用户偏好自动调整视觉特效等级，
+  # 在视觉效果和运行流畅度之间取得平衡。
   #
-  # level:
-  #   low
-  #   normal
-  #   high
+  # auto 配置说明：
+  #   true  -> TypeScript 运行时根据设备硬件能力自动选择性能等级
+  #   false -> 使用 level 字段强制指定性能等级，不进行自动检测
   #
-  # 以后如果需要测试特效性能，可以直接：
+  # level 可选值：
+  #   "low"    - 最低特效：关闭所有 Canvas 动画，仅保留基础 CSS 效果
+  #   "normal" - 标准特效：启用主要视觉特效，降低粒子密度（默认推荐）
+  #   "high"   - 最高特效：所有效果全开，适合高性能桌面设备
   #
+  # 手动锁定性能等级的示例用法：
   #   auto: false
-  #   level: low
-  #
-  # 不需要修改 TS。
+  #   level: "low"
+  # 不需要修改 TypeScript 源码即可测试不同性能等级的表现。
   # ==========================================================================
 
   performance:
 
-    # 自动性能等级
+    # 是否自动检测设备性能并选择合适的等级：true=自动检测，false=手动指定
     auto: true
 
-    # auto=false 时使用
+    # 当 auto=false 时，手动指定的性能等级："low" / "normal" / "high"
     level: "normal"
 
-    # reduced-motion 用户强制降级
-    respectReducedMotion: true
+    # 是否尊重用户的 reduced-motion 系统偏好：检测到该偏好时自动降级特效
+    respectReducedMotion: true               # true=尊重用户偏好，false=忽略
 
-    # 页面进入后台时暂停 Canvas / 动画
-    pauseWhenHidden: true
+    # 页面切换到后台标签页时是否暂停 Canvas 和 CSS 动画以节省资源
+    pauseWhenHidden: true                    # true=后台暂停，false=持续运行
 
-    # 移动设备自动降低特效
-    reduceOnMobile: true
+    # 移动设备是否自动降低特效等级，保证电池续航和流畅度
+    reduceOnMobile: true                     # true=自动降低，false=不作区分
 
-    # 低性能设备自动降低特效
-    reduceOnLowPower: true
+    # 低性能设备（如旧款手机、集成显卡）是否自动降低特效
+    reduceOnLowPower: true                   # true=自动降低，false=不作区分
 
-    # Canvas 自动降低 DPR
-    adaptiveDpr: true
+    # Canvas 是否自动降低设备像素比（DPR），用稍低分辨率换取更高帧率
+    adaptiveDpr: true                        # true=自动调整 DPR，false=使用设备原生 DPR
 
-    # Canvas 粒子数量动态调整
-    adaptiveParticles: true
+    # Canvas 粒子数量是否根据设备性能动态调整
+    adaptiveParticles: true                  # true=动态调整粒子数，false=使用默认粒子数
 
-    # 根据 FPS 自动降级
-    adaptiveFps: true
+    # 是否根据实时 FPS 自动降级特效（当帧率过低时自动减少特效）
+    adaptiveFps: true                        # true=启用 FPS 自适应，false=不降级
 
 
   # ==========================================================================
-  # v1.1.0 Accessibility
+  # v1.1.0 无障碍（Accessibility）访问
+  #
+  # 确保网站对所有用户（包括使用辅助技术的用户）都友好可用。
+  # 所有选项开启后，主题会确保视觉特效层不影响屏幕阅读器、
+  # 键盘导航等无障碍功能。
   # ==========================================================================
 
   accessibility:
 
-    # 尊重 prefers-reduced-motion
-    reducedMotion: true
+    # 是否尊重用户的 prefers-reduced-motion 设置：检测到后关闭非必要动画
+    reducedMotion: true                      # true=尊重用户设置，false=忽略
 
-    # 保证键盘导航
-    keyboardNavigation: true
+    # 是否保证键盘导航功能完整（Tab 键可访问所有交互元素）
+    keyboardNavigation: true                 # true=启用键盘导航，false=仅鼠标交互
 
-    # 保证焦点可见
-    visibleFocus: true
+    # 是否保证焦点指示器可见（:focus-visible 样式兜底）
+    visibleFocus: true                       # true=强制显示焦点框，false=隐藏焦点样式
 
-    # 保证装饰层不影响交互
-    decorativeEffectsPointerEventsNone: true
+    # 是否确保所有装饰性图层设置 pointer-events: none，不阻挡点击和交互
+    decorativeEffectsPointerEventsNone: true # true=装饰层不拦截点击，false=装饰层可交互

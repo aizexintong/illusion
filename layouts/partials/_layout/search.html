@@ -1,6 +1,8 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 搜索组件模板：支持本地搜索和 Algolia 搜索，含搜索表单和结果展示区 */ -}}
 {{- if .Site.Params.enableSearch -}}
 <div class="search-component" role="search" aria-label='{{ i18n "search_title" }}'>
+  {{- /* 本地搜索方案 */ -}}
   {{- if eq .Site.Params.searchProvider "local" -}}
   <form class="search-form" id="search-form" role="search" data-index-url='{{ "index.json" | relURL }}'>
     <div class="search-input-group">
@@ -9,8 +11,10 @@
     </div>
     <div class="search-results" id="search-results" aria-live="polite" aria-atomic="true"></div>
   </form>
+  {{- /* Algolia 搜索方案 */ -}}
   {{- else if eq .Site.Params.searchProvider "algolia" -}}
   <div class="algolia-search"><div id="search-box"></div><div id="hits"></div></div>
+  {{- /* 搜索未启用时的提示 */ -}}
   {{- else -}}
   <div class="search-disabled" role="status"><p>{{ i18n "search_disabled" }}</p></div>
   {{- end -}}

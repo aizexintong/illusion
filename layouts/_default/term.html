@@ -1,17 +1,22 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 默认分类项模板：显示某个 taxonomy 项（标签/分类）下的所有页面列表 */ -}}
 {{ define "main" }}
 <div class="section-content" role="main">
+  {{- /* 页面头部：显示分类项名称和图标 */ -}}
   {{ partial "_components/page-header.html" (dict
     "Title" .Title
     "Icon" "fas fa-tag"
   ) }}
   <div class="container">
+    {{- /* 判断是否有页面 */ -}}
     {{ if gt (len .Pages) 0 }}
     <div class="posts-list" role="list">
+      {{- /* 遍历该分类项下的所有页面 */ -}}
       {{ range .Pages }}
       <article class="post-item" role="listitem">
         <div class="post-item-content">
           <h3 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          {{- /* 发布日期 */ -}}
           {{ if .Date }}<div class="post-meta"><span><i class="fas fa-calendar-alt"></i>{{ .Date.Format "2006-01-02" }}</span></div>{{ end }}
           <a href="{{ .RelPermalink }}" class="read-more"><span>{{ i18n "btn_read_more" }}</span><i class="fas fa-arrow-right"></i></a>
         </div>
@@ -19,6 +24,7 @@
       {{ end }}
     </div>
     {{ else }}
+    {{- /* 无内容时的空状态提示 */ -}}
     <div class="no-terms-message"><p>{{ i18n "term_empty" }}</p></div>
     {{ end }}
   </div>

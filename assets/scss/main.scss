@@ -1,15 +1,18 @@
 /* ============================================================================
    幻梦 Illusion v1.1.0 - SCSS 样式表（移动优先）
    正式预览版，核心功能稳定可用
+   本文件包含完整的主题样式系统：变量定义、响应式混入、全局样式、
+   组件样式、动画关键帧、暗色主题装饰及响应式覆盖
    ============================================================================ */
 
 @use "sass:map";
 
 // ============================================================================
-// 第一部分：变量系统 (阶梯式语义变量)
+// 第一部分：变量系统 —— 阶梯式语义变量
+// 所有设计系统的基本原子值按层级组织，便于统一管理和复用
 // ============================================================================
 
-// ----- 1.1 断点 (Breakpoints) -----
+// ----- 1.1 断点 —— 响应式设计的分界点，控制各设备布局的切换 -----
 $bp: (
   'sm': 576px,
   'md': 768px,
@@ -18,7 +21,7 @@ $bp: (
   'xxl': 1440px
 );
 
-// ----- 1.2 间距 (Spacing) - 基于 4px 网格 -----
+// ----- 1.2 间距 —— 基于 4px 网格系统的空间尺度，覆盖全部常用内外边距 -----
 $sp: (
   'min': 1px,
   '1': 0.25rem,
@@ -35,7 +38,7 @@ $sp: (
   '24': 6rem
 );
 
-// ----- 1.3 字号 (Font Sizes) - 黄金比例 1.25 -----
+// ----- 1.3 字号 —— 基于黄金比例 1.25 的排版级数表，确保跨文本层级视觉和谐 -----
 $fs: (
   'xs': 0.75rem,
   'sm': 0.875rem,
@@ -49,7 +52,7 @@ $fs: (
   '5xl': 4.768rem
 );
 
-// ----- 1.4 行高 (Line Heights) -----
+// ----- 1.4 行高 —— 从紧凑标题到松散正文的阅读行间距等级 -----
 $lh: (
   'tight': 1.2,
   'snug': 1.375,
@@ -58,7 +61,7 @@ $lh: (
   'loose': 2
 );
 
-// ----- 1.5 字重 (Font Weights) -----
+// ----- 1.5 字重 —— 字体粗细等级，从常规 400 到超粗 800 -----
 $fw: (
   'normal': 400,
   'medium': 500,
@@ -67,7 +70,7 @@ $fw: (
   'extrabold': 800
 );
 
-// ----- 1.6 圆角 (Border Radius) -----
+// ----- 1.6 圆角 —— 从微小到全圆的边角半径集合，控制卡片、按钮等组件的柔和度 -----
 $rd: (
   'xs': 0.25rem,
   'sm': 0.5rem,
@@ -79,7 +82,7 @@ $rd: (
   'full': 9999px
 );
 
-// ----- 1.7 动画时长 (Duration) —— 统一 Transition / Animation -----
+// ----- 1.7 过渡时长 —— Transition 与 Animation 共用的时间参数集合 -----
 $tr: (
   'fast': 150ms,
   'base': 300ms,
@@ -88,14 +91,14 @@ $tr: (
   'slowest': 1s
 );
 
-// ----- 1.8 缓动 (Easing) -----
+// ----- 1.8 缓动函数 —— 三种核心动画加速曲线：默认、弹性、平滑 -----
 $ez: (
   'default': cubic-bezier(0.25, 0.46, 0.45, 0.94),
   'spring': cubic-bezier(0.175, 0.885, 0.32, 1.275),
   'smooth': cubic-bezier(0.4, 0, 0.2, 1)
 );
 
-// ----- 1.9 容器宽度 (Container Widths) -----
+// ----- 1.9 容器宽度 —— 各响应式断点对应的页面内容区最大宽度约束 -----
 $cw: (
   'sm': 540px,
   'md': 720px,
@@ -104,7 +107,7 @@ $cw: (
   'xxl': 1320px
 );
 
-// ----- 1.10 组件尺寸 (Component Sizes) -----
+// ----- 1.10 组件尺寸 —— 头部、图标、按钮、侧边栏、文章图片等核心组件的固定高宽 -----
 $sz: (
   'header': 70px,
   'header-md': 76px,
@@ -131,7 +134,7 @@ $sz: (
   'sidebar-xl': 320px
 );
 
-// ----- 1.11 模糊度 (Blur) -----
+// ----- 1.11 模糊度 —— 毛玻璃效果中 backdrop-filter 的 blur() 值阶梯 -----
 $blur: (
   'sm': 4px,
   'md': 8px,
@@ -139,7 +142,7 @@ $blur: (
   'xl': 32px
 );
 
-// ----- 1.12 动画时长 (Animation Durations) -----
+// ----- 1.12 动画时长全集 —— 从瞬时 0ms 到超长 8s 的各类动画持续时间定义 -----
 $duration: (
   'instant': 0ms,
   'fastest': 50ms,
@@ -159,7 +162,7 @@ $duration: (
   'star-twinkle': 8s
 );
 
-// ----- 1.12 动画位移 (Motion Distance) -----
+// ----- 1.13 动画位移距离 —— 动画中元素 translate() 移动的偏移量阶梯 -----
 $ao: (
   'min': 4px,
   'sm': 8px,
@@ -169,7 +172,7 @@ $ao: (
   '2xl': 40px
 );
 
-// ----- 1.13 变换比例 (Motion Scale) -----
+// ----- 1.14 变换比例 —— 动画中 scale() 使用的缩放因子，从 0.5 缩小到 1.2 放大 -----
 $ts: (
   'min': 0.5,
   'sm': 0.8,
@@ -182,10 +185,9 @@ $ts: (
 );
 
 
-// --------------------------------------------------------------------------
-// Sass Token 命名兼容层
-// 原项目已有大量 $bp/$sp/$fs... 引用；新架构提供语义化别名。
-// --------------------------------------------------------------------------
+// ========== Sass Token 语义化命名兼容层 ==========
+// 原项目已有大量 $bp/$sp/$fs 等简短变量名引用；
+// 新架构提供完整语义化别名（$breakpoints/$space/$font-size），方便跨项目迁移和理解
 $breakpoints: $bp;
 $space: $sp;
 $font-size: $fs;
@@ -218,9 +220,9 @@ $motion-scale: $ts;
   @return map.get($motion-scale, $key);
 }
 
-// --------------------------------------------------------------------------
-// 语义 Token Map：表达“用途”，而不是“数值”
-// --------------------------------------------------------------------------
+// ========== 语义 Token Map ==========
+// 表达"设计意图/用途"而非"具体数值"的语义化变量层
+// 新组件优先使用这一层作为设计语境入口，旧 --sp/--fs/--c-* 保持向下兼容
 $semantic-spacing: (
   'page-gutter': map.get($space, '4'),
   'section-sm': map.get($space, '8'),
@@ -248,9 +250,8 @@ $semantic-motion: (
 );
 
 
-// --------------------------------------------------------------------------
-// 旧 getter 兼容层
-// --------------------------------------------------------------------------
+// ========== 旧版 getter 兼容层 ==========
+// 向下兼容旧代码中的 get-sp()、get-fs()、get-ad()、get-ao()、get-ts() 等简写取值函数
 @function get-sp($key) {
   @return token-space($key);
 }
@@ -272,7 +273,8 @@ $semantic-motion: (
 }
 
 // ============================================================================
-// 第二部分：响应式 Mixin (增量覆盖管道)
+// 第二部分：响应式混入 —— 增量覆盖管道
+// 基于移动优先策略，所有样式默认为移动端，通过 respond-to() 逐断点叠加桌面样式
 // ============================================================================
 
 @mixin respond-to($breakpoint) {
@@ -286,7 +288,8 @@ $semantic-motion: (
 }
 
 // ============================================================================
-// 第三部分：辅助函数
+// 第三部分：辅助函数 —— 带容错回退的变量取值器
+// 每个函数从对应的变量映射表中按 key 获取值，找不到时输出警告并返回默认值
 // ============================================================================
 
 @function token-space($key) {
@@ -330,19 +333,21 @@ $semantic-motion: (
 }
 
 // ============================================================================
-// 第四部分：全局样式 (默认 = 移动端)
+// 第四部分：全局样式 —— 默认移动端基准样式
+// 包括 CSS 自定义属性定义、主题变量、重置样式、工具类、容器、卡片和按钮系统
 // ============================================================================
 
-// ----- 4.1 CSS 变量定义 -----
+// ----- 4.1 CSS 自定义属性（设计 Token）-----
+// 将所有设计系统变量映射为 CSS 自定义属性，支持运行时主题切换
 :root {
-  // 断点
+  // 响应式断点 —— 各设备尺寸的媒体查询临界值
   --bp-sm: #{map.get($bp, 'sm')};
   --bp-md: #{map.get($bp, 'md')};
   --bp-lg: #{map.get($bp, 'lg')};
   --bp-xl: #{map.get($bp, 'xl')};
   --bp-xxl: #{map.get($bp, 'xxl')};
 
-  // 间距
+  // 间距 —— 内外边距的数值尺度
   --sp-min: #{map.get($sp, 'min')};
   --sp-1: #{map.get($sp, '1')};
   --sp-2: #{map.get($sp, '2')};
@@ -357,7 +362,7 @@ $semantic-motion: (
   --sp-20: #{map.get($sp, '20')};
   --sp-24: #{map.get($sp, '24')};
 
-  // 字号
+  // 字号 —— 文字大小级数
   --fs-xs: #{map.get($fs, 'xs')};
   --fs-sm: #{map.get($fs, 'sm')};
   --fs-base: #{map.get($fs, 'base')};
@@ -369,21 +374,21 @@ $semantic-motion: (
   --fs-4xl: #{map.get($fs, '4xl')};
   --fs-5xl: #{map.get($fs, '5xl')};
 
-  // 行高
+  // 行高 —— 文本行间距等级
   --lh-tight: #{map.get($lh, 'tight')};
   --lh-snug: #{map.get($lh, 'snug')};
   --lh-normal: #{map.get($lh, 'normal')};
   --lh-relaxed: #{map.get($lh, 'relaxed')};
   --lh-loose: #{map.get($lh, 'loose')};
 
-  // 字重
+  // 字重 —— 字体粗细等级
   --fw-normal: #{map.get($fw, 'normal')};
   --fw-medium: #{map.get($fw, 'medium')};
   --fw-semibold: #{map.get($fw, 'semibold')};
   --fw-bold: #{map.get($fw, 'bold')};
   --fw-extrabold: #{map.get($fw, 'extrabold')};
 
-  // 圆角
+  // 圆角 —— 边角弧度级数
   --rd-xs: #{map.get($rd, 'xs')};
   --rd-sm: #{map.get($rd, 'sm')};
   --rd-md: #{map.get($rd, 'md')};
@@ -393,19 +398,19 @@ $semantic-motion: (
   --rd-3xl: #{map.get($rd, '3xl')};
   --rd-full: #{map.get($rd, 'full')};
 
-  // 过渡
+  // 过渡 —— 动画与过渡的时间参数
   --tr-fast: #{map.get($tr, 'fast')};
   --tr-base: #{map.get($tr, 'base')};
   --tr-slow: #{map.get($tr, 'slow')};
   --tr-slower: #{map.get($tr, 'slower')};
   --tr-slowest: #{map.get($tr, 'slowest')};
 
-  // 缓动
+  // 缓动 —— 动画加速曲线函数
   --ez-default: #{map.get($ez, 'default')};
   --ez-spring: #{map.get($ez, 'spring')};
   --ez-smooth: #{map.get($ez, 'smooth')};
 
-  // 容器
+  // 容器 —— 各断点下的内容最大宽度
   --cw: 100%;
   --cw-sm: #{map.get($cw, 'sm')};
   --cw-md: #{map.get($cw, 'md')};
@@ -413,7 +418,7 @@ $semantic-motion: (
   --cw-xl: #{map.get($cw, 'xl')};
   --cw-xxl: #{map.get($cw, 'xxl')};
 
-  // 组件尺寸
+  // 组件尺寸 —— 头部、按钮、侧边栏等组件固定高宽
   --sz-header: #{map.get($sz, 'header')};
   --sz-header-md: #{map.get($sz, 'header-md')};
   --sz-header-lg: #{map.get($sz, 'header-lg')};
@@ -438,13 +443,13 @@ $semantic-motion: (
   --sz-sidebar-lg: #{map.get($sz, 'sidebar-lg')};
   --sz-sidebar-xl: #{map.get($sz, 'sidebar-xl')};
 
-  // 模糊度
+  // 模糊度 —— 毛玻璃效果模糊程度
   --blur-sm: #{map.get($blur, 'sm')};
   --blur-md: #{map.get($blur, 'md')};
   --blur-lg: #{map.get($blur, 'lg')};
   --blur-xl: #{map.get($blur, 'xl')};
 
-  // 动画时长
+  // 动画时长 —— 从瞬时到超长的多种动画时间参数
   --ad-instant: #{map.get($duration, 'instant')};
   --ad-fastest: #{map.get($duration, 'fastest')};
   --ad-faster: #{map.get($duration, 'faster')};
@@ -462,7 +467,7 @@ $semantic-motion: (
   --ad-scroll-wheel: #{map.get($duration, 'scroll-wheel')};
   --ad-star-twinkle: #{map.get($duration, 'star-twinkle')};
 
-  // 动画偏移
+  // 动画偏移 —— 元素位移距离级数
   --ao-min: #{map.get($ao, 'min')};
   --ao-sm: #{map.get($ao, 'sm')};
   --ao-md: #{map.get($ao, 'md')};
@@ -470,7 +475,7 @@ $semantic-motion: (
   --ao-xl: #{map.get($ao, 'xl')};
   --ao-2xl: #{map.get($ao, '2xl')};
 
-  // 变换比例
+  // 变换比例 —— 缩放因子集合
   --ts-min: #{map.get($ts, 'min')};
   --ts-sm: #{map.get($ts, 'sm')};
   --ts-md: #{map.get($ts, 'md')};
@@ -480,7 +485,8 @@ $semantic-motion: (
   --ts-2xl: #{map.get($ts, '2xl')};
   --ts-3xl: #{map.get($ts, '3xl')};
 
-  // 颜色系统 - 由主题变体覆盖
+  // ========== 基础颜色系统 ==========
+  // 主题主色（Primary）—— 暖珊瑚色系，品牌核心色
   --c-primary-100: #FDF3EE;
   --c-primary-200: #FCE6DC;
   --c-primary-300: #F0C4B8;
@@ -521,7 +527,7 @@ $semantic-motion: (
   --c-gold-800: #785828;
   --c-gold-900: #584018;
 
-  // 语义颜色
+  // 语义颜色 —— 背景、文本、边框等上下文色
   --c-bg: #FDF8F5;
   --c-bg-elevated: #F8F0EC;
   --c-bg-elevated-2: #F0E8E2;
@@ -538,7 +544,7 @@ $semantic-motion: (
   --c-border-light: #F0E8E0;
   --c-border-subtle: var(--c-primary-300);
 
-  // 功能色
+  // 功能色 —— 成功、警告、错误、信息等状态色
   --c-success: #4A8;
   --c-success-bg: rgba(100, 180, 100, 0.12);
   --c-warning: #FFD700;
@@ -546,7 +552,7 @@ $semantic-motion: (
   --c-error: #D06060;
   --c-info: #6090C0;
 
-  // 阴影
+  // 阴影 —— 从轻量到重量的卡片、悬浮阴影层级
   --shadow-xs: 0 1px 2px rgba(208, 112, 88, 0.04);
   --shadow-sm: 0 1px 3px rgba(208, 112, 88, 0.06);
   --shadow-md: 0 4px 14px rgba(208, 112, 88, 0.08);
@@ -554,40 +560,39 @@ $semantic-motion: (
   --shadow-xl: 0 0 40px rgba(240, 196, 184, 0.12);
   --shadow-glow: 0 0 20px rgba(240, 196, 184, 0.18);
 
-  // 渐变
+  // 渐变 —— 主渐变、微妙渐变和页面氛围渐变
   --gradient-primary: linear-gradient(135deg, #E8927C 0%, #F0A888 50%, #E8B870 100%);
   --gradient-subtle: linear-gradient(135deg, rgba(232, 146, 124, 0.1) 0%, rgba(240, 168, 136, 0.06) 100%);
   --gradient-surface: linear-gradient(180deg, rgba(255, 252, 250, 0.88) 0%, rgba(253, 248, 245, 0.95) 100%);
 
-  // 覆盖层
+  // 覆盖层 —— 模态框和遮罩的半透明背景
   --overlay: rgba(253, 248, 245, 0.6);
 
-  // 交互状态
+  // 交互状态 —— 悬停、按下、文本选择的背景色反馈
   --hover-bg: rgba(208, 112, 88, 0.06);
   --active-bg: rgba(208, 112, 88, 0.12);
   --selection-bg: rgba(232, 146, 124, 0.3);
 
-  // 专用背景
+  // 专用背景 —— 头部、侧边栏、页脚等固定区域的半透明背景
   --c-header-bg: rgba(248, 240, 236, 0.75);
   --c-header-scrolled-bg: rgba(255, 252, 250, 0.92);
   --c-sidebar-bg: rgba(248, 240, 236, 0.85);
   --c-footer-bg: rgba(248, 240, 236, 0.90);
 
-  // 字体族
+  // 字体族 —— 中英文混排的无衬线字体与等宽代码字体
   --font-sans: 'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  // --------------------------------------------------------------------------
-  // 语义 CSS Token：新组件优先使用这一层；旧 --sp/--fs/--c-* 保持兼容
-  // --------------------------------------------------------------------------
+  // ========== 语义化 CSS Token ==========
+  // 新组件优先使用这一语义层作为设计入口；旧 --sp/--fs/--c-* 保持兼容
 
-  // Layout
+  // 布局 —— 内容宽度、可读性宽度、侧边栏宽度、页面槽距
   --layout-content-width: var(--cw-xxl);
   --layout-readable-width: var(--sz-readable);
   --layout-sidebar-width: var(--sz-sidebar);
   --layout-page-gutter: clamp(var(--sp-4), 4vw, var(--sp-10));
 
-  // Typography
+  // 排版 —— 正文字号、行高、标题尺寸、字重
   --text-body-size: var(--fs-base);
   --text-body-line-height: var(--lh-normal);
   --text-title-size: clamp(var(--fs-xl), 3vw, var(--fs-3xl));
@@ -595,7 +600,7 @@ $semantic-motion: (
   --text-body-weight: var(--fw-normal);
   --text-heading-weight: var(--fw-bold);
 
-  // Surface / color
+  // 表面色 —— 页面背景、层级表面、品牌色等语义颜色映射
   --color-page-bg: var(--c-bg);
   --color-surface: var(--c-surface);
   --color-surface-elevated: var(--c-surface-elevated);
@@ -611,7 +616,7 @@ $semantic-motion: (
   --color-error: var(--c-error);
   --color-info: var(--c-info);
 
-  // Motion
+  // 动画 —— 动画时长、缓动函数、位移距离的语义化名称
   --motion-duration-fast: var(--tr-fast);
   --motion-duration-base: var(--tr-base);
   --motion-duration-slow: var(--tr-slow);
@@ -621,7 +626,7 @@ $semantic-motion: (
   --motion-distance-md: var(--ao-md);
   --motion-distance-lg: var(--ao-lg);
 
-  // Components
+  // 组件 —— 头部高度、侧边栏宽度、卡片圆角、按钮高度等组件级变量
   --component-header-height: var(--sz-header);
   --component-sidebar-width: var(--sz-sidebar);
   --component-card-radius: var(--rd-lg);
@@ -629,7 +634,7 @@ $semantic-motion: (
   --component-control-radius: var(--rd-md);
 }
 
-// ----- 4.2 浅色主题 -----
+// ----- 4.2 浅色主题 —— 暖色系的浅色配色方案 -----
 [data-theme='light'] {
   --c-primary-100: #FDF3EE;
   --c-primary-200: #FCE6DC;
@@ -710,7 +715,7 @@ $semantic-motion: (
   --c-footer-bg: rgba(248, 240, 236, 0.90);
 }
 
-// ----- 4.3 暗色主题 -----
+// ----- 4.3 暗色主题 —— 深色底 + 高明度暖色调的暗色配色方案 -----
 [data-theme='dark'] {
   --c-primary-100: #1C1210;
   --c-primary-200: #2E1A14;
@@ -791,7 +796,8 @@ $semantic-motion: (
   --c-footer-bg: rgba(30, 24, 22, 0.92);
 }
 
-// ----- 4.4 重置与基础 -----
+// ----- 4.4 全局重置与基础样式 -----
+// 清除浏览器默认边距，统一盒模型，设置根字体和页面基础排版
 *,
 *::before,
 *::after {
@@ -820,7 +826,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-// ----- 4.5 基础元素 -----
+// ----- 4.5 基础元素 —— 链接、图片、列表、按钮、表单、标题、段落等 HTML 元素默认样式 -----
 a {
   color: var(--c-primary-400);
   text-decoration: none;
@@ -903,7 +909,7 @@ p {
   background: var(--selection-bg);
 }
 
-// ----- 4.6 滚动条 -----
+// ----- 4.6 滚动条样式 —— 自定义细窄滚动条，匹配主题渐变色彩 -----
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -929,7 +935,7 @@ p {
   scrollbar-color: var(--c-primary-300) var(--c-border-light);
 }
 
-// ----- 4.7 辅助功能 -----
+// ----- 4.7 无障碍辅助功能 —— 焦点轮廓、跳过导航链接和屏幕阅读器专用类 -----
 :focus-visible {
   outline: 2px solid var(--c-primary-400);
   outline-offset: 2px;
@@ -966,7 +972,7 @@ p {
   border: 0;
 }
 
-// ----- 4.8 工具类 -----
+// ----- 4.8 通用工具类 —— 文本省略、渐变色文字、居中对齐等高频复用样式 -----
 .text-ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -1000,7 +1006,7 @@ p {
   text-align: center;
 }
 
-// ----- 4.9 容器 -----
+// ----- 4.9 内容容器与布局 —— 页面容器、内容包裹器、区块内容区、页面头等基础布局 -----
 .container {
   width: var(--cw);
   max-width: var(--cw-xl);
@@ -1093,7 +1099,7 @@ p {
   line-height: var(--lh-relaxed);
 }
 
-// ----- 4.10 背景层 -----
+// ----- 4.10 背景图层 —— 固定定位的全屏背景图片层与渐变覆盖层 -----
 .bg-layer {
   position: fixed;
   top: 0;
@@ -1119,7 +1125,7 @@ p {
   background: var(--overlay);
 }
 
-// ----- 4.11 卡片系统 -----
+// ----- 4.11 卡片系统 —— 基础卡片、侧边栏卡片、内容卡片及子组件的毛玻璃效果定义 -----
 .card {
   background: var(--c-surface-overlay);
   backdrop-filter: blur(var(--blur-lg));
@@ -1220,7 +1226,7 @@ p {
   margin: var(--sp-8) 0;
 }
 
-// ----- 4.12 按钮系统 -----
+// ----- 4.12 按钮系统 —— 主要、次要、描边、幽灵按钮样式及尺寸变体，含水波纹动画效果 -----
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1348,10 +1354,12 @@ p {
 }
 
 // ============================================================================
-// 第五部分：组件样式
+// 第五部分：组件样式 —— 页面级和模块级 UI 组件
+// 包含头部导航、页脚、Hero、文章卡片、关于、技能、友链、工具、
+// 归档、标签、文章列表、分页、文章详情、评论、搜索、404 等全部组件
 // ============================================================================
 
-// ----- 5.1 头部导航 -----
+// ----- 5.1 头部导航 —— 粘性定位的网站主导航，含移动端汉堡菜单和响应式断点切换 -----
 .site-header {
   background: var(--c-header-bg);
   backdrop-filter: blur(var(--blur-lg));
@@ -1583,7 +1591,7 @@ p {
   }
 }
 
-// ----- 5.2 页脚 -----
+// ----- 5.2 页脚 —— 四栏网格布局的网站底部，含导航链接、社交图标、技术标签和版权信息 -----
 .site-footer {
   background: var(--c-footer-bg);
   backdrop-filter: none;
@@ -1852,7 +1860,7 @@ p {
   }
 }
 
-// ----- 5.3 Hero -----
+// ----- 5.3 Hero 区 —— 首页全屏英雄区，包含标题、副标题、描述、行动按钮、滚动提示和引用名言 -----
 .hero {
   padding: var(--sp-16) 0 var(--sp-8);
   text-align: left;
@@ -2042,7 +2050,7 @@ p {
   font-weight: var(--fw-semibold);
 }
 
-// ----- 5.4 文章卡片 -----
+// ----- 5.4 文章卡片 —— 文章列表中的网格卡片，包含图片、分类标签、标题、元信息、标签和摘要 -----
 .posts-section {
   padding: var(--sp-16) 0;
 }
@@ -2225,8 +2233,8 @@ p {
     font-size: 0.875em;
   }
 }
+// ----- 5.5 关于板块 —— 首页关于我区域，包含头像、描述、统计数据和行为召唤按钮 -----
 
-// ----- 5.5 关于板块 -----
 .about-section {
   padding: var(--sp-16) 0;
 }
@@ -2345,7 +2353,7 @@ p {
   opacity: 0.5;
 }
 
-// ----- 5.6 技能板块 -----
+// ----- 5.6 技能板块 —— 首页技能展示区，包含图标、进度条和各技能熟练度百分比 -----
 .skills-section {
   padding: var(--sp-16) 0;
 }
@@ -2421,7 +2429,7 @@ p {
   transition: width var(--tr-slowest) var(--ez-spring);
 }
 
-// ----- 5.7 关于页面 -----
+// ----- 5.7 关于页面 —— 个人介绍页，包含个人简介、哲学理念、联系方式和形象照片 -----
 .about-intro {
   margin: var(--sp-6) 0;
 }
@@ -2660,7 +2668,7 @@ p {
   }
 }
 
-// ----- 5.8 技能页面 -----
+// ----- 5.8 技能页面 —— 技能详情页面，展示技能分类、进度条、项目案例和时间线 -----
 .skills-overview,
 .detailed-skills,
 .skill-development {
@@ -2897,7 +2905,7 @@ p {
   }
 }
 
-// ----- 5.9 友链页面 -----
+// ----- 5.9 友链页面 —— 友情链接展示与申请页面，包含链接卡片、分类和申请须知 -----
 .friends-links {
   margin: var(--sp-10) 0;
 }
@@ -3178,7 +3186,7 @@ p {
   }
 }
 
-// ----- 5.10 工具页面 -----
+// ----- 5.10 工具页面 —— 工具资源推荐页面，按分类展示工具卡片，含图标、描述和外部链接 -----
 .tools-section {
   margin: var(--sp-8) 0;
 }
@@ -3342,7 +3350,7 @@ p {
   transition: all var(--tr-fast) var(--ez-default);
 }
 
-// ----- 5.11 归档页面 -----
+// ----- 5.11 归档页面 —— 按年份和月份组织的文章归档，含年份导航侧边栏和日历视图 -----
 .archives-layout {
   display: flex;
   flex-direction: column;
@@ -3641,7 +3649,7 @@ p {
   }
 }
 
-// ----- 5.12 标签页面 -----
+// ----- 5.12 标签页面 —— 标签云网格布局页面，展示所有标签及对应文章数量 -----
 .tags-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -3773,7 +3781,7 @@ p {
   margin: 0 auto;
 }
 
-// ----- 5.13 文章列表 -----
+// ----- 5.13 文章列表 —— 文章列表竖排卡片布局，包含图片、标题、元信息、标签和摘要 -----
 .posts-list {
   display: flex;
   flex-direction: column;
@@ -3860,7 +3868,7 @@ p {
   margin-bottom: var(--sp-min);
 }
 
-// ----- 5.14 分页 -----
+// ----- 5.14 分页 —— 页码导航组件，含上一页/下一页、当前页高亮和省略号 -----
 .pagination {
   display: flex;
   align-items: center;
@@ -3953,7 +3961,7 @@ p {
   }
 }
 
-// ----- 5.15 文章列表侧边栏 -----
+// ----- 5.15 文章列表侧边栏 —— 文章列表页的侧边栏，含日历卡片、最新文章和标签云 -----
 .posts-layout {
   display: flex;
   flex-direction: column;
@@ -4117,7 +4125,7 @@ p {
   }
 }
 
-// ----- 5.16 文章详情页 -----
+// ----- 5.16 文章详情页 —— 文章正文页面，包含封面图、文章头、正文排版、侧边栏目录和文章元信息 -----
 .article-page {
   padding-bottom: var(--sp-8);
 }
@@ -4661,7 +4669,7 @@ p {
   }
 }
 
-// ----- 5.17 评论 -----
+// ----- 5.17 评论 —— 文章评论区样式，含评论警告、禁用状态的展示 -----
 .comments-section {
   padding: var(--sp-12) 0;
   margin-top: var(--sp-12);
@@ -4696,7 +4704,7 @@ p {
   }
 }
 
-// ----- 5.18 搜索 -----
+// ----- 5.18 搜索 —— 搜索组件与模态框，含输入框、搜索结果列表、高亮匹配和错误提示 -----
 .search-component {
   width: 100%;
 }
@@ -4964,7 +4972,7 @@ p {
   }
 }
 
-// ----- 5.19 404页面 -----
+// ----- 5.19 404 页面 —— 页面未找到时的错误页面，含动画图标、错误信息和引导按钮 -----
 .error-icon {
   font-size: 5rem;
   color: var(--c-primary-400);
@@ -4985,7 +4993,7 @@ p {
   flex-wrap: wrap;
 }
 
-// ----- 5.20 法律页面 -----
+// ----- 5.20 法律页面 —— 隐私政策、服务条款等法律文档页面的排版样式 -----
 .legal-content {
   max-width: var(--sz-readable);
   margin: 0 auto;
@@ -5041,7 +5049,7 @@ p {
   }
 }
 
-// ----- 5.21 滚动按钮 -----
+// ----- 5.21 滚动按钮 —— 固定定位的返回顶部、滚到底部和中心滚动控件 -----
 .scroll-buttons {
   position: fixed;
   right: var(--sp-2);
@@ -5099,7 +5107,7 @@ p {
   gap: var(--sp-min);
 }
 
-// ----- 5.22 代码高亮 -----
+// ----- 5.22 代码高亮 —— 代码块样式，含语言标识、复制按钮和暗色主题适配 -----
 .highlight {
   position: relative;
   border-radius: var(--rd-lg);
@@ -5207,7 +5215,7 @@ p {
   border: 1px solid rgba(167, 139, 250, 0.25);
 }
 
-// ----- 5.23 Chroma 语法高亮 -----
+// ----- 5.23 Chroma 语法高亮 —— Hugo Chroma 引擎的语法高亮色彩映射，关键字、字符串、注释等分别着色 -----
 .chroma {
   color: var(--c-text-primary);
 
@@ -5342,7 +5350,7 @@ p {
   }
 }
 
-// ----- 5.24 装饰动画元素 -----
+// ----- 5.24 装饰动画元素 —— 卡片闪光、标题下划线、分隔线、浮动元素和滚动进度条的动画装饰 -----
 .card-anime-decoration {
   position: relative;
   overflow: hidden;
@@ -5442,7 +5450,7 @@ p {
   box-shadow: 0 0 12px rgba(232, 160, 191, 0.35);
 }
 
-// ----- 5.25 动画通用类 -----
+// ----- 5.25 动画通用类 —— 预先定义的入场动画类，含淡入、弹跳、浮动效果和延迟变体 -----
 .animate-fade-in {
   animation: fadeIn var(--ad-base) var(--ez-spring) forwards;
   will-change: opacity;
@@ -5484,7 +5492,7 @@ p {
   animation-delay: 0.5s;
 }
 
-// ----- 5.26 点击特效 & 灯箱 -----
+// ----- 5.26 点击特效与灯箱 —— 鼠标点击星芒特效和图片点击放大的全屏灯箱查看器 -----
 .click-star {
   position: fixed;
   pointer-events: none;
@@ -5566,7 +5574,7 @@ p {
   z-index: 9999;
 }
 
-// ----- 5.27 Shortcode 技能组件 -----
+// ----- 5.27 Shortcode 技能组件 —— Hugo 短代码渲染的技能进度条组件，含名称、等级和进度动画 -----
 .skills-shortcode {
   margin: var(--sp-8) 0;
 
@@ -5625,7 +5633,8 @@ p {
 }
 
 // ============================================================================
-// 第六部分：动画关键帧 (全部使用变量)
+// 第六部分：动画关键帧 —— 全部使用 CSS 变量驱动
+// 包含卡片闪光、点击星芒、淡入、弹跳、浮动、脉冲、渐变流动等全部动画定义
 // ============================================================================
 
 @keyframes cardShine {
@@ -5822,7 +5831,7 @@ p {
 }
 
 // ============================================================================
-// 第七部分：暗色主题特有装饰
+// 第七部分：暗色主题特有装饰 —— 星空粒子、萤火虫光斑和背景径向渐变氛围光
 // ============================================================================
 
 [data-theme='dark'] {
@@ -5876,10 +5885,11 @@ p {
 }
 
 // ============================================================================
-// 第八部分：响应式增量覆盖 (Mobile-First)
+// 第八部分：响应式增量覆盖 —— 移动优先策略
+// 从 ≥576px 大手机开始，逐断点叠加平板、桌面、大桌面的布局和尺寸覆盖
 // ============================================================================
 
-// ----- 8.1 大手机 (≥576px) -----
+// ----- 8.1 大手机（≥576px）—— 双栏网格初步形成，侧边栏和元素尺寸微调 -----
 @include respond-to('sm') {
   .site-title {
     font-size: var(--sp-4);
@@ -5920,7 +5930,7 @@ p {
   }
 }
 
-// ----- 8.2 平板竖屏 (≥768px) -----
+// ----- 8.2 平板竖屏（≥768px）—— 桌面导航显示，Hero 横向布局，侧边栏吸顶固定 -----
 @include respond-to('md') {
   :root {
     --sz-header: var(--sz-header-md);
@@ -6277,7 +6287,7 @@ p {
   }
 }
 
-// ----- 8.3 平板横屏/小桌面 (≥992px) -----
+// ----- 8.3 平板横屏/小型桌面（≥992px）—— 四栏页脚、三栏文章网格，导航间距加大 -----
 @include respond-to('lg') {
   :root {
     --sz-header: var(--sz-header-lg);
@@ -6395,7 +6405,7 @@ p {
   }
 }
 
-// ----- 8.4 桌面 (≥1200px) -----
+// ----- 8.4 桌面（≥1200px）—— 容器宽度扩展，导航链接字号增大、间距进一步放松 -----
 @include respond-to('xl') {
   .container {
     max-width: var(--cw-xl);
@@ -6429,7 +6439,7 @@ p {
   }
 }
 
-// ----- 8.5 大桌面 (≥1440px) -----
+// ----- 8.5 大桌面（≥1440px）—— 最大容器宽度，宽松的头部内边距和导航间距 -----
 @include respond-to('xxl') {
   .container {
     max-width: var(--cw-xxl);
@@ -6455,7 +6465,8 @@ p {
 }
 
 // ============================================================================
-// 第九部分：无障碍：减少动画
+// 第九部分：无障碍 —— 减少动画（prefers-reduced-motion）
+// 当用户在操作系统中开启"减少动态效果"时，所有动画和过渡缩短为几乎瞬时
 // ============================================================================
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,11 +1,11 @@
-// ==========================================================================
-// 幻梦 Illusion v1.1.0 - TypeScript 脚本引擎
-// 正式预览版，12 个管理器模块实现全部交互功能
-// ==========================================================================
+// ========== 幻梦 Illusion v1.1.0 - TypeScript 脚本引擎 ==========
+// 主题的完整前端脚本系统，包含 12 个独立的功能管理器模块
+// 负责主题切换、Canvas 粒子特效、滚动动画、搜索、分页、日历等全部交互功能
+// 所有模块在页面加载时按依赖顺序自动初始化
 
-// ==========================================================================
-// 类型定义
-// ==========================================================================
+// ========== 全局 TypeScript 接口与类型定义 ==========
+// 定义粒子对象、流星对象、光谱类型和主题配置等核心数据类型
+// 所有接口在此统一声明，供各管理器模块引用使用
 
 interface ThemeConfig {
   light: { name: string; icon: string; label: string };
@@ -38,28 +38,31 @@ interface SpectralType {
   weight: number;
 }
 
-// ==========================================================================
-// i18n 辅助函数 - 从 DOM 数据集读取翻译
-// ==========================================================================
+// ========== I18n 国际化辅助模块 ==========
+// 提供多语言翻译功能，支持从 DOM 属性（data-i18n-xxx）和全局对象（window.i18nData）读取翻译文本
+// 支持 {{ 变量名 }} 模板插值语法，参数替换时自动转义处理
 
 const I18n = {
   /**
-   * 从 data-i18n 属性获取翻译文本
-   * 优先级: data-i18n-xxx 属性 > window.i18nData > 默认英文
+   * 根据翻译键获取对应的多语言文本
+   * 查找优先级：window.i18nData 全局对象 > DOM 元素 #i18n-data 的 data-i18n-xxx 属性 > 返回 key 本身作为回退
+   * @param key - 翻译文本的唯一标识键名
+   * @param params - 可选的模板参数对象，用于替换文本中的 {{ 变量名 }} 占位符
+   * @returns 翻译后的文本字符串，若未找到翻译则返回 key 本身并在控制台输出警告
    */
   t(key: string, params?: Record<string, string | number>): string {
-    // 尝试从 window.i18nData 获取
+    // 第一优先级：尝试从全局 window.i18nData 对象中获取翻译文本
     const i18nData = (window as any).i18nData;
     if (i18nData && i18nData[key]) {
       return this._interpolate(i18nData[key], params);
     }
-    // 尝试从 DOM 元素获取（如果有全局容器）
+    // 第二优先级：尝试从 DOM 中的 #i18n-data 容器通过 data-i18n-xxx 属性获取
     const globalEl = document.getElementById('i18n-data');
     if (globalEl) {
       const val = globalEl.getAttribute('data-i18n-' + key);
       if (val) return this._interpolate(val, params);
     }
-    // 返回 key 本身作为 fallback
+    // 未找到任何翻译文本：输出警告日志并返回 key 本身作为兜底文本
     console.warn('[I18n] Missing translation key:', key);
     return key;
   },
@@ -72,9 +75,10 @@ const I18n = {
   }
 };
 
-// ==========================================================================
-// 主题管理系统
-// ==========================================================================
+// ========== 主题管理器（ThemeManager）==========
+// 管理明暗主题切换，支持 light（亮色）、dark（暗色）、system（跟随系统）三种模式
+// 通过 localStorage 持久化存储用户偏好的主题模式
+// 使用 CustomEvent 通知所有组件主题变化，同时通过 postMessage 向 Giscus、Utterances 等 iframe 评论系统同步主题
 
 const ThemeManager = {
   config: {
@@ -148,8 +152,10 @@ const ThemeManager = {
   },
 
   /**
-   * 设置主题并触发自定义事件
-   * 所有评论系统通过监听 'themeChanged' 事件响应暗色模式
+   * 设置当前主题模式并保存到 localStorage
+   * 触发全局 'themeChanged' 自定义事件，通知所有组件（评论系统、Canvas 特效等）主题已切换
+   * 同时向 Giscus 和 Utterances 等第三方评论系统的 iframe 发送 postMessage 同步主题
+   * @param theme - 目标主题名称：'light'（亮色）| 'dark'（暗色）| 'system'（跟随系统）
    */
   setTheme(theme: string): void {
     if (!this.config[theme as keyof ThemeConfig]) return;
@@ -158,20 +164,20 @@ const ThemeManager = {
     this.currentTheme = theme;
     localStorage.setItem('theme', theme);
 
-    // 应用主题到 DOM
+    // 将主题值应用到 DOM 根元素的 data-theme 属性上，CSS 变量随之切换
     this.applyTheme(theme);
 
-    // 更新所有主题切换按钮
+    // 同步更新页面上所有主题切换按钮的图标和提示标签
     this.updateAllToggleButtons();
 
-    // 获取实际应用的主题（处理 'system' 的情况）
+    // 解析实际渲染的亮暗模式（当用户选择 'system' 时，根据系统色彩偏好确定最终主题）
     const appliedTheme = this.currentTheme === 'system'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : theme;
 
-    // ============================================================
-    // 关键：触发自定义事件，通知所有评论系统主题已变化
-    // ============================================================
+    // ========== 触发全局主题变更事件 ==========
+    // 派发 themeChanged 自定义事件，所有评论组件通过监听此事件同步更新主题配色
+    // event.detail.theme：用户选择的模式，event.detail.applied：实际渲染的亮暗，event.detail.previous：上一次主题
     document.dispatchEvent(new CustomEvent('themeChanged', {
       detail: {
         theme: this.currentTheme,      // 'system' | 'light' | 'dark'
@@ -185,10 +191,12 @@ const ThemeManager = {
   },
 
   /**
-   * 通过 postMessage 通知 iframe 内的评论系统（如 Giscus、Utterances）
+   * 通过 postMessage 跨域通信，通知 iframe 内嵌入的第三方评论系统切换主题配色
+   * 支持 Giscus（基于 GitHub Discussions）和 Utterances（基于 GitHub Issues）两种评论系统
+   * @param theme - 实际渲染的亮暗模式：'light'（亮色）或 'dark'（暗色）
    */
   notifyIframeComments(theme: 'light' | 'dark'): void {
-    // Giscus
+    // 向页面中的 Giscus 评论 iframe 发送主题配置更新消息
     const giscusFrame = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement | null;
     if (giscusFrame) {
       giscusFrame.contentWindow?.postMessage({
@@ -200,7 +208,7 @@ const ThemeManager = {
       }, 'https://giscus.app');
     }
 
-    // Utterances
+    // 向页面中的 Utterances 评论 iframe 发送主题切换消息（github-light / github-dark）
     const utterancesFrame = document.querySelector('.utterances-frame') as HTMLIFrameElement | null;
     if (utterancesFrame) {
       utterancesFrame.contentWindow?.postMessage({
@@ -210,10 +218,11 @@ const ThemeManager = {
     }
   },
 
+  /** 更新页面上所有主题切换按钮（头部导航栏的 #theme-toggle 和右侧滚动区的 .scroll-theme）的图标和提示文本 */
   updateAllToggleButtons(): void {
-    // 更新头部主题按钮
+    // 遍历更新所有头部区域的切换按钮
     document.querySelectorAll('#theme-toggle').forEach(btn => this.updateToggleButton(btn as HTMLElement));
-    // 更新滚动区主题按钮
+    // 遍历更新所有滚动区域的切换按钮
     document.querySelectorAll('.scroll-theme').forEach(btn => this.updateToggleButton(btn as HTMLElement));
   },
 
@@ -236,7 +245,7 @@ const ThemeManager = {
       if (this.currentTheme === 'system') {
         const appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         this.applyTheme('system');
-        // 系统主题变化时也要通知评论系统
+        // 当系统色彩偏好变化且用户选择了 'system' 模式时，自动同步更新主题并向所有评论系统发送通知
         document.dispatchEvent(new CustomEvent('themeChanged', {
           detail: {
             theme: 'system',
@@ -247,14 +256,16 @@ const ThemeManager = {
         this.notifyIframeComments(appliedTheme);
       }
     };
-    // 使用 addEventListener 替代弃用的 addListener
+    // 使用 addEventListener 监听 prefers-color-scheme 变化（替代已弃用的 .addListener 方法）
     mediaQuery.addEventListener('change', handleChange);
   }
 };
 
-// ==========================================================================
-// 特效管理器（白天：糖果彩带雨 | 夜间：星光+萤火虫）
-// ==========================================================================
+// ========== Canvas 粒子特效管理器（EffectsManager）==========
+// 根据当前主题模式渲染不同的全屏 Canvas 粒子特效
+// - 白天模式（light）：糖果彩带雨效果，包含彩带、糖果、爱心、星星四类下落粒子
+// - 夜间模式（dark）：星空闪烁 + 萤火虫飞舞效果，低概率触发流星群动画
+// 低性能设备（双核以下、移动端）会自动减少粒子数量以降低 CPU 和 GPU 消耗
 
 const EffectsManager = {
   canvas: null as HTMLCanvasElement | null,
@@ -780,9 +791,13 @@ const EffectsManager = {
   }
 };
 
-// ==========================================================================
-// 动画效果管理器
-// ==========================================================================
+// ========== 动画效果管理器（AnimationManager）==========
+// 统一管理页面各类动画效果，包括：
+// - AOS 入场动画：滚动触发元素的淡入/位移/缩放效果
+// - 滚动进度条：页面顶部细线指示当前阅读进度
+// - 技能进度条：滚动到可视区域时从 0% 动画过渡到目标百分比
+// - Typed.js 打字机效果：模拟逐字打印的文本动画
+// - 降级方案：当 AOS 库未加载时使用 IntersectionObserver 实现简易入场动画
 
 const AnimationManager = {
   init(): void {
@@ -931,9 +946,16 @@ const AnimationManager = {
   }
 };
 
-// ==========================================================================
-// 交互功能管理器
-// ==========================================================================
+// ========== 交互功能管理器（InteractionManager）==========
+// 管理用户交互相关的各种功能，包括：
+// - 移动端汉堡菜单：打开/关闭动画与焦点管理
+// - 平滑滚动：锚点链接点击时平滑滚动到目标位置并预留顶部偏移
+// - 图片懒加载：基于 IntersectionObserver 的 data-src 延迟加载
+// - 触摸交互增强：移动端点击时添加视觉反馈样式
+// - 键盘导航：注入"跳转到主内容"的跳转链接
+// - 页头滚动效果：页面滚动超过阈值时为导航栏添加阴影
+// - 搜索弹窗：支持 Ctrl+K 快捷键打开/关闭搜索模态框
+// - 3D 卡片悬停：鼠标在卡片上移动时产生透视旋转效果
 
 const InteractionManager = {
   init(): void {
@@ -1106,9 +1128,12 @@ const InteractionManager = {
   }
 };
 
-// ==========================================================================
-// Markdown文档增强管理器
-// ==========================================================================
+// ========== Markdown 文档增强管理器（EnhancementManager）==========
+// 增强文章正文内容的渲染效果和交互体验，包括：
+// - 代码块增强：自动检测编程语言标签，添加一键复制代码按钮
+// - 表格增强：为表格包裹横向滚动容器，避免移动端溢出
+// - 引用块增强：根据前缀符号（💡 ⚠️ 📝 ❌）自动添加提示/警告/备注/错误样式
+// - 标题锚点：为无 id 的标题元素自动生成唯一锚点 ID，支持链接跳转
 
 const EnhancementManager = {
   init(): void {
@@ -1197,9 +1222,12 @@ const EnhancementManager = {
   }
 };
 
-// ==========================================================================
-// 通用功能管理器
-// ==========================================================================
+// ========== 通用工具管理器（UtilsManager）==========
+// 提供页面通用交互工具与辅助功能，包括：
+// - 右侧悬浮滚动按钮组：返回顶部、到达底部、快捷搜索、主题切换
+// - 图片灯箱：点击文章图片全屏放大查看，支持 Escape 键关闭
+// - 文章目录高亮：根据当前滚动位置自动高亮对应目录项
+// - 点击涟漪特效：全局鼠标点击产生扩散波纹动画
 
 const UtilsManager = {
   init(): void {
@@ -1218,7 +1246,7 @@ const UtilsManager = {
     const searchBtn = buttons.querySelector('.scroll-search') as HTMLElement;
     const themeBtn = buttons.querySelector('.scroll-theme') as HTMLElement;
 
-    // ---- 滚动功能 ----
+    // ----- 滚动功能：绑定返回顶部和到达底部的平滑滚动 -----
     if (topBtn) {
       topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
@@ -1226,7 +1254,7 @@ const UtilsManager = {
       bottomBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
     }
 
-    // ---- 搜索 ----
+    // ----- 搜索：点击触发头部搜索模态框 -----
     if (searchBtn) {
       searchBtn.addEventListener('click', () => {
         const searchToggle = document.querySelector('.search-toggle') as HTMLElement;
@@ -1234,7 +1262,7 @@ const UtilsManager = {
       });
     }
 
-    // ---- 主题切换 ----
+    // ----- 主题切换：触发头部主题按钮的点击，依次循环 light -> dark -> system -----
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
         const themeToggle = document.getElementById('theme-toggle') as HTMLElement;
@@ -1242,7 +1270,7 @@ const UtilsManager = {
       });
     }
 
-    // ---- 滚动显隐逻辑 ----
+    // ----- 滚动显隐逻辑：根据页面滚动位置动态显示/隐藏各按钮 -----
     let ticking = false;
     const updateButtons = (): void => {
       const scrollY = window.scrollY;
@@ -1250,7 +1278,7 @@ const UtilsManager = {
       const threshold = 300;
       const centerGroup = buttons.querySelector('.scroll-center-group') as HTMLElement;
 
-      // 顶部按钮：滚动超过阈值显示
+      // 顶部按钮：页面滚动距离超过 300px 阈值时显示
       if (scrollY > threshold) {
         buttons.classList.add('visible');
         if (topBtn) topBtn.style.display = 'flex';
@@ -1258,7 +1286,7 @@ const UtilsManager = {
         if (topBtn) topBtn.style.display = 'none';
       }
 
-      // 底部按钮：未到达底部显示
+      // 底部按钮：距页面底部超过 300px 时显示，已到达底部附近则隐藏
       if (scrollY < maxScroll - threshold) {
         buttons.classList.add('visible');
         if (bottomBtn) bottomBtn.style.display = 'flex';
@@ -1266,13 +1294,13 @@ const UtilsManager = {
         if (bottomBtn) bottomBtn.style.display = 'none';
       }
 
-      // 中间按钮组：跟随顶部或底部按钮的显示状态
+      // 中间按钮组（搜索和主题切换）：只要顶部或底部按钮有一项可见，就同时显示
       const hasVisible = (topBtn?.style.display === 'flex') || (bottomBtn?.style.display === 'flex');
       if (centerGroup) {
         centerGroup.style.display = hasVisible ? 'flex' : 'none';
       }
 
-      // 如果没有任何按钮显示，隐藏整个容器
+      // 如果没有任何按钮处于可见状态，隐藏整个悬浮按钮容器
       if (!hasVisible) {
         buttons.classList.remove('visible');
       }
@@ -1366,9 +1394,10 @@ const UtilsManager = {
   }
 };
 
-// ==========================================================================
-// Font Awesome 回退检测
-// ==========================================================================
+// ========== Font Awesome 图标库回退检测（FontFallback）==========
+// 检测 Font Awesome 图标字体是否成功加载渲染
+// 通过创建一个隐藏的测试图标元素 <i class="fas fa-square">，检查其实际渲染宽度来判断字体可用性
+// 若图标宽度小于 5px（加载失败），则动态注入 data-href 中指定的备用 CSS 链接
 
 const FontFallback = {
   init(): void {
@@ -1391,9 +1420,12 @@ const FontFallback = {
   }
 };
 
-// ==========================================================================
-// 页脚管理器
-// ==========================================================================
+// ========== 页脚信息管理器（FooterManager）==========
+// 动态更新页脚区域的版权信息、驱动信息、站点运行时长，每秒刷新一次
+// - 版权信息：根据建站日期自动生成年份范围（如 2020-2025）
+// - 驱动信息：展示 Hugo 引擎名称、主题名称和作者链接
+// - 运行时长：精确到秒的站点存活时间计数器，格式为 年-月-日 T 时:分:秒
+// - 渲染耗时：显示页面从开始加载到脚本执行完成的毫秒数
 
 const FooterManager = {
   siteTime: '',
@@ -1423,7 +1455,7 @@ const FooterManager = {
     const currentYear = now.getFullYear();
     const startYear = siteStart.getFullYear();
 
-    // 版权信息
+    // ----- 更新版权信息：根据建站日期动态生成 © 2020-2025 格式的年份范围 -----
     const copyrightEl = document.getElementById('footer-copyright');
     if (copyrightEl) {
       const prefix = I18n.t('footer_copyright_prefix');
@@ -1439,7 +1471,7 @@ const FooterManager = {
       copyrightEl.innerHTML = `${prefix} ${yearPart} <a href="${this.siteUrl}">${this.siteName}</a> ${webmaster} · ${reserved} <a href="${this.siteUrl}">${this.siteName}</a> ${rights}`;
     }
 
-    // 驱动信息
+    // ----- 更新驱动信息：显示 Hugo 引擎名称、主题名称和作者 GitHub 链接 -----
     const poweredEl = document.getElementById('footer-powered');
     if (poweredEl) {
       const prefix = I18n.t('footer_powered_prefix');
@@ -1451,7 +1483,7 @@ const FooterManager = {
       poweredEl.innerHTML = `${prefix} <a href="https://gohugo.io" target="_blank" rel="noopener">${hugo}</a> ${sep} ${theme}<a href="https://github.com/aizexintong/illusion" target="_blank" rel="noopener">幻梦 Illusion</a> ${sep} ${authorLabel}<a href="https://github.com/aizexintong" target="_blank" rel="noopener">爱则心痛</a>`;
     }
 
-    // 运行时长
+    // ----- 更新运行时长：计算自建站以来的完整时间差，渲染为 年-月-日 T 时:分:秒 格式 -----
     const displayEl = document.getElementById('uptime-display');
     if (!displayEl) return;
 
@@ -1485,7 +1517,7 @@ const FooterManager = {
       html += `<span style="color:${this.uptimeColors[i]};font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${dateNums[i]}</span>`;
     }
 
-    // 页面渲染耗时（固定值，保留两位小数）
+    // 追加页面渲染耗时信息（从页面开始加载到当前脚本执行的时间，保留两位小数）
     const renderLabel = I18n.t('footer_render_time');
     const renderMs = this.renderTime.toFixed(2);
     html += ` · ${renderLabel} <span style="color:#90C080;font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;">${renderMs}ms</span>`;
@@ -1497,9 +1529,12 @@ const FooterManager = {
   pad4(n: number): string { return String(n).padStart(4, '0'); }
 };
 
-// ==========================================================================
-// 搜索引擎管理器
-// ==========================================================================
+// ========== 站内搜索引擎管理器（SearchEngine）==========
+// 实现站内全文搜索功能，从 JSON 索引文件异步加载文章数据
+// - 搜索结果按标题、正文、摘要三个字段进行关键词匹配
+// - 关键词在结果中自动高亮标记
+// - 搜索结果摘要自动提取匹配关键词附近的上下文片段
+// - 支持 Escape 键清空搜索输入和结果
 
 const SearchEngine = {
   searchIndex: [] as any[],
@@ -1606,9 +1641,10 @@ const SearchEngine = {
   }
 };
 
-// ==========================================================================
-// 日历组件
-// ==========================================================================
+// ========== 日历小组件（CalendarWidget）==========
+// 渲染当月日历面板，包括周几标题行、日期数字网格、当前年月标签
+// 当天日期使用特殊 CSS 类名 .today 进行高亮标记
+// 月份名称和星期缩写均通过 I18n 模块读取多语言翻译
 
 const CalendarWidget = {
   init(): void {
@@ -1672,9 +1708,12 @@ const CalendarWidget = {
   }
 };
 
-// ==========================================================================
-// 归档导航器
-// ==========================================================================
+// ========== 归档年份导航器（ArchivesNavigator）==========
+// 解析页面中的所有归档年份分组，提供按年份切换文章列表的导航功能
+// - 上一页/下一页按钮：点击切换相邻年份
+// - 键盘导航：支持左右箭头键快速切换年份
+// - 月份面板：显示当前年份各月份的文章数量统计
+// - 月份点击：定位并平滑滚动到对应的月份分组位置
 
 const ArchivesNavigator = {
   years: [] as number[],
@@ -1783,9 +1822,9 @@ const ArchivesNavigator = {
   }
 };
 
-// ==========================================================================
-// 导航链接点击特效
-// ==========================================================================
+// ========== 导航链接点击特效（NavClickEffect）==========
+// 为导航栏链接（CSS 选择器 .nav-link）的点击事件添加星星弹出动画
+// 在点击位置生成一个 ✨ 字符元素，通过 CSS 动画 starPop 播放 0.6 秒后自动销毁
 
 const NavClickEffect = {
   init(): void {
@@ -1800,9 +1839,12 @@ const NavClickEffect = {
   }
 };
 
-// ==========================================================================
-// 标签页分页管理器
-// ==========================================================================
+// ========== 标签云分页管理器（TagsPagination）==========
+// 为标签云页面提供分页导航功能，将大量标签卡片按每页固定数量分组显示
+// - 智能页码显示：根据总页数和当前位置自动适配页码布局（首页用省略号收尾 / 尾页省略开头 / 中间两端省略）
+// - URL 参数同步：切换页码时更新浏览器地址栏查询参数，支持前进后退导航
+// - 导航按钮控制：最后一页自动隐藏"下一页"按钮
+// - 滚动定位：切换页码后自动滚动到标签网格顶部
 
 const TagsPagination = {
   currentPage: 1,
@@ -1818,7 +1860,7 @@ const TagsPagination = {
     const total = parseInt(grid.dataset.total || '0');
     this.totalPages = Math.ceil(total / this.perPage);
     if (this.totalPages <= 1) {
-      pagination.style.display = 'none'; // 只有一页时不显示分页
+      pagination.style.display = 'none'; // 标签总数不足一页时隐藏分页导航
       return;
     }
     pagination.style.display = 'flex';
@@ -1856,7 +1898,7 @@ const TagsPagination = {
     const showPages = 7;
     const half = Math.floor(showPages / 2);
 
-    // 总页数 <= 7：全部显示
+    // 总页数不超过 7 页时：直接列出全部页码（1 2 3 ... 7）
     if (total <= showPages) {
       for (let i = 1; i <= total; i++) {
         this.addPageLink(pageNumbers, i);
@@ -1864,7 +1906,7 @@ const TagsPagination = {
       return;
     }
 
-    // 首页：1 2 3 4 ... 末页
+    // 当前页靠近开头位置：显示 1 2 3 4 ... 最后一页
     if (current <= half) {
       for (let i = 1; i <= 4; i++) {
         this.addPageLink(pageNumbers, i);
@@ -1874,7 +1916,7 @@ const TagsPagination = {
       return;
     }
 
-    // 尾页：首页 ... 倒数第4页 ... 末页
+    // 当前页靠近末尾位置：显示 首页 ... n-3 n-2 n-1 n
     if (current > total - half) {
       this.addPageLink(pageNumbers, 1);
       this.addDots(pageNumbers);
@@ -1884,7 +1926,7 @@ const TagsPagination = {
       return;
     }
 
-    // 中间：首页 ... 当前页-1 当前页 当前页+1 ... 末页
+    // 当前页在中间区域：显示 首页 ... 当前页前后各一页 ... 末页
     this.addPageLink(pageNumbers, 1);
     this.addDots(pageNumbers);
     for (let i = current - 1; i <= current + 1; i++) {
@@ -1914,16 +1956,15 @@ const TagsPagination = {
     container.appendChild(link);
   },
 
-  // ============================================================
-  // 关键修改：首页隐藏"上一页"，尾页隐藏"下一页"
-  // ============================================================
+  // ========== 更新分页导航按钮的可见性状态 ==========
+  // 当前在第一页时隐藏"上一页"按钮，在最后一页时隐藏"下一页"按钮
   updateNavButtons(): void {
     const prevBtn = document.getElementById('page-prev') as HTMLElement;
     const nextBtn = document.getElementById('page-next') as HTMLElement;
 
     if (prevBtn) {
       if (this.currentPage <= 1) {
-        prevBtn.style.display = 'none'; // 首页隐藏
+        prevBtn.style.display = 'none'; // 处于第一页，隐藏"上一页"按钮
       } else {
         prevBtn.style.display = 'inline-flex';
         prevBtn.style.pointerEvents = 'auto';
@@ -1933,7 +1974,7 @@ const TagsPagination = {
 
     if (nextBtn) {
       if (this.currentPage >= this.totalPages) {
-        nextBtn.style.display = 'none'; // 尾页隐藏
+        nextBtn.style.display = 'none'; // 处于最后一页，隐藏"下一页"按钮
       } else {
         nextBtn.style.display = 'inline-flex';
         nextBtn.style.pointerEvents = 'auto';
@@ -1943,9 +1984,10 @@ const TagsPagination = {
   }
 };
 
-// ==========================================================================
-// 主初始化函数
-// ==========================================================================
+// ========== 主初始化入口函数 ==========
+// 按依赖顺序依次初始化所有管理器模块，确保各模块的 DOM 操作不会互相干扰
+// 使用全局标志位 IllusionThemeInitialized 防止页面重复初始化
+// 在 prefers-reduced-motion（用户偏好减少动画）模式下跳过 Canvas 粒子特效以降低性能消耗
 
 function initIllusionTheme(): void {
   if ((window as any).IllusionThemeInitialized) return;
@@ -1976,13 +2018,13 @@ function initIllusionTheme(): void {
   console.log('Illusion Theme v1.0.0 initialized');
 }
 
-// ==========================================================================
-// 启动逻辑
-// ==========================================================================
+// ========== 自动启动 ==========
+// 脚本文件加载完成后立即执行初始化，无需等待 DOMContentLoaded 事件
+// 各管理器内部自行通过 document.readyState 检测来处理 DOM 就绪状态的时序问题
 
 initIllusionTheme();
 
-// 导出接口
+// 将所有管理器实例统一暴露到全局 window.IllusionTheme 对象上，便于外部脚本调用和浏览器控制台调试
 (window as any).IllusionTheme = {
   ThemeManager, EffectsManager, AnimationManager,
   InteractionManager, EnhancementManager, UtilsManager,

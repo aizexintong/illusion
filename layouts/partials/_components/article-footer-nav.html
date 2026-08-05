@@ -1,11 +1,14 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 文章底部导航：上一篇 / 推荐阅读 / 下一篇 */ -}}
+{{- /* 文章底部导航组件：显示上一篇文章、相关推荐阅读和下一篇文章的导航卡片 */ -}}
+{{- /* 计算相关文章推荐数量：缺少上/下篇时显示 3 篇推荐，否则显示 2 篇 */ -}}
 {{ $relCount := 2 }}
 {{ if or (not .PrevInSection) (not .NextInSection) }}{{ $relCount = 3 }}{{ end }}
+{{- /* 获取相关文章（按内容相关性排序） */ -}}
 {{ $related := where (.Site.RegularPages.Related .) "Type" "posts" | first $relCount }}
 
 <div class="post-footer-nav">
   <div class="post-footer-flex">
+    {{- /* 上一篇文章 */ -}}
     {{ with .PrevInSection }}
     <a href="{{ .RelPermalink }}" class="nav-card nav-prev">
       <span class="nav-card-label">{{ i18n "post_prev" }}</span>
@@ -13,6 +16,7 @@
     </a>
     {{ end }}
 
+    {{- /* 相关推荐阅读 */ -}}
     {{ range $related }}
     <a href="{{ .RelPermalink }}" class="nav-card nav-prev">
       {{ if .Params.image }}<div class="nav-rel-img"><img src="{{ .Params.image }}" alt="" loading="lazy"/></div>{{ end }}
@@ -20,6 +24,7 @@
     </a>
     {{ end }}
 
+    {{- /* 下一篇文章 */ -}}
     {{ with .NextInSection }}
     <a href="{{ .RelPermalink }}" class="nav-card nav-next">
       <span class="nav-card-label">{{ i18n "post_next" }}</span>

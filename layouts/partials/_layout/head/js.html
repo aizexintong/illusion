@@ -1,4 +1,5 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* JS 编译模板：使用 esbuild 编译 TypeScript 源文件，生产环境压缩，开发环境启用 Source Map */ -}}
 {{- $opts := dict "targetPath" "main.js" "minify" (not hugo.IsDevelopment) "target" "es2015" "format" "iife" "sourceMap" (cond hugo.IsDevelopment "inline" "") "params" (dict "api" "https://github.com/aizexintong" "theme" "illusion") }}
 {{- with resources.Get "ts/main.ts" | js.Build $opts | fingerprint -}}
 <script defer src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}"></script>

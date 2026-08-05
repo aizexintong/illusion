@@ -4,7 +4,7 @@
 
 [![Hugo](https://img.shields.io/badge/Hugo-%3E%3D0.146.0-FF4088?logo=hugo)](https://gohugo.io)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Demo](https://img.shields.io/badge/Demo-azxt.org-brightgreen)](https://azxt.org)
+[![Demo](https://img.shields.io/badge/Demo-illusion.azxt.org-brightgreen)](https://illusion.azxt.org)
 [![Version](https://img.shields.io/badge/Version-v1.1.0-orange)](https://github.com/aizexintong/illusion)
 
 ---
@@ -13,7 +13,7 @@
 
 **幻梦 (Illusion)** v1.1.0 正式预览版——为个人博客打造的 Hugo 主题，将自然意象（晨雾、星空、萤火虫、糖果雨）融入数字设计。
 
-在线演示: [https://azxt.org](https://azxt.org)
+在线演示: [https://illusion.azxt.org](https://illusion.azxt.org)
 
 > **版本说明**: v1.1.0 为正式预览版，核心功能稳定可用，可能存在少量不影响正常使用的边界情况瑕疵，欢迎反馈。
 

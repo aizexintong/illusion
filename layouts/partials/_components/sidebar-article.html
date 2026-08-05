@@ -1,5 +1,7 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 文章详情页侧栏组件：展示文章目录(TOC)、文章元信息（发布时间、修改状态、字数、阅读时间）和标签列表 */ -}}
 <aside class="article-right">
+{{- /* 文章目录（如果启用且有内容） */ -}}
 {{ if and .Site.Params.enableTOC .TableOfContents }}
 <div class="side-box">
   <div class="side-box-title"><i class="fas fa-list"></i> {{ i18n "post_contents" }}</div>
@@ -7,9 +9,11 @@
 </div>
 {{ end }}
 
+{{- /* 文章元信息面板 */ -}}
 <div class="side-box">
   <div class="side-box-title"><i class="fas fa-info"></i> {{ i18n "post_info" }}</div>
   <div class="side-info">
+    {{- /* 发布日期 */ -}}
     {{ if .Date }}
     <div class="side-info-row">
       <span class="side-info-label">{{ i18n "post_published" }}</span>
@@ -20,6 +24,7 @@
     </div>
     {{ end }}
 
+    {{- /* 判断文章是否被修改过 */ -}}
     {{- $isModified := and .Date .Lastmod (ne (.Lastmod.Format "2006-01-02") (.Date.Format "2006-01-02")) -}}
     {{ if $isModified }}
     <div class="side-info-row">
@@ -29,7 +34,8 @@
         <span class="side-info-relative">({{ partial "_utils/relative-time.html" .Lastmod }})</span>
       </span>
     </div>
-    {{- $modDays := int (div (sub .Lastmod.Unix .Date.Unix) 86400) -}}
+      {{- /* 计算修改天数并显示状态 */ -}}
+      {{- $modDays := int (div (sub .Lastmod.Unix .Date.Unix) 86400) -}}
     <div class="side-status">
       <i class="fas {{ if le $modDays 7 }}fa-clock{{ else }}fa-history{{ end }}"></i>
       <span class="side-status-text">
@@ -63,6 +69,7 @@
   </div>
 </div>
 
+{{- /* 标签列表面板 */ -}}
 {{ if .Params.tags }}
 <div class="side-box">
   <div class="side-box-title"><i class="fas fa-tags"></i> {{ i18n "post_tags" }}</div>

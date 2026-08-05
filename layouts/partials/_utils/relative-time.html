@@ -1,18 +1,27 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 相对时间工具：将日期转换为相对时间文本（刚刚/X分钟前/X小时前/X天前/X周前/X月前/X年前） */ -}}
 {{- $date := . -}}
+{{- /* 计算与当前时间的秒数差 */ -}}
 {{- $secs := (now.Sub $date).Seconds -}}
+{{- /* 60 秒内：刚刚 */ -}}
 {{- if lt $secs 60 -}}
   {{ i18n "rel_just_now" }}
+{{- /* 60 秒 ~ 1 小时内：X 分钟前 */ -}}
 {{- else if lt $secs 3600 -}}
   {{ printf "%.0f" (div $secs 60) }}{{ i18n "rel_minutes_ago" }}
+{{- /* 1 小时 ~ 1 天内：X 小时前 */ -}}
 {{- else if lt $secs 86400 -}}
   {{ printf "%.0f" (div $secs 3600) }}{{ i18n "rel_hours_ago" }}
+{{- /* 1 天 ~ 1 周内：X 天前 */ -}}
 {{- else if lt $secs 604800 -}}
   {{ printf "%.0f" (div $secs 86400) }}{{ i18n "rel_days_ago" }}
+{{- /* 1 周 ~ 1 月内：X 周前 */ -}}
 {{- else if lt $secs 2592000 -}}
   {{ printf "%.0f" (div $secs 604800) }}{{ i18n "rel_weeks_ago" }}
+{{- /* 1 月 ~ 1 年内：X 个月前 */ -}}
 {{- else if lt $secs 31536000 -}}
   {{ printf "%.0f" (div $secs 2592000) }}{{ i18n "rel_months_ago" }}
+{{- /* 1 年以上：X 年前 */ -}}
 {{- else -}}
   {{ printf "%.0f" (div $secs 31536000) }}{{ i18n "rel_years_ago" }}
 {{- end -}}

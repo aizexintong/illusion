@@ -1,6 +1,7 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 文章列表页侧栏：日历 + 最新文章 + 标签云 */ -}}
+{{- /* 文章列表页侧栏组件：展示日历小部件、最新 5 篇文章和标签云（前 10 个标签） */ -}}
 <aside class="posts-sidebar">
+  {{- /* 日历小部件 */ -}}
   <div class="sidebar-card calendar-card sidebar-widget">
     <div class="calendar-header">
       <span class="calendar-month" id="calendar-month"></span>

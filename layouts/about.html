@@ -1,11 +1,14 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 关于页面模板：展示个人信息、理念、正文内容和联系方式 */ -}}
 {{ define "main" }}
+{{- /* 从主题数据中获取关于页配置 */ -}}
 {{ $aboutData := hugo.Data.theme.about }}
 <div class="section-content">
   <div class="container">
+    {{- /* 页面头部 */ -}}
     {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
-    <section class="about-intro" data-aos="fade-up">
+    {{- /* 个人信息介绍区域：头像 + 姓名 + 座右铭 + 统计数据 */ -}}
       <div class="intro-card card">
         <div class="intro-content">
           <div class="intro-text">
@@ -17,6 +20,7 @@
               <i class="fas fa-quote-right"></i>
             </div>
           </div>
+        {{- /* 头像区域 */ -}}
           <div class="intro-image">
             {{- $assets := hugo.Data.theme.assets -}}
             <img src="{{ $assets.avatar.url }}" alt="{{ $aboutData.intro.name }}" loading="lazy">
@@ -24,6 +28,7 @@
           </div>
         </div>
 
+        {{- /* 统计数据行：文章数、技能数等 */ -}}
         <div class="intro-stats">
           {{ with $aboutData.stats }}{{ range . }}
           <div class="stat-item">
@@ -44,6 +49,7 @@
       </div>
     </section>
 
+    {{- /* 理念展示区域 */ -}}
     <section class="about-philosophy" data-aos="fade-up">
       <h2 class="section-title">{{ $aboutData.philosophy.title | default (i18n "about_philosophy") }}</h2>
       <div class="philosophy-grid">
@@ -57,6 +63,7 @@
       </div>
     </section>
 
+    {{- /* 正文内容（Markdown） */ -}}
     {{ if .Content }}
     <section class="about-content" data-aos="fade-up">
       <div class="content-card card">
@@ -65,6 +72,7 @@
     </section>
     {{ end }}
 
+    {{- /* 联系方式区域 */ -}}
     <section class="about-contact" data-aos="fade-up">
       <div class="contact-card card">
         <h2 class="section-title">{{ $aboutData.contact.title | default (i18n "about_contact") }}</h2>

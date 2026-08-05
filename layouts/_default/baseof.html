@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 全局基础模板 (baseof)：定义所有页面的 HTML 骨架结构，包含头部、主体、页脚、搜索模态框、浮动按钮、图片灯箱和脚本加载 */ -}}
 <html lang="{{ site.Language.Locale }}" dir="{{ or site.Language.Direction `ltr` }}">
 <head>
+  {{- /* 记录页面开始加载的时间戳 */ -}}
   <script>window.pageLoadTime = performance.now();</script>
+  {{- /* 引入全局头部：元数据、OG、CSS、JS、Schema 等 */ -}}
   {{ partial "_layout/head.html" . }}
+  {{- /* 全局国际化文本数据，供前端 JS 使用 */ -}}
   <script>
     window.i18nData = {
+      {{- /* ========== 主题切换相关文本 ========== */ -}}
       // ===== 主题切换 =====
       "theme_light": "{{ i18n "theme_light" }}",
       "theme_dark": "{{ i18n "theme_dark" }}",
       "theme_system": "{{ i18n "theme_system" }}",
 
+      {{- /* ========== 无障碍辅助功能文本 ========== */ -}}
       // ===== 辅助功能 =====
       "a11y_skip_to_main": "{{ i18n "a11y_skip_to_main" }}",
 
+      {{- /* ========== 代码复制功能文本 ========== */ -}}
       // ===== 代码复制 =====
       "js_code_copy": "{{ i18n "js_code_copy" }}",
       "js_code_copied": "{{ i18n "js_code_copied" }}",
       "js_copy_code": "{{ i18n "js_copy_code" }}",
 
+      {{- /* ========== 搜索功能文本 ========== */ -}}
       // ===== 搜索 =====
       "js_search_error": "{{ i18n "js_search_error" }}",
       "js_search_error_hint": "{{ i18n "js_search_error_hint" }}",
@@ -26,17 +34,21 @@
       "js_search_results_for": "{{ i18n "js_search_results_for" }}",
       "js_search_results_count": "{{ i18n "js_search_results_count" }}",
 
+      {{- /* ========== 页脚文本 ========== */ -}}
       // ===== 页脚 =====
       "js_uptime_label": "{{ i18n "js_uptime_label" }}",
 
+      {{- /* ========== 归档页面文本 ========== */ -}}
       // ===== 归档 =====
       "js_archives_no_data": "{{ i18n "js_archives_no_data" }}",
 
+      {{- /* ========== 日历组件文本 ========== */ -}}
       // ===== 日历 =====
       "calendar_weekdays": "{{ i18n "calendar_weekdays" }}",
       "calendar_year_suffix": "{{ i18n "calendar_year_suffix" }}",
       "calendar_date_format": "{{ i18n "calendar_date_format" }}",
 
+      {{- /* ========== 十二个月份名称（用于归档导航） ========== */ -}}
       // ===== 月份（归档导航用） =====
       "archives_month_01": "{{ i18n "archives_month_01" }}",
       "archives_month_02": "{{ i18n "archives_month_02" }}",
@@ -51,6 +63,7 @@
       "archives_month_11": "{{ i18n "archives_month_11" }}",
       "archives_month_12": "{{ i18n "archives_month_12" }}",
 
+      {{- /* ========== 页脚版权信息文本 ========== */ -}}
       // ===== 页脚版权 =====
       "footer_copyright_prefix": "{{ i18n "footer_copyright_prefix" }}",
       "footer_copyright_separator": "{{ i18n "footer_copyright_separator" }}",
@@ -65,6 +78,7 @@
       "footer_uptime_label": "{{ i18n "footer_uptime_label" }}",
       "footer_render_time": "{{ i18n "footer_render_time" }}",
 
+      {{- /* ========== 评论系统警告提示文本 ========== */ -}}
       // ===== 评论系统警告（新增） =====
       "comments_disqus_warn": "{{ i18n "comments_disqus_warn" }}",
       "comments_utterances_warn": "{{ i18n "comments_utterances_warn" }}",
@@ -78,6 +92,7 @@
   </script>
 </head>
 <body>
+  {{- /* ========== 背景图层：图片 + 遮罩 ========== */ -}}
   <div class="bg-layer bg-image-layer">
     {{- $assets := hugo.Data.theme.assets -}}
     {{- $bg := $assets.background.adaptive.url | default "https://t.alcy.cc/ycy" -}}
@@ -85,19 +100,24 @@
   </div>
   <div class="bg-layer bg-overlay-layer"></div>
 
+  {{- /* ========== 内容主体：头部 + 主内容区 + 页脚 ========== */ -}}
   <div class="content-wrapper">
     <header>{{ partial "_layout/header.html" . }}</header>
     <main id="main">{{ block "main" . }}{{ end }}</main>
     <footer>{{ partial "_layout/footer.html" . }}</footer>
   </div>
 
+  {{- /* 搜索模态框 */ -}}
   {{ partial "_layout/search-modal.html" . }}
 
+  {{- /* ========== 右侧浮动按钮组 ========== */ -}}
   <div class="scroll-buttons" id="scroll-buttons">
+    {{- /* 回到顶部按钮 */ -}}
     <button class="scroll-btn scroll-to-top" aria-label="{{ i18n "btn_scroll_top" }}" title="{{ i18n "btn_scroll_top" }}">
       <i class="fas fa-chevron-up"></i>
     </button>
 
+    {{- /* 中间分组：搜索 + 主题切换 */ -}}
     <div class="scroll-center-group">
       <button class="scroll-btn scroll-search search-toggle" aria-label="{{ i18n "nav_search" }}" title="{{ i18n "nav_search" }}" id="scroll-search">
           <i class="fas fa-search"></i>
@@ -107,21 +127,25 @@
       </button>
     </div>
 
+    {{- /* 滚到底部按钮 */ -}}
     <button class="scroll-btn scroll-to-bottom" aria-label="{{ i18n "btn_scroll_bottom" }}" title="{{ i18n "btn_scroll_bottom" }}">
       <i class="fas fa-chevron-down"></i>
     </button>
   </div>
 
+  {{- /* ========== 图片灯箱（点击查看大图） ========== */ -}}
   <div class="img-lightbox" id="img-lightbox">
     <button class="img-lightbox-close" aria-label="{{ i18n "btn_close" }}"><i class="fas fa-times"></i></button>
     <img src="" alt="" id="img-lightbox-img">
   </div>
 
+  {{- /* ========== 第三方库 CDN 加载（含本地回退） ========== */ -}}
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" crossorigin="anonymous"
     onerror="var a=document.createElement('script');a.defer=true;a.src='{{ "lib/aos/aos.js" | relURL }}';this.insertAdjacentElement('afterend',a)"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.js" crossorigin="anonymous"
     onerror="var t=document.createElement('script');t.defer=true;t.src='{{ "lib/typed.js/typed.js" | relURL }}';this.insertAdjacentElement('afterend',t)"></script>
 
+  {{- /* 站点全局配置，供前端 JS 使用 */ -}}
   <script>
     window.siteConfig = {
       siteTime: "{{ .Site.Params.siteTime }}",

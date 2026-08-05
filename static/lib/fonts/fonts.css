@@ -1,9 +1,11 @@
 /* 幻梦 Illusion v1.1.0 - 本地字体定义
- * 使用系统字体栈作为回退，确保在国内网络环境下也能正常显示
+ * 通过 @font-face 将中文字体族映射到用户系统中已安装的等价字体，
+ * 避免从远程 CDN 加载字体文件，确保在国内网络环境下仍能快速渲染。
+ * 所有字重均启用 font-display: swap，优先使用系统字体以防止文字闪烁(FOTI)。
  * 正式预览版
  */
 
-/* Noto Sans SC - 使用系统字体栈回退 */
+/* Noto Sans SC 细体(300) - 对应 Light 字重，适用于轻盈辅助文字 */
 @font-face {
   font-family: 'Noto Sans SC';
   font-style: normal;
@@ -14,6 +16,7 @@
        local('Source Han Sans CN Light');
 }
 
+/* Noto Sans SC 常规(400) - 对应 Regular 字重，适用于正文内容 */
 @font-face {
   font-family: 'Noto Sans SC';
   font-style: normal;
@@ -24,6 +27,7 @@
        local('Source Han Sans CN Regular');
 }
 
+/* Noto Sans SC 中等(500) - 对应 Medium 字重，适用于标题或强调文本 */
 @font-face {
   font-family: 'Noto Sans SC';
   font-style: normal;
@@ -34,6 +38,7 @@
        local('Source Han Sans CN Medium');
 }
 
+/* Noto Sans SC 粗体(700) - 对应 Bold 字重，适用于重点突出文字 */
 @font-face {
   font-family: 'Noto Sans SC';
   font-style: normal;
@@ -44,7 +49,7 @@
        local('Source Han Sans CN Bold');
 }
 
-/* ZCOOL QingKe HuangYou - 艺术字体 */
+/* ZCOOL QingKe HuangYou 常规(400) - 艺术手写风格字体，用于装饰性标题 */
 @font-face {
   font-family: 'ZCOOL QingKe HuangYou';
   font-style: normal;

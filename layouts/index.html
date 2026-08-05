@@ -1,8 +1,14 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 首页模板：按顺序渲染 Hero 区域、最新文章、关于介绍、技术栈展示和页面正文内容 */ -}}
 {{ define "main" }}
+  {{- /* 首页 Hero 大图区域 */ -}}
   {{ partial "_components/page-hero.html" . }}
+  {{- /* 最新文章列表板块 */ -}}
   {{ partial "_components/section-posts.html" . }}
+  {{- /* 关于我简介板块 */ -}}
   {{ partial "_components/section-about.html" . }}
+  {{- /* 技术栈展示板块 */ -}}
   {{ partial "_components/section-skills.html" . }}
+  {{- /* 页面 Markdown 正文内容 */ -}}
   {{ .Content }}
 {{ end }}

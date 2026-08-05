@@ -1,12 +1,21 @@
 # =============================================================================
-# 幻梦 Illusion v1.1.0 - Hugo 站点配置
+# 幻梦 Illusion v1.1.0 - Hugo 主题站点配置文件
 # 正式预览版
-# 使命: 站点核心配置与功能开关，后期调整的主要文件
+# 本文件是幻梦主题的核心配置文件，集中管理站点的基础信息、功能开关、
+# 评论系统、导航菜单、Markdown 渲染、输出格式和站点地图等所有关键设置。
+# 后期需要调整站点行为时，主要修改此文件中的对应配置项。
 # =============================================================================
 
-# ---------------------------------------------------------------------------
-# 站点基本信息
-# ---------------------------------------------------------------------------
+# ========== 站点基本信息 ==========
+# 配置站点的访问地址、语言区域、站点标题和主题等基础元数据。
+# baseURL: 站点的完整访问地址，必须以 / 结尾，用于生成绝对 URL。
+# locale: 站点语言区域代码，zh-CN 表示简体中文。
+# languageName: 语言名称，用于多语言站点中显示的语言标签。
+# title: 浏览器标签页和搜索结果中显示的站点名称。
+# theme: 使用的 Hugo 主题目录名，需与 themes/ 目录下的文件夹名称一致。
+# defaultContentLanguage: 默认内容语言代码。
+# defaultContentLanguageInSubdir: 是否将默认语言的内容放在子目录中，false 表示根目录即为默认语言。
+# enableGitInfo: 开启后可在页面底部显示基于 Git 提交记录的最后更新时间。
 baseURL = 'https://azxt.org/'
 locale = 'zh-CN'
 languageName = '中文'
@@ -16,11 +25,18 @@ defaultContentLanguage = 'zh'
 defaultContentLanguageInSubdir = false
 enableGitInfo = true
 
-# ---------------------------------------------------------------------------
-# 功能开关（最常调整的部分）
-# ---------------------------------------------------------------------------
+# ========== 功能开关 ==========
+# 此部分包含所有可通过参数控制的站点功能，是后期最常调整的配置区域。
+# 涵盖个人信息、功能开关、SEO 社交分享和评论系统等子配置块。
 [params]
-  # -- 个人信息 --
+  # ----- 个人信息 -----
+  # 作者的个人资料，用于页面元信息、SEO 标签和社交分享卡片。
+  # author: 作者署名，显示在文章页面和网站底部。
+  # description: 网站描述，用于 meta description 标签和 SEO 摘要。
+  # email: 公开的联系邮箱。
+  # github: GitHub 用户名，用于社交链接和 GitHub 相关功能。
+  # domain: 网站主域名，用于生成 Open Graph 等社交标签。
+  # siteTime: 网站创建时间，格式为 ISO 8601 时间格式（含时区偏移），如 "2026-04-01T00:00:00+08:00"。
   author = "爱则心痛(演示)"
   description = "爱则心痛(演示)的个人博客 - 分享技术、生活和思考"
   email = "admin@azxt.org"
@@ -28,7 +44,19 @@ enableGitInfo = true
   domain = "azxt.org"
   siteTime = "2026-04-01T00:00:00+08:00"
 
-  # -- 功能开关 --
+  # ----- 功能开关 -----
+  # 控制站点的各项前端功能，设为 true 启用，false 禁用。
+  # enableDarkMode: 是否启用深色/浅色模式切换功能。
+  # enableSearch: 是否启用站内搜索功能。
+  # searchProvider: 搜索服务提供者，可选值: "local"（本地搜索）。
+  # enableParticles: 是否启用粒子背景动画效果。
+  # enable3DEffects: 是否启用 3D 视觉效果（如 Three.js 场景）。
+  # enableScrollAnimations: 是否启用页面滚动时的入场动画。
+  # enableTypewriter: 是否启用打字机文字效果。
+  # enableAccessibility: 是否启用无障碍辅助功能（如键盘导航、屏幕阅读器优化）。
+  # enableTOC: 是否在文章页面启用目录（Table of Contents）。
+  # enableComments: 评论系统的总开关，设为 false 后所有评论系统均不会加载。
+  # lazyLoadImages: 是否启用图片懒加载，减少首屏加载时间，提升页面性能。
   enableDarkMode = true
   enableSearch = true
   searchProvider = "local"
@@ -38,58 +66,97 @@ enableGitInfo = true
   enableTypewriter = true
   enableAccessibility = true
   enableTOC = true
-  enableComments = false          # 总开关
+  enableComments = false
   lazyLoadImages = true
 
-  # -- SEO / 社交分享 --
+  # ----- SEO 与社交分享 -----
+  # 控制搜索引擎优化和社交媒体分享相关的元标签生成。
+  # enableSchema: 是否生成 Schema.org 结构化数据标签，有助于搜索引擎解析页面内容。
+  # enableOpenGraph: 是否生成 Open Graph 协议标签，用于 Facebook、Telegram 等平台的分享卡片预览。
+  # enableTwitterCards: 是否生成 Twitter Cards 标签，用于 Twitter/X 平台的分享链接预览。
   enableSchema = true
   enableOpenGraph = true
   enableTwitterCards = true
 
-  # -- 评论系统配置 --
+  # ----- 评论系统配置 -----
+  # 选择并配置网站的评论系统。commentsProvider 指定当前使用的评论平台，
   # 可选值: disqus | utterances | giscus | twikoo | waline | artalk
+  # 切换评论系统时只需修改 commentsProvider 的值并填写对应平台的配置项即可。
+  # 注意: enableComments 总开关必须设为 true 评论系统才会加载。
   commentsProvider = "giscus"
 
-  # ----- Disqus -----
+  # ----- Disqus 评论系统 -----
+  # Disqus 是第三方托管评论服务，无需自建后端，开箱即用。
+  # disqusShortname: 在 Disqus 管理后台注册站点时获得的唯一短名称标识。
   disqusShortname = ""
 
-  # ----- Utterances -----
-  utterancesRepo = ""                # 格式: owner/repo
-  utterancesIssueTerm = "pathname"   # pathname | url | title | og:title
+  # ----- Utterances 评论系统 -----
+  # Utterances 是基于 GitHub Issues 的轻量评论系统，评论数据存储在指定仓库的 Issues 中。
+  # utterancesRepo: GitHub 仓库标识，格式: owner/repo（如 "aizexintong/blog-comments"）。
+  # utterancesIssueTerm: 评论与页面的映射方式，可选值: pathname | url | title | og:title。
+  utterancesRepo = ""
+  utterancesIssueTerm = "pathname"
 
-  # ----- Giscus -----
+  # ----- Giscus 评论系统 -----
+  # Giscus 是基于 GitHub Discussions 的评论系统，功能更丰富，支持反应表情和分类管理。
+  # giscusRepo: GitHub 仓库标识，格式: owner/repo。
+  # giscusRepoId: 仓库的唯一 ID，可从 Giscus 官网配置页面获取。
+  # giscusCategory: 用于存放评论的 Discussions 分类名称。
+  # giscusCategoryId: Discussions 分类的唯一 ID，可从 Giscus 官网配置页面获取。
+  # giscusMapping: 页面与 Discussions 的映射方式，可选值: pathname | url | title | og:title | specific。
+  # giscusStrict: 是否启用严格模式（按映射精确匹配），"1" 表示开启，"0" 表示关闭。
+  # giscusReactions: 是否启用评论的反应表情功能，"1" 表示开启，"0" 表示关闭。
+  # giscusEmitMetadata: 是否向 GitHub 发送页面元数据，"1" 表示开启，"0" 表示关闭。
+  # giscusInputPosition: 评论输入框的位置，可选值: bottom（底部）| top（顶部）。
+  # giscusLang: Giscus 界面语言代码，zh-CN 表示简体中文。
   giscusRepo = ""
   giscusRepoId = ""
   giscusCategory = ""
   giscusCategoryId = ""
-  giscusMapping = "pathname"           # pathname | url | title | og:title | specific
+  giscusMapping = "pathname"
   giscusStrict = "0"
   giscusReactions = "1"
   giscusEmitMetadata = "0"
-  giscusInputPosition = "bottom"       # bottom | top
-  giscusLang = "zh-CN"                 # 界面语言
+  giscusInputPosition = "bottom"
+  giscusLang = "zh-CN"
 
-  # ----- Twikoo -----
-  twikooEnvId = ""                   # 腾讯云环境ID 或 自部署地址
-  twikooRegion = ""                  # 可选: ap-guangzhou | ap-shanghai | ...
+  # ----- Twikoo 评论系统 -----
+  # Twikoo 是基于腾讯云 CloudBase 的评论系统，支持部署在腾讯云或自建服务器。
+  # twikooEnvId: 腾讯云环境 ID 或自部署服务器的完整访问地址。
+  # twikooRegion: 腾讯云环境所在地域，可选值如 ap-guangzhou（广州）、ap-shanghai（上海）等。
+  # twikooLang: 界面语言代码，zh-CN 表示简体中文。
+  twikooEnvId = ""
+  twikooRegion = ""
   twikooLang = "zh-CN"
 
-  # ----- Waline -----
+  # ----- Waline 评论系统 -----
+  # Waline 是基于 Valine 改进的轻量评论系统，支持自部署和丰富的功能扩展。
+  # walineServerURL: Waline 服务端的访问地址，如 "https://waline.example.com"。
+  # walineLang: 界面语言代码，zh-CN 表示简体中文。
+  # walinePageSize: 每页显示的评论数量，建议值 10 ~ 20。
+  # walineMeta: 评论者需要填写的字段列表，可选值: nick（昵称）、mail（邮箱）、link（网址）。
+  # walineRequiredMeta: 评论者必须填写的字段列表，至少需要 nick 和 mail。
   walineServerURL = ""
   walineLang = "zh-CN"
   walinePageSize = 10
   walineMeta = ['nick', 'mail', 'link']
   walineRequiredMeta = ['nick', 'mail']
 
-  # ----- Artalk -----
-  artalkServer = ""                  # 自部署服务端地址
-  artalkSite = ""                    # 站点名称
+  # ----- Artalk 评论系统 -----
+  # Artalk 是自部署的轻量评论系统，支持暗色模式、多站点管理和数据导出。
+  # artalkServer: 自部署 Artalk 服务端的完整访问地址。
+  # artalkSite: 当前站点在 Artalk 后台中配置的站点名称。
+  # artalkPlaceholder: 评论输入框的占位提示文字。
+  # artalkDarkMode: 暗色模式策略，可选值: auto（跟随系统）| manual（手动切换）| true（始终暗色）| false（始终亮色）。
+  artalkServer = ""
+  artalkSite = ""
   artalkPlaceholder = "说点什么吧..."
-  artalkDarkMode = "auto"            # auto | manual | true | false
+  artalkDarkMode = "auto"
 
-# ---------------------------------------------------------------------------
-# 导航菜单
-# ---------------------------------------------------------------------------
+# ========== 导航菜单 ==========
+# 配置网站的主导航菜单（main）和页脚导航菜单（footer）。
+# weight 值决定菜单项的排列顺序，数值越小越靠前。
+# icon 使用 Font Awesome 图标类名，用于在菜单项名称前显示图标。
 [menus]
   [[menus.main]]
     name = '首页'
@@ -147,7 +214,8 @@ enableGitInfo = true
     [menus.main.params]
       icon = 'fas fa-tools'
 
-  # 页脚导航
+  # ----- 页脚导航 -----
+  # 显示在网站底部的导航链接，通常包含隐私政策、使用条款等页面入口。
   [[menus.footer]]
     name = '隐私政策'
     url = '/privacy/'
@@ -162,9 +230,13 @@ enableGitInfo = true
     [menus.footer.params]
       icon = 'fas fa-file-contract'
 
-# ---------------------------------------------------------------------------
-# Markdown 渲染与代码高亮
-# ---------------------------------------------------------------------------
+# ========== Markdown 渲染与代码高亮 ==========
+# 配置 Hugo 的 Markdown 解析器和代码语法高亮的行为参数。
+# codeFences: 是否启用围栏代码块（使用三个反引号 ``` 包裹的代码块）。
+# guessSyntax: 当代码块未指定语言时，是否自动尝试推断其编程语言。
+# noClasses: 设为 false 时使用 CSS 类名进行语法高亮（需配合样式文件）；设为 true 时使用内联样式。
+# tabWidth: 代码块中 Tab 字符的显示宽度，数值表示空格数。
+# lineNos: 是否在代码块中显示行号。
 [markup]
   [markup.highlight]
     codeFences = true
@@ -173,9 +245,13 @@ enableGitInfo = true
     tabWidth = 2
     lineNos = false
 
-# ---------------------------------------------------------------------------
-# 输出格式
-# ---------------------------------------------------------------------------
+# ========== 输出格式 ==========
+# 定义 Hugo 为每种页面类型生成的输出格式列表。
+# home: 首页输出 HTML 页面、JSON 索引文件（用于搜索）和 RSS 订阅源。
+# page: 普通页面（如文章正文）只输出 HTML。
+# section: 栏目列表页输出 HTML 页面和 RSS 订阅源。
+# taxonomy: 分类列表页（如标签列表页 /tags/）输出 HTML 页面和 RSS 订阅源。
+# term: 分类详情页（如单个标签的文章列表）输出 HTML 页面和 RSS 订阅源。
 [outputs]
   home = ["HTML", "JSON", "RSS"]
   page = ["HTML"]
@@ -183,9 +259,11 @@ enableGitInfo = true
   taxonomy = ["HTML", "RSS"]
   term = ["HTML", "RSS"]
 
-# ---------------------------------------------------------------------------
-# Sitemap
-# ---------------------------------------------------------------------------
+# ========== 站点地图（Sitemap） ==========
+# 配置 XML 站点地图的生成参数，站点地图帮助搜索引擎了解网站页面的结构和更新频率。
+# changefreq: 页面默认的更新频率，可选值: always | hourly | daily | weekly | monthly | yearly | never。
+# filename: 生成的站点地图文件名，通常存放于站点根目录。
+# priority: 页面默认的抓取优先级，取值范围 0.0 ~ 1.0，值越大表示越重要。
 [sitemap]
   changefreq = "weekly"
   filename = "sitemap.xml"

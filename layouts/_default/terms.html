@@ -1,13 +1,17 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 默认分类法总览模板：显示某个 taxonomy（如标签/分类）的所有项，含计数和链接 */ -}}
 {{ define "main" }}
 <div class="section-content" role="main">
+  {{- /* 页面头部：分类法标题与图标 */ -}}
   {{ partial "_components/page-header.html" (dict
     "Title" .Title
     "Icon" "fas fa-tags"
   ) }}
   <div class="container">
+    {{- /* 判断是否有分类项 */ -}}
     {{ if .Data.Terms }}
     <div class="tags-grid" data-aos="fade-up">
+      {{- /* 按文章数量降序排列所有分类项 */ -}}
       {{ range sort .Data.Terms.Alphabetical "Count" "desc" }}
       <div class="tags-card-wrapper">
         <a href="{{ .Page.RelPermalink }}" class="tags-card">
@@ -18,6 +22,7 @@
       {{ end }}
     </div>
     {{ else }}
+    {{- /* 无分类项时的空状态提示 */ -}}
     <div class="no-terms-message"><p>{{ i18n "taxonomy_empty" }}</p></div>
     {{ end }}
   </div>

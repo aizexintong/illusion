@@ -1,5 +1,7 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* Schema.org 结构化数据模板：输出 Organization 和 WebSite 的 JSON-LD 数据，含站点信息和搜索功能声明 */ -}}
 {{- if .Site.Params.enableSchema }}
+{{- /* Organization 结构化数据 */ -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -12,6 +14,7 @@
   "author": { "@type": "Person", "name": "{{ .Site.Params.author }}" }
 }
 </script>
+{{- /* WebSite 结构化数据（含搜索功能声明） */ -}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

@@ -1,22 +1,25 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 自定义阅读时间工具：根据中英文内容比例动态计算阅读时长（中文约 400 字/分钟，英文约 200 词/分钟） */ -}}
 {{- $content := .Content | plainify -}}
 
-{{- /* 统计方块字（中文字符）使用 \x{} 格式 */ -}}
+{{- /* 统计中文字符数量（Unicode 范围 \x{4e00}-\x{9fff}） */ -}}
 {{- $chineseCount := len (findRE `[\x{4e00}-\x{9fff}]` $content) -}}
 
-{{- /* 统计英文单词数 */ -}}
+{{- /* 移除中文后统计英文单词数量 */ -}}
 {{- $noChinese := replaceRE `[\x{4e00}-\x{9fff}]` " " $content -}}
 {{- $words := split $noChinese " " -}}
+{{- /* 去除空字符串，累加有效英文单词数 */ -}}
 {{- $englishCount := 0 -}}
 {{- range $words -}}
   {{- if ne . "" }}{{ $englishCount = add $englishCount 1 }}{{ end -}}
 {{- end -}}
 
-{{- /* 总字数 */ -}}
+{{- /* 总字数：中文 + 英文单词 */ -}}
 {{- $totalWords := add $chineseCount $englishCount -}}
 {{- if lt $totalWords 1 }}{{ $totalWords = 1 }}{{ end -}}
 
-{{- /* 阅读速度：根据中英文比例调整 */ -}}
+{{- /* 根据中英文比例动态调整阅读速度：中文越多速度越慢 */ -}}
+{{- /* 计算字符总数和中文字符占比 */ -}}
 {{- $totalChars := len $content -}}
 {{- $chineseRatio := 0.0 -}}
 {{- if gt $totalChars 0 -}}
@@ -31,4 +34,5 @@
 {{- $readingTime := math.Ceil $minutes -}}
 {{- if lt $readingTime 1 }}{{ $readingTime = 1 }}{{ end -}}
 
+{{- /* 返回计算结果 */ -}}
 {{- return $readingTime -}}

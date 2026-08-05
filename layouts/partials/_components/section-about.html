@@ -1,5 +1,6 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 首页"关于"板块 */ -}}
+{{- /* 首页"关于"板块组件：展示作者头像、简介、统计数据（文章/标签/技能数）和跳转按钮 */ -}}
+{{- /* 从主题数据获取首页关于区域配置 */ -}}
 {{- $homeData := hugo.Data.theme.home | default dict -}}
 {{- $aboutData := $homeData.about | default dict -}}
 

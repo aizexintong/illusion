@@ -1,20 +1,23 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 分页导航组件，接收 Paginator 对象 */ -}}
+{{- /* 分页导航组件：接收 Hugo Paginator 对象，生成带省略号的分页链接，最多显示 7 个页码按钮 */ -}}
 {{ if gt .TotalPages 1 }}
 <nav class="pagination" aria-label="{{ i18n "page_nav" }}">
+  {{- /* 当前页码和总页数 */ -}}
   {{ $currentPage := .PageNumber }}
   {{ $totalPages := .TotalPages }}
   {{ $showPages := 7 }}
   {{ $half := div $showPages 2 }}
 
-  {{/* 上一页 - 首页时不显示 */}}
+  {{- /* 上一页按钮：首页时不显示 */ -}}
   {{ if .HasPrev }}
   <a href="{{ .Prev.URL }}" class="page-link prev"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
   {{ end }}
 
+  {{- /* 构建显示的页码数组 */ -}}
   <div class="page-numbers">
     {{ $displayPages := slice }}
 
+    {{- /* 根据页码数量决定省略策略 */ -}}
     {{ if le $totalPages $showPages }}
       {{ range seq 1 $totalPages }}
         {{ $displayPages = $displayPages | append . }}
@@ -48,7 +51,7 @@
     {{ end }}
   </div>
 
-  {{/* 下一页 - 尾页时不显示 */}}
+  {{- /* 下一页按钮：尾页时不显示 */ -}}
   {{ if .HasNext }}
   <a href="{{ .Next.URL }}" class="page-link next">{{ i18n "page_next" }}<i class="fas fa-chevron-right"></i></a>
   {{ end }}

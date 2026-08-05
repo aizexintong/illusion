@@ -1,6 +1,8 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 标签总览页模板：展示所有标签及其文章数量，支持前端分页和降序排列 */ -}}
 {{ define "main" }}
 <div class="section-content" role="main">
+  {{- /* 页面头部：标签总览标题、副标题与统计信息 */ -}}
   {{ partial "_components/page-header.html" (dict
     "Title" (i18n "tags_header_title")
     "Icon" "fas fa-tags"
@@ -10,8 +12,11 @@
   ) }}
 
   <div class="container">
+    {{- /* 判断是否有标签项 */ -}}
     {{ if .Data.Terms }}
+      {{- /* 每页显示数量 */ -}}
       {{ $perPage := hugo.Data.theme.tags.page.perPage | default 25 }}
+      {{- /* 按文章数量降序排列 */ -}}
       {{ $sortedTerms := sort .Data.Terms.Alphabetical "Count" "desc" }}
       {{ $totalTerms := len $sortedTerms }}
 
@@ -26,6 +31,7 @@
         {{ end }}
       </div>
 
+      {{- /* 前端分页导航（默认隐藏，JS 控制显示） */ -}}
       <nav class="pagination" id="tags-pagination" aria-label="{{ i18n "page_nav" }}" style="display:none;">
         <a href="#" class="page-link prev" id="page-prev"><i class="fas fa-chevron-left"></i>{{ i18n "page_prev" }}</a>
         <div class="page-numbers" id="page-numbers"></div>

@@ -1,5 +1,7 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 友链页面模板：展示友情链接卡片和应用友链的条件与联系方式 */ -}}
 {{ define "main" }}
+{{- /* 从主题数据获取友链配置 */ -}}
 {{ $friendsData := hugo.Data.theme.friends }}
 <div class="section-content">
   <div class="container">
@@ -8,6 +10,7 @@
       "Description" ($friendsData.page.subtitle | default (i18n "links_subtitle"))
     ) }}
 
+    {{- /* 友链卡片列表 */ -}}
     <section class="friends-links" data-aos="fade-up">
       <div class="links-container">
         <div class="links-grid">
@@ -30,6 +33,7 @@
       </div>
     </section>
 
+    {{- /* 友链申请区域：申请条件和联系方式 */ -}}
     <section class="apply-links" data-aos="fade-up">
       <div class="apply-card card">
         <h2 class="section-title">{{ $friendsData.apply.title | default (i18n "links_apply_title") }}</h2>

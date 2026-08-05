@@ -1,6 +1,8 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 标签详情页模板：分页展示某个标签下的所有文章，使用文章卡片组件和分页导航 */ -}}
 {{ define "main" }}
 <div class="section-content" role="main">
+  {{- /* 页面头部：标签名称、图标、文章数量 */ -}}
   {{ partial "_components/page-header.html" (dict
     "Title" .Title
     "Icon" "fas fa-tag"
@@ -9,13 +11,17 @@
   ) }}
 
   <div class="container">
+    {{- /* 判断是否有文章 */ -}}
     {{ if gt (len .Pages) 0 }}
+    {{- /* 每页显示 16 篇文章 */ -}}
     {{ $paginator := .Paginate .Pages 16 }}
     <div class="term-posts-grid" role="list">
+      {{- /* 使用文章卡片组件展示文章 */ -}}
       {{ range $paginator.Pages }}
         {{ partial "_components/article-card.html" (dict "Page" . "Style" "grid" "ExcerptLength" 80) }}
       {{ end }}
     </div>
+    {{- /* 分页导航 */ -}}
     {{ partial "_components/pagination.html" $paginator }}
     {{ else }}
     <div class="no-terms-message" data-aos="fade-up"><p>{{ i18n "term_empty" }}</p></div>

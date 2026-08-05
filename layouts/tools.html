@@ -1,10 +1,13 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 工具推荐页面模板：按分类展示各类在线工具卡片，含图标和描述，支持图片图标和字体图标 */ -}}
 {{ define "main" }}
+{{- /* 从主题数据获取工具配置 */ -}}
 {{ $toolsData := hugo.Data.theme.tools }}
 <div class="section-content">
   <div class="container">
     {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
+    {{- /* 按分类遍历展示工具 */ -}}
     <section class="tools-section">
       {{ range $toolsData.categories }}
       <div class="tools-category" data-aos="fade-up">
@@ -18,6 +21,7 @@
         <div class="tools-grid">
           {{ range .tools }}
           <a href="{{ .url }}" class="tool-card" target="_blank" rel="noopener nofollow" data-aos="zoom-in">
+            {{- /* 判断图标类型：HTTP 链接则为图片，否则为字体图标 */ -}}
             <div class="tool-icon">
               {{- if hasPrefix .icon "http" -}}<img src="{{ .icon }}" alt="{{ .name }}" loading="lazy">
               {{- else -}}<i class="{{ .icon }}"></i>{{- end -}}

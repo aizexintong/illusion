@@ -1,12 +1,15 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 评论系统模板：支持 Disqus、Utterances、Giscus、Twikoo、Waline、Artalk 六种评论服务，含主题自适应切换 */ -}}
 {{- if .Site.Params.enableComments -}}
 <section class="comments-section" aria-label='{{ i18n "comments_section" }}'>
   <div class="container">
     <h2 class="section-title">{{ i18n "comments_title" }}</h2>
     <div class="comments-container">
 
+      {{- /* 获取配置的评论提供商，默认 Disqus */ -}}
       {{- $provider := .Site.Params.commentsProvider | default "disqus" -}}
 
+      {{- /* ========== 评论方案 1：Disqus ========== */ -}}
       {{- if eq $provider "disqus" -}}
         {{- if .Site.Params.disqusShortname -}}
           <div id="disqus_thread"></div>
@@ -46,7 +49,8 @@
           </div>
         {{- end -}}
 
-      {{- else if eq $provider "utterances" -}}
+      {{- /* ========== 评论方案 2：Utterances ========== */ -}}
+      {{- if eq $provider "utterances" -}}
         {{- if .Site.Params.utterancesRepo -}}
           <div id="utterances-comments"></div>
           <script>
@@ -116,7 +120,8 @@
           </div>
         {{- end -}}
 
-      {{- else if eq $provider "giscus" -}}
+      {{- /* ========== 评论方案 3：Giscus ========== */ -}}
+      {{- if eq $provider "giscus" -}}
         {{- if and .Site.Params.giscusRepo .Site.Params.giscusRepoId .Site.Params.giscusCategory .Site.Params.giscusCategoryId -}}
           <div id="giscus-comments"></div>
 
@@ -199,7 +204,8 @@
           </div>
         {{- end -}}
 
-      {{- else if eq $provider "twikoo" -}}
+      {{- /* ========== 评论方案 4：Twikoo ========== */ -}}
+      {{- if eq $provider "twikoo" -}}
         {{- if .Site.Params.twikooEnvId -}}
           <div id="twikoo-comments"></div>
           <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.all.min.js" crossorigin="anonymous"></script>
@@ -259,7 +265,8 @@
           </div>
         {{- end -}}
 
-      {{- else if eq $provider "waline" -}}
+      {{- /* ========== 评论方案 5：Waline ========== */ -}}
+      {{- if eq $provider "waline" -}}
         {{- if .Site.Params.walineServerURL -}}
           <div id="waline-comments"></div>
           <link rel="stylesheet" href="https://unpkg.com/@waline/client/dist/waline.css" crossorigin="anonymous" />
@@ -322,7 +329,8 @@
           </div>
         {{- end -}}
 
-      {{- else if eq $provider "artalk" -}}
+      {{- /* ========== 评论方案 6：Artalk ========== */ -}}
+      {{- if eq $provider "artalk" -}}
         {{- if .Site.Params.artalkServer -}}
           <link rel="stylesheet" href="{{ .Site.Params.artalkServer }}/dist/Artalk.css" crossorigin="anonymous">
           <div id="ArtalkComments"></div>
@@ -414,7 +422,8 @@
           </div>
         {{- end -}}
 
-      {{- else -}}
+      {{- /* ========== 未配置评论或评论已禁用 ========== */ -}}
+      {{- if and (ne $provider "disqus") (ne $provider "utterances") (ne $provider "giscus") (ne $provider "twikoo") (ne $provider "waline") (ne $provider "artalk") }}
         <div class="comments-disabled" role="status">
           <p><i class="fas fa-comment-slash"></i> {{ i18n "comments_disabled" }}</p>
         </div>

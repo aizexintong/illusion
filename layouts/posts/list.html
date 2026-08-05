@@ -1,6 +1,8 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 文章列表模板：分页展示所有博客文章，包含封面图、标题、元信息、标签和分页导航 */ -}}
 {{ define "main" }}
 <div class="section-content" role="main">
+  {{- /* 页面头部 */ -}}
   {{ partial "_components/page-header.html" (dict
     "Title" (i18n "nav_posts")
     "Icon" "fas fa-feather-alt"
@@ -8,12 +10,15 @@
   ) }}
 
   <div class="container">
+    {{- /* 每页显示 10 篇文章 */ -}}
     {{ $paginator := .Paginate .Pages 10 }}
     <div class="posts-layout">
-      <div class="posts-main">
+        {{- /* 文章主区域 */ -}}
+        <div class="posts-main">
         <div class="posts-list" role="list">
           {{ range $index, $page := $paginator.Pages }}
           <article class="post-item{{ if and $page.Params.image (eq (mod $index 2) 1) }} reverse{{ end }}" role="listitem">
+            {{- /* 文章封面图（如果有） */ -}}
             {{ if $page.Params.image }}
             <div class="post-item-image">
               <img src="{{ $page.Params.image }}" alt="{{ $page.Title }}" loading="lazy" width="400" height="200" />
@@ -27,10 +32,12 @@
               <h3 class="post-title" title="{{ $page.Title }}">
                 <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
               </h3>
+              {{- /* 发布日期和阅读时间 */ -}}
               <div class="post-meta">
                 {{ if $page.Date }}<span><i class="fas fa-calendar-alt"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
                 {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
               </div>
+              {{- /* 文章标签（最多 3 个） */ -}}
               {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 3) }}
               <div class="post-excerpt">
                 {{ with $page.Description }}{{ . | plainify | truncate 120 }}{{ else }}{{ $page.Summary | plainify | truncate 120 }}{{ end }}
@@ -43,8 +50,10 @@
           </article>
           {{ end }}
         </div>
+        {{- /* 分页导航 */ -}}
         {{ partial "_components/pagination.html" $paginator }}
       </div>
+      {{- /* 侧栏：日历 + 最新文章 + 标签云 */ -}}
       {{ partial "_components/sidebar-posts.html" . }}
     </div>
   </div>

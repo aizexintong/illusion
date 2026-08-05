@@ -1,14 +1,16 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 自定义字数统计工具：统计纯文本内容中中文字符和英文单词的总数 */ -}}
 {{- $content := .Content | plainify -}}
-{{- /* 统计方块字（中文字符）使用 \x{} 格式 */ -}}
+{{- /* 统计中文字符数量（Unicode 范围 \x{4e00}-\x{9fff}） */ -}}
 {{- $chineseCount := len (findRE `[\x{4e00}-\x{9fff}]` $content) -}}
-{{- /* 移除中文后，按空格分割统计拼音单词 */ -}}
+{{- /* 移除中文后，按空格分割统计英文单词数 */ -}}
 {{- $noChinese := replaceRE `[\x{4e00}-\x{9fff}]` " " $content -}}
 {{- $words := split $noChinese " " -}}
 {{- $englishCount := 0 -}}
 {{- range $words -}}
   {{- if ne . "" }}{{ $englishCount = add $englishCount 1 }}{{ end -}}
 {{- end -}}
+{{- /* 总字数 = 中文字符 + 英文单词，最少为 1 */ -}}
 {{- $total := add $chineseCount $englishCount -}}
 {{- if lt $total 1 }}{{ $total = 1 }}{{ end -}}
 {{- return $total -}}

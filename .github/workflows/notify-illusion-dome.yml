@@ -1,4 +1,5 @@
-name: 主题更新时通知站点重建
+# 幻梦 Illusion v1.1.0 - 主题仓库推送后自动通知父站点重建 - 正式预览版
+name: 检测到主题代码推送后通知父站点重建
 
 on:
   push:
@@ -9,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     steps:
-      - name: 触发 illusion-dome 重建
+      - name: 向 illusion-dome 父站点仓库发送 repository_dispatch 事件触发重建
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}

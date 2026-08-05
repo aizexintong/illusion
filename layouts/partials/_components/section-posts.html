@@ -1,5 +1,6 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
-{{- /* 首页"最新文章"板块 */ -}}
+{{- /* 首页"最新文章"板块组件：展示指定数量的最新文章（默认 6 篇），含查看更多按钮 */ -}}
+{{- /* 从主题数据获取配置 */ -}}
 {{- $homeData := hugo.Data.theme.home | default dict -}}
 {{- $postsData := $homeData.posts | default dict -}}
 {{- $postCount := $postsData.count | default 6 -}}
@@ -18,6 +19,7 @@
       </div>
       {{ end }}
     </div>
+    {{- /* 如果文章总数超过展示数量，显示"查看更多"按钮 */ -}}
     {{ if gt (len (where site.RegularPages "Type" "posts")) $postCount }}
     <div class="text-center" data-aos="fade-up">
       <a href="{{ $postsData.showMore.url | default "/posts" }}" class="btn btn-outline">

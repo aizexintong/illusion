@@ -1,28 +1,38 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 全局头部模板：定义网页编码、视口、SEO 元数据、OG/Twitter 社交分享标签、图标、字体、CSS 和 JS 资源加载 */ -}}
+{{- /* ========== 基础元数据 ========== */ -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="{{ .Site.Params.description | default (i18n "sitedescription") }}">
 <meta name="author" content="{{ .Site.Params.author | default (i18n "siteauthor") }}">
 <meta name="keywords" content="{{ .Site.Params.keywords | default (i18n "sitekeywords") }}">
 
+{{- /* 根据页面类型动态设置标题：首页只显示站点名，其他页面为 "页面标题 | 站点名" */ -}}
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
 
+{{- /* SVG 图标 */ -}}
 <link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | relURL }}">
 
+{{- /* ========== 资源预连接和 DNS 预解析 ========== */ -}}
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="dns-prefetch" href="https://tc.alcy.cc">
 
+{{- /* ========== 本地字体样式 ========== */ -}}
 <link rel="stylesheet" href="{{ "lib/fonts/fonts.css" | relURL }}">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
+{{- /* ========== Font Awesome 图标库（CDN + 本地回退） ========== */ -}}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous"></noscript>
+{{- /* Font Awesome 本地回退方案：当 CDN 不可用时切换 */ -}}
 <link id="fa-fallback-css" data-href='{{ "lib/fontawesome/css/all.min.css" | relURL }}' rel="alternate stylesheet" disabled>
 
+{{- /* ========== AOS 动画库（CDN + 本地回退） ========== */ -}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous"></noscript>
 
+{{- /* ========== 主题主 CSS（SCSS 编译） ========== */ -}}
 {{ partial "_layout/head/css.html" . }}
 
+{{- /* ========== Open Graph 社交分享标签 ========== */ -}}
 {{- $assets := hugo.Data.theme.assets -}}
 {{- $ogImage := $assets.avatar.url | default "https://t.alcy.cc/tx" -}}
 {{- if .IsPage }}{{ with .Params.image }}{{ $ogImage = . }}{{ end }}{{ end }}
@@ -33,13 +43,16 @@
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:image" content="{{ $ogImage }}">
 
-<meta name="twitter:card" content="summary_large_image">
+{{- /* ========== Twitter Card 社交分享标签 ========== */ -}}
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}">
 <meta name="twitter:image" content="{{ $ogImage }}">
 
+{{- /* ========== RSS 订阅源链接 ========== */ -}}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ "index.xml" | relURL }}">
 
+{{- /* ========== 主题主 JS（TypeScript 编译） ========== */ -}}
 {{ partial "_layout/head/js.html" . }}
 
+{{- /* ========== Schema.org 结构化数据（可选） ========== */ -}}
 {{ if .Site.Params.enableSchema }}{{ partial "_layout/head/schema.html" . }}{{ end }}

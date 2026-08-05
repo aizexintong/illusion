@@ -1,19 +1,22 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
 {{- /*
-  文章卡片组件
+  文章卡片组件：支持 grid 网格和 list 列表两种布局风格
   参数:
     .Page          - 页面对象 (必填)
-    .Style         - "grid" (默认) | "list"
-    .ExcerptLength - 摘要长度 (默认 80)
-    .ShowImage     - 是否显示图片 (默认 true)
+    .Style         - "grid" 网格布局 (默认) | "list" 列表布局
+    .ExcerptLength - 摘要截取长度 (默认 80 字符)
+    .ShowImage     - 是否显示封面图 (默认 true)
+    .Index         - 列表索引，用于交替布局 (可选)
 */ -}}
 {{- $page := .Page -}}
 {{- $style := .Style | default "grid" -}}
 {{- $excerptLen := .ExcerptLength | default 80 -}}
 {{- $showImage := ne (.ShowImage | default true) false -}}
 
+{{- /* ========== 网格布局风格 ========== */ -}}
 {{- if eq $style "grid" -}}
 <article class="post-card" role="listitem">
+  {{- /* 封面图区域 */ -}}
   {{ if and $showImage $page.Params.image }}
   <div class="post-image">
     <img src="{{ $page.Params.image }}" alt="{{ $page.Title }}" loading="lazy" width="400" height="200"/>
@@ -21,15 +24,13 @@
     {{ if $page.Params.categories }}<span class="post-category">{{ index $page.Params.categories 0 }}</span>{{ end }}
   </div>
   {{ end }}
+  {{- /* 文章内容区域 */ -}}
   <div class="post-content">
     <h3 class="post-title" title="{{ $page.Title }}">
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h3>
+    {{- /* 元数据：日期和阅读时间 */ -}}
     <div class="post-meta">
-      {{ if $page.Date }}<span><i class="fas fa-calendar"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
-      {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
-    </div>
-    {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 3) }}
     <div class="post-excerpt">
       {{ with $page.Description }}{{ . | plainify | truncate $excerptLen }}{{ else }}{{ $page.Summary | plainify | truncate $excerptLen }}{{ end }}
     </div>
@@ -39,6 +40,7 @@
     </a>
   </div>
 </article>
+{{- /* ========== 列表布局风格 ========== */ -}}
 {{- else -}}
 <article class="post-item{{ if and $showImage $page.Params.image (eq (mod .Index 2) 1) }} reverse{{ end }}" role="listitem">
   {{ if and $showImage $page.Params.image }}
@@ -53,9 +55,10 @@
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h3>
     <div class="post-meta">
-      {{ if $page.Date }}<span><i class="fas fa-calendar-alt"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
+      {{ if $page.Date }}<span><i class="fas fa-calendar"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
       {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
     </div>
+    {{- /* 文章标签（最多 3 个） */ -}}
     {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 3) }}
     <div class="post-excerpt">
       {{ with $page.Description }}{{ . | plainify | truncate $excerptLen }}{{ else }}{{ $page.Summary | plainify | truncate $excerptLen }}{{ end }}

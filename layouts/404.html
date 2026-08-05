@@ -1,5 +1,7 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 404 错误页面模板：展示错误图标、提示信息和返回首页/浏览文章的按钮 */ -}}
 {{ define "main" }}
+{{- /* 从主题数据获取 404 页配置（图标、文字、按钮等） */ -}}
 {{ $errorData := hugo.Data.theme.error404 | default dict }}
 {{ $page := $errorData.page | default dict }}
 {{ $buttons := $errorData.buttons | default dict }}

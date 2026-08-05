@@ -1,10 +1,13 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 技能展示页面模板：展示技能分类总览、详细技能进度条和技能发展时间线 */ -}}
 {{ define "main" }}
+{{- /* 从主题数据获取技能配置 */ -}}
 {{ $skillsData := hugo.Data.theme.skills }}
 <div class="section-content">
   <div class="container">
     {{ partial "_components/page-header.html" (dict "Title" .Title "Description" .Description) }}
 
+    {{- /* 技能分类总览 */ -}}
     <section class="skills-overview" data-aos="fade-up">
       <div class="skills-summary card">
         <h2 class="section-title">{{ $skillsData.overview.title | default (i18n "skills_overview") }}</h2>
@@ -22,6 +25,7 @@
       </div>
     </section>
 
+    {{- /* 详细技能列表（含进度条） */ -}}
     <section class="detailed-skills" data-aos="fade-up">
       <h2 class="section-title">{{ i18n "skills_detail" }}</h2>
       <p class="section-subtitle">{{ i18n "skills_detail_subtitle" }}</p>
@@ -42,6 +46,7 @@
       </div>
     </section>
 
+    {{- /* 技能发展时间线 */ -}}
     <section class="skill-development" data-aos="fade-up">
       <div class="development-timeline card">
         <h2 class="section-title">{{ i18n "skills_timeline" }}</h2>

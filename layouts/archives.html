@@ -1,7 +1,10 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 归档页面模板：按年份和月份分组展示所有文章，含侧栏年份导航和统计信息 */ -}}
 {{ define "main" }}
+{{- /* 获取所有 posts 类型的页面 */ -}}
 {{ $posts := where site.RegularPages "Type" "posts" }}
 {{ $totalPosts := len $posts }}
+{{- /* 收集所有年份并降序排列 */ -}}
 {{ $years := slice }}
 {{ range $posts.GroupByDate "2006" }}{{ $years = $years | append .Key }}{{ end }}
 {{ $sortedYears := sort $years "" "desc" }}
@@ -13,12 +16,14 @@
       "Description" (.Description | default (i18n "archives_title"))
     ) }}
 
+    {{- /* 归档统计概览 */ -}}
     <div class="archives-summary" data-aos="fade-up">
       <span class="archives-count"><i class="fas fa-file-alt"></i> {{ i18n "archives_count" (dict "Count" $totalPosts) }}</span>
     </div>
 
     <div class="archives-layout">
-      <div class="archives-main">
+        {{- /* 主内容区：按年份分组展示文章 */ -}}
+        <div class="archives-main">
         {{ if gt (len $sortedYears) 0 }}
           {{ range ($posts.GroupByDate "2006") }}
           <div class="archive-year" data-aos="fade-up" id="year-{{ .Key }}" data-year="{{ .Key }}">
@@ -49,6 +54,7 @@
         {{ end }}
       </div>
 
+      {{- /* 侧栏：年份导航 + 月份列表 + 统计信息 */ -}}
       <aside class="archives-sidebar">
         <div class="sidebar-card archives-nav-card">
           <div class="sidebar-title"><i class="fas fa-calendar-alt"></i> {{ i18n "archives_nav_title" }}</div>

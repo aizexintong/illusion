@@ -1,7 +1,9 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* 全局页脚模板：包含关于信息、快速链接、技术栈标签、社交媒体和版权信息 */ -}}
 <footer class="site-footer" role="contentinfo">
   <div class="container">
     <div class="footer-content">
+      {{- /* 关于区域：作者简介和联系方式 */ -}}
       <div class="footer-section">
         <h2 class="title-anime">{{ i18n "footer_about" }}</h2>
         <p>{{ i18n "footer_about_desc" (dict "Author" .Site.Params.author) }}</p>
@@ -38,6 +40,7 @@
         <p class="footer-note">{{ i18n "footer_motto" }}</p>
       </div>
     </div>
+    {{- /* 版权信息区域：菜单链接 + 动态版权 + 运行时间 + 技术支持 */ -}}
     <div class="copyright">
       <div class="copyright-links">
         {{ range site.Menus.footer }}

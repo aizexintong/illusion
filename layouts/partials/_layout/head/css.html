@@ -1,4 +1,5 @@
 {{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /* CSS 编译模板：使用 Dart Sass 编译 SCSS 源文件为压缩 CSS，生产环境启用指纹，开发环境启用 Source Map */ -}}
 {{- $opts := dict "transpiler" "dartsass" "targetPath" "css/style.css" "outputStyle" "compressed" "enableSourceMap" (not hugo.IsProduction) }}
 {{- with resources.Get "scss/main.scss" | toCSS $opts | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
