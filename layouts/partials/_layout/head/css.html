@@ -1,3 +1,4 @@
+{{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
 {{- $opts := dict "transpiler" "dartsass" "targetPath" "css/style.css" "outputStyle" "compressed" "enableSourceMap" (not hugo.IsProduction) }}
 {{- with resources.Get "scss/main.scss" | toCSS $opts | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">

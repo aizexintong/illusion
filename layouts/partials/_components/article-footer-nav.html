@@ -1,3 +1,4 @@
+{{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
 {{- /* 文章底部导航：上一篇 / 推荐阅读 / 下一篇 */ -}}
 {{ $relCount := 2 }}
 {{ if or (not .PrevInSection) (not .NextInSection) }}{{ $relCount = 3 }}{{ end }}
