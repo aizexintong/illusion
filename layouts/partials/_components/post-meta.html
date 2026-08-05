@@ -1,0 +1,11 @@
+{{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /*
+  文章元数据组件：统一管理文章日期、阅读时间等元信息的显示
+  参数:
+    .Page - 页面对象 (必填)
+*/ -}}
+{{- $page := .Page -}}
+<div class="post-meta">
+  {{ if $page.Date }}<span><i class="fas fa-calendar"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
+  {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
+</div>

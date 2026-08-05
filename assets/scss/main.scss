@@ -2271,7 +2271,7 @@ p {
 
 .about-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--sp-3);
   margin-top: var(--sp-8);
 }

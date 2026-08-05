@@ -30,7 +30,9 @@
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h3>
     {{- /* 元数据：日期和阅读时间 */ -}}
-    <div class="post-meta">
+    {{ partial "_components/post-meta.html" (dict "Page" $page) }}
+    {{- /* 文章标签（最多 4 个） */ -}}
+    {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 4) }}
     <div class="post-excerpt">
       {{ with $page.Description }}{{ . | plainify | truncate $excerptLen }}{{ else }}{{ $page.Summary | plainify | truncate $excerptLen }}{{ end }}
     </div>
@@ -54,12 +56,10 @@
     <h3 class="post-title" title="{{ $page.Title }}">
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h3>
-    <div class="post-meta">
-      {{ if $page.Date }}<span><i class="fas fa-calendar"></i>{{ $page.Date.Format "2006-01-02" }}</span>{{ end }}
-      {{ if $page.ReadingTime }}<span><i class="fas fa-clock"></i>{{ $page.ReadingTime }}{{ i18n "post_read_time" }}</span>{{ end }}
-    </div>
-    {{- /* 文章标签（最多 3 个） */ -}}
-    {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 3) }}
+    {{- /* 元数据：日期和阅读时间 */ -}}
+    {{ partial "_components/post-meta.html" (dict "Page" $page) }}
+    {{- /* 文章标签（最多 4 个） */ -}}
+    {{ partial "_components/post-terms.html" (dict "Page" $page "Taxonomy" "tags" "Limit" 4) }}
     <div class="post-excerpt">
       {{ with $page.Description }}{{ . | plainify | truncate $excerptLen }}{{ else }}{{ $page.Summary | plainify | truncate $excerptLen }}{{ end }}
     </div>
