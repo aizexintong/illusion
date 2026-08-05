@@ -48,6 +48,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_disqus_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 评论方案 2：Utterances ========== */ -}}
       {{- if eq $provider "utterances" -}}
@@ -119,6 +120,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_utterances_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 评论方案 3：Giscus ========== */ -}}
       {{- if eq $provider "giscus" -}}
@@ -203,6 +205,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_giscus_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 评论方案 4：Twikoo ========== */ -}}
       {{- if eq $provider "twikoo" -}}
@@ -264,6 +267,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_twikoo_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 评论方案 5：Waline ========== */ -}}
       {{- if eq $provider "waline" -}}
@@ -328,6 +332,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_waline_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 评论方案 6：Artalk ========== */ -}}
       {{- if eq $provider "artalk" -}}
@@ -421,6 +426,7 @@
             <p><i class="fas fa-exclamation-triangle"></i> {{ i18n "comments_artalk_warn" }}</p>
           </div>
         {{- end -}}
+      {{- end -}}
 
       {{- /* ========== 未配置评论或评论已禁用 ========== */ -}}
       {{- if and (ne $provider "disqus") (ne $provider "utterances") (ne $provider "giscus") (ne $provider "twikoo") (ne $provider "waline") (ne $provider "artalk") }}
