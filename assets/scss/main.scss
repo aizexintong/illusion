@@ -1,5 +1,5 @@
 /* ============================================================================
-   Illusion Theme v2.0.0 - SCSS (Mobile-First) - 零硬编码版本
+   Illusion Theme v2.0.0 - SCSS (Mobile-First)
    重构核心：
    1. 默认样式 = 最小屏幕 (单列/堆叠/隐藏桌面元素)
    2. @mixin respond-to($bp) 增量覆盖
@@ -3307,6 +3307,14 @@ p {
     height: var(--sp-8);
     object-fit: contain;
     transition: filter var(--tr-fast) var(--ez-default);
+  }
+}
+
+[data-theme='dark'] {
+  .tool-icon {
+    img {
+      filter: invert(0.75) brightness(1) contrast(1.5);
+    }
   }
 }
 
