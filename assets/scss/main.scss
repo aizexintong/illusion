@@ -5632,6 +5632,21 @@ p {
   transition: width var(--tr-slowest) ease-in-out;
 }
 
+// ----- 数学公式（KaTeX） -----
+// 行内公式与中文正文保持相近字号，避免中文行距被公式撑开
+.katex {
+  font-size: 1.1em;
+}
+
+// 独立公式在窄屏下可能超出正文宽度，允许横向滚动，避免撑破文章卡片
+.katex-display {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-2) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 // ============================================================================
 // 第六部分：动画关键帧 —— 全部使用 CSS 变量驱动
 // 包含卡片闪光、点击星芒、淡入、弹跳、浮动、脉冲、渐变流动等全部动画定义

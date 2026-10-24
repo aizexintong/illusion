@@ -1,0 +1,73 @@
+{{- /* 幻梦 Illusion v1.1.0 - 正式预览版 */ -}}
+{{- /*
+  数学公式渲染（KaTeX）
+  ---------------------------------------------------------------------------
+  配合 hugo.toml 中的 markup.goldmark.extensions.passthrough 使用：
+  Goldmark 保留 $...$、$$...$$、\(...\)、\[...\] 中的原始 LaTeX，
+  再由 KaTeX 的 auto-render 在浏览器端完成排版。
+
+  加载策略：
+    1. 站点 params.enableMath 控制总开关（默认 true）；
+    2. 单篇文章可用 Front Matter 的 math: true / math: false 覆盖；
+    3. 仅当正文确实出现公式定界符时才请求 CDN 资源，普通文章零额外开销。
+
+  资源失败回退：
+    jsDelivr 为主源，unpkg 为备用源，任一资源加载失败自动切换。
+*/ -}}
+
+{{- /* ========== 功能开关：页面 math 优先，其次站点 enableMath ========== */ -}}
+{{- $enabled := true -}}
+{{- if isset .Site.Params "enablemath" -}}
+  {{- $enabled = .Site.Params.enableMath -}}
+{{- end -}}
+{{- if isset .Params "math" -}}
+  {{- $enabled = .Params.math -}}
+{{- end -}}
+
+{{- /* ========== 只有正文包含公式定界符时才加载（排除代码块与行内代码） ========== */ -}}
+{{- $text := replaceRE `(?s)<(?:pre|code)\b[^>]*>.*?</(?:pre|code)>` "" .Content -}}
+{{- $hasMath := or (strings.Contains $text "$$") (strings.Contains $text "\\(") (strings.Contains $text "\\[") (strings.Contains $text "$") -}}
+
+{{- if and $enabled $hasMath -}}
+{{- $version := "0.16.22" -}}
+{{- $cdn := printf "https://cdn.jsdelivr.net/npm/katex@%s/dist" $version -}}
+{{- $backup := printf "https://unpkg.com/katex@%s/dist" $version -}}
+{{- /* KaTeX 样式表：放在主题主样式之前，便于用主题变量覆盖细节 */ -}}
+<link rel="stylesheet" href="{{ $cdn }}/katex.min.css" crossorigin="anonymous"
+      onerror="this.onerror=null;this.href='{{ $backup }}/katex.min.css'">
+{{- /* KaTeX 核心与 auto-render：defer 保证在主脚本之前按顺序执行 */ -}}
+<script defer src="{{ $cdn }}/katex.min.js" crossorigin="anonymous"
+        onerror="this.onerror=null;this.src='{{ $backup }}/katex.min.js'"></script>
+<script defer src="{{ $cdn }}/contrib/auto-render.min.js" crossorigin="anonymous"
+        onerror="this.onerror=null;this.src='{{ $backup }}/contrib/auto-render.min.js'"></script>
+<script>
+  (function () {
+    var rendered = false;
+    function renderMath() {
+      var root = document.getElementById('main');
+      if (rendered || !root || typeof katex === 'undefined' || typeof renderMathInElement !== 'function') return;
+      rendered = true;
+      try {
+        renderMathInElement(root, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '\\[', right: '\\]', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\(', right: '\\)', display: false }
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option'],
+          throwOnError: false,
+          strict: false,
+          trust: false
+        });
+      } catch (err) {
+        console.warn('[KaTeX]', err);
+      }
+    }
+    // 正常情况：defer 脚本先于 DOMContentLoaded 执行，此时即可排版
+    document.addEventListener('DOMContentLoaded', renderMath);
+    // 兜底：CDN 回退导致 KaTeX 迟到时，等页面资源加载完再重试一次
+    window.addEventListener('load', renderMath);
+  })();
+</script>
+{{- end -}}

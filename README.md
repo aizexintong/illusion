@@ -34,6 +34,7 @@
 | 数据驱动 | 单一 `data/theme.yaml` 管理首页、关于、技能、友链、工具、404 等所有页面 |
 | 滚动动画 | AOS 库驱动入场动画，卡片 3D 鼠标跟随透视效果 |
 | 代码高亮 | Chroma 语法高亮 + 语言标签 + 一键复制按钮 |
+| 数学公式 | 内置 KaTeX，支持行内 `$...$` / `\(...\)` 与独立 `$$...$$` / `\[...\]`，按需加载 |
 | 图片灯箱 | 点击放大，Esc 或点击外部关闭 |
 | 归档页面 | 按年月分组，侧边栏年份导航 + 月份网格 + 文章统计 |
 | 标签/分类 | Hugo 原生分类法，格子展示 + 客户端分页 |
@@ -145,6 +146,7 @@ defaultContentLanguage = 'zh'
   enableTOC = true
   enableComments = false
   lazyLoadImages = true
+  enableMath = true
   enableSchema = true
   enableOpenGraph = true
   enableTwitterCards = true
@@ -211,6 +213,39 @@ toc: true
 {{< /links-grid >}}
 ```
 
+### 数学公式（LaTeX）
+
+主题内置 [KaTeX](https://katex.org/) 渲染链路，无需手动引入任何脚本，直接在 Markdown 中书写公式即可：
+
+```markdown
+行内公式：$E = mc^2$，质能方程。
+
+独立公式：
+
+$$
+\int_{-\infty}^{+\infty} e^{-x^2}\,\mathrm{d}x = \sqrt{\pi}
+$$
+```
+
+支持的定界符：`$...$`（行内）、`$$...$$`（独立）、`\(...\)`（行内）、`\[...\]`（独立）。公式内容由 Hugo 的 `markup.goldmark.extensions.passthrough` 原样保留，再由 KaTeX 在浏览器端排版，因此公式中的 `_`、`*`、`\` 不会被当成 Markdown 语法。
+
+**配置要求**：Hugo 不会合并主题 `hugo.toml` 里的 `markup` 配置，请确认站点 `hugo.toml` 包含以下规则（主题自带的起始配置已包含，从旧版本升级时需手动补充）：
+
+```toml
+[markup.goldmark.extensions.passthrough]
+  enable = true
+
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)'], ['$', '$']]
+```
+
+**按需加载**：只有正文实际出现公式定界符的页面才会请求 KaTeX 资源（jsDelivr 为主源、unpkg 为备用源），普通文章没有额外开销。
+
+**关闭方式**：全局关闭在 `hugo.toml` 中设置 `[params] enableMath = false`；单篇文章关闭在 Front Matter 中写 `math: false`。
+
+> 若站点内容中经常出现成对的美元符号（例如价格区间），可在 `hugo.toml` 的 passthrough 配置中移除 `inline` 里的 `['$', '$']`，改用 `\(...\)` 书写行内公式。
+
 ---
 
 ## 技术架构
@@ -222,6 +257,7 @@ toc: true
 | 脚本引擎 | TypeScript → Hugo `js.Build`（单体 `main.ts`，约 2000 行） |
 | 动画库 | AOS.js + Typed.js（CDN 优先，本地回退） |
 | 图标 | Font Awesome 6（CDN 优先，本地回退） |
+| 公式渲染 | KaTeX 0.16.22（CDN 按需加载 + auto-render） |
 | 字体 | Inter + Noto Sans SC + JetBrains Mono + 系统字体回退 |
 
 ### JavaScript 模块（12 个管理器）

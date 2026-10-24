@@ -68,6 +68,9 @@ enableGitInfo = true
   enableTOC = true
   enableComments = false
   lazyLoadImages = true
+  # enableMath: 是否启用数学公式渲染（KaTeX），开启后正文中的 $...$、$$...$$、\(...\)、\[...\] 会被渲染为公式。
+  # 需配合下方 [markup.goldmark.extensions.passthrough] 使用；单篇文章可在 Front Matter 中用 math: false 关闭。
+  enableMath = true
 
   # ----- SEO 与社交分享 -----
   # 控制搜索引擎优化和社交媒体分享相关的元标签生成。
@@ -244,6 +247,17 @@ enableGitInfo = true
     noClasses = false
     tabWidth = 2
     lineNos = false
+
+  # ----- 数学公式（passthrough） -----
+  # 让 Goldmark 跳过公式定界符内的内容，原样输出 LaTeX，交由前端 KaTeX 渲染。
+  # 若正文中存在成对的美元符号（例如价格区间），可去掉 inline 中的 ['$', '$']，
+  # 改用 \(...\) 作为行内公式写法，避免把普通文本误判为公式。
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+
+    [markup.goldmark.extensions.passthrough.delimiters]
+      block = [['\[', '\]'], ['$$', '$$']]
+      inline = [['\(', '\)'], ['$', '$']]
 
 # ========== 输出格式 ==========
 # 定义 Hugo 为每种页面类型生成的输出格式列表。

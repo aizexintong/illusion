@@ -29,6 +29,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous" media="print" onload="this.onload=null;this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" crossorigin="anonymous"></noscript>
 
+{{- /* ========== 数学公式（KaTeX，按需加载） ========== */ -}}
+{{ partial "_layout/head/math.html" . }}
+
 {{- /* ========== 主题主 CSS（SCSS 编译） ========== */ -}}
 {{ partial "_layout/head/css.html" . }}
 
