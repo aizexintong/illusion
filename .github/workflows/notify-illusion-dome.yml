@@ -13,6 +13,8 @@ name: 检测到主题代码推送后通知父站点重建
 on:
   push:
     branches: ["main"]
+  # 支持在 Actions 页面手动触发，便于更新 DISPATCH_TOKEN 后立即验证
+  workflow_dispatch:
 
 jobs:
   notify:
