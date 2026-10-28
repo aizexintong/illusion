@@ -315,6 +315,8 @@ hugo --minify --cleanDestinationDir
 
 输出 `public/` 目录，部署到任意静态托管服务（GitHub Pages、Vercel、Netlify、Cloudflare Pages 等）。
 
+主题仓库内置 `.github/workflows/notify-illusion-dome.yml`：推送 `main` 后通过 `DISPATCH_TOKEN` 触发演示站点重建。该密钥需要是仅授权 `aizexintong/illusion-dome`、具备 Contents 读写权限的 PAT；密钥缺失或过期时工作流只输出警告并跳过，不会失败，演示站点另有每日定时重建兜底。
+
 ---
 
 ## 许可证
